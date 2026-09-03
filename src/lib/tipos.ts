@@ -127,6 +127,7 @@ export type TituloComSaldo = {
   fornecedor_cliente: string | null;
   documento_numero: string | null;
   membro_nome: string | null;
+  criado_em: string;
 };
 
 export type Baixa = {
