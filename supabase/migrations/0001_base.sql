@@ -42,6 +42,9 @@ stable
 as $$ select coalesce(public.meu_papel() = 'diretoria', false); $$;
 
 -- Cria o profile automaticamente quando a diretoria convida um usuario.
+-- O papel NUNCA vem do metadata do proprio usuario: se o signup publico
+-- estiver ligado no projeto, qualquer um se cadastraria como diretoria.
+-- Todo novo usuario nasce 'membro'; a tela de convite promove em seguida.
 create or replace function public.fn_novo_usuario()
 returns trigger
 language plpgsql
@@ -54,7 +57,7 @@ begin
     new.id,
     coalesce(new.raw_user_meta_data->>'nome', ''),
     new.email,
-    coalesce((new.raw_user_meta_data->>'role')::public.papel_usuario, 'membro')
+    'membro'
   )
   on conflict (id) do nothing;
   return new;

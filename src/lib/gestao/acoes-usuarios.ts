@@ -30,8 +30,8 @@ export async function convidarUsuario(_estado: Resultado, dados: FormData): Prom
   const admin = criarClienteAdmin();
   const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/definir-senha`;
 
-  const { error } = await admin.auth.admin.inviteUserByEmail(email, {
-    data: { nome, role },
+  const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
+    data: { nome },
     redirectTo,
   });
 
@@ -41,6 +41,17 @@ export async function convidarUsuario(_estado: Resultado, dados: FormData): Prom
         ? "Já existe um usuário com este e-mail."
         : error.message,
     };
+  }
+
+  // O papel e definido aqui, pelo servidor. A trigger no banco sempre cria o
+  // usuario como 'membro' — o metadata do proprio usuario nunca decide o papel.
+  if (data?.user?.id) {
+    const supabase = await criarClienteServidor();
+    const { error: erroPapel } = await supabase
+      .from("profiles")
+      .update({ nome, role, atualizado_em: new Date().toISOString() })
+      .eq("id", data.user.id);
+    if (erroPapel) return { erro: `Convite enviado, mas o perfil não foi definido: ${erroPapel.message}` };
   }
 
   revalidatePath("/gestao/usuarios");
