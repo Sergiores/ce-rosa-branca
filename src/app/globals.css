@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  --color-azul-50: #f0f7ff;
+  --color-azul-100: #dceeff;
+  --color-azul-200: #b9dcff;
+  --color-azul-300: #85c3ff;
+  --color-azul-400: #4aa4fb;
+  --color-azul-500: #2186ec;
+  --color-azul-600: #1268ca;
+  --color-azul-700: #1153a3;
+  --color-azul-800: #144886;
+  --color-azul-900: #163d6f;
+
+  --color-fundo: #f7fbff;
+  --color-superficie: #ffffff;
+  --color-borda: #e2edf9;
+  --color-texto: #12263f;
+  --color-texto-suave: #5b7290;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-xl2: 1.25rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: var(--color-fundo);
+    color: var(--color-texto);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background-color: var(--color-azul-200);
+  }
+}
+
+@layer components {
+  .container-site {
+    width: 100%;
+    margin-inline: auto;
+    max-width: 76rem;
+    padding-inline: 1.25rem;
+  }
+}
+
+@keyframes surgir {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+.animar-surgir { animation: surgir 0.5s ease-out both; }
