@@ -172,7 +172,7 @@ export default async function PaginaInicial() {
           <Cartao className="bg-azul-600 text-white">
             <CartaoCorpo className="sm:p-8">
               <BookOpen className="h-8 w-8 text-azul-100" />
-              <h3 className="mt-4 text-xl font-semibold">Estudo do Livro dos Médiuns</h3>
+              <h3 className="mt-4 text-xl font-semibold">Estudo do Livro dos Espíritos</h3>
               <p className="mt-2 text-sm text-azul-100">
                 Pergunta, resposta e o parecer dos nossos médiuns sobre cada texto.
               </p>

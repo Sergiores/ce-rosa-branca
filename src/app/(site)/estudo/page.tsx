@@ -6,7 +6,7 @@ import { listarQuestoes } from "@/lib/conteudo";
 import { registrarAcesso } from "@/lib/metricas";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Estudo do Livro dos Médiuns" };
+export const metadata: Metadata = { title: "Estudo do Livro dos Espíritos" };
 
 export default async function PaginaEstudo() {
   await registrarAcesso("/estudo");
@@ -24,7 +24,7 @@ export default async function PaginaEstudo() {
         <BookOpen className="mt-1 h-8 w-8 shrink-0 text-azul-600" />
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-texto sm:text-3xl">
-            Estudo do Livro dos Médiuns
+            Estudo do Livro dos Espíritos
           </h1>
           <p className="mt-2 max-w-2xl text-texto-suave">
             Cada questão traz a pergunta, a resposta original da obra e o parecer dos médiuns da casa

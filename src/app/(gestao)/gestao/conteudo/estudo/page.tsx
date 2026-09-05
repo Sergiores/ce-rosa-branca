@@ -8,7 +8,7 @@ import { excluirParecer, salvarParecer, salvarQuestao } from "@/lib/gestao/acoes
 import type { Parecer, Questao } from "@/lib/tipos";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Livro dos Médiuns" };
+export const metadata: Metadata = { title: "Livro dos Espíritos" };
 
 export default async function EstudoGestao({
   searchParams,
@@ -43,7 +43,7 @@ export default async function EstudoGestao({
   return (
     <div className="mx-auto max-w-5xl">
       <h1 className="text-2xl font-semibold tracking-tight text-texto">
-        Estudo do Livro dos Médiuns
+        Estudo do Livro dos Espíritos
       </h1>
       <p className="mt-1 text-texto-suave">
         Cadastre a questão com a resposta da obra e registre o parecer dos médiuns.

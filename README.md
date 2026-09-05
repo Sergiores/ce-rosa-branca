@@ -3,7 +3,7 @@
 Site público e sistema de gestão da Casa Espírita Rosa Branca.
 
 - **Site**: home com carrossel de notícias, mensagem do dia, eventos e calendário, projetos,
-  estudo do *Livro dos Médiuns*, páginas institucionais, contato e botão para a loja externa.
+  estudo do *Livro dos Espíritos*, páginas institucionais, contato e botão para a loja externa.
 - **Gestão**: usuários por perfil com permissão por tela, conteúdo do site, atas de reunião,
   membros e mensalidades, documentos de compra/venda, contas a pagar e a receber com duplicatas
   e baixas, relatórios, auditoria e audiência do site.

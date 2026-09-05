@@ -13,7 +13,7 @@ const SECOES = [
   { href: "/gestao/conteudo/eventos", titulo: "Eventos", texto: "Programação, palestras e cursos.", Icone: CalendarDays },
   { href: "/gestao/conteudo/projetos", titulo: "Projetos", texto: "Frentes de trabalho da casa.", Icone: HeartHandshake },
   { href: "/gestao/conteudo/paginas", titulo: "Páginas institucionais", texto: "A Casa, missão e valores, contato.", Icone: FileText },
-  { href: "/gestao/conteudo/estudo", titulo: "Livro dos Médiuns", texto: "Questões, respostas e pareceres.", Icone: BookOpen },
+  { href: "/gestao/conteudo/estudo", titulo: "Livro dos Espíritos", texto: "Questões, respostas e pareceres.", Icone: BookOpen },
 ];
 
 export default async function PaginaConteudo() {

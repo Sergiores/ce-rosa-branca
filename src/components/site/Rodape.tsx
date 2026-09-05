@@ -25,7 +25,7 @@ export function Rodape({ lojaUrl }: { lojaUrl?: string }) {
             <li><Link className="hover:text-azul-700" href="/noticias">Notícias</Link></li>
             <li><Link className="hover:text-azul-700" href="/eventos">Eventos</Link></li>
             <li><Link className="hover:text-azul-700" href="/projetos">Projetos</Link></li>
-            <li><Link className="hover:text-azul-700" href="/estudo">Livro dos Médiuns</Link></li>
+            <li><Link className="hover:text-azul-700" href="/estudo">Livro dos Espíritos</Link></li>
           </ul>
         </div>
 

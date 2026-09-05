@@ -73,7 +73,7 @@ create table if not exists public.mensagens_do_dia (
 );
 create unique index if not exists idx_mensagem_data on public.mensagens_do_dia (data);
 
--- ---------- Estudo do Livro dos Mediuns ----------
+-- ---------- Estudo do Livro dos Espiritos ----------
 -- Texto-semente deve vir de edicao em dominio publico.
 create table if not exists public.questoes (
   id        uuid primary key default gen_random_uuid(),

@@ -12,7 +12,7 @@ type Props = { params: Promise<{ numero: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { numero } = await params;
-  return { title: `Questão ${numero} — Livro dos Médiuns` };
+  return { title: `Questão ${numero} — Livro dos Espíritos` };
 }
 
 export default async function PaginaQuestao({ params }: Props) {
