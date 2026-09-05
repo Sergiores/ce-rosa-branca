@@ -18,7 +18,7 @@ join pg_class c on c.relname = t.tablename and c.relnamespace = 'public'::regnam
 where t.schemaname = 'public'
 order by t.tablename;
 
--- Esperado: 22 tabelas, todas com rls_ligado = true.
+-- Esperado: 20 tabelas, todas com rls_ligado = true.
 -- tem_auditoria = false apenas em: acessos_site, visualizacoes, auditoria.
 
 -- 2) Funcoes de apoio
