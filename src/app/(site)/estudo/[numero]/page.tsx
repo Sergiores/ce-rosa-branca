@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowLeft, MessageSquareQuote } from "lucide-react";
 import { Cartao, CartaoCorpo, Etiqueta } from "@/components/ui";
+import { BotaoOuvir } from "@/components/site/BotaoOuvir";
 import { obterQuestaoComPareceres } from "@/lib/conteudo";
 import { registrarAcesso } from "@/lib/metricas";
 
@@ -25,6 +26,18 @@ export default async function PaginaQuestao({ params }: Props) {
 
   await registrarAcesso(`/estudo/${numero}`);
 
+  // Texto lido em voz alta: pergunta, resposta da obra e pareceres publicados.
+  const textoCompleto = [
+    `Questão ${questao.numero}.`,
+    questao.pergunta,
+    "Resposta.",
+    questao.resposta,
+    ...pareceres.flatMap((p) => [
+      p.autor_nome ? `Parecer de ${p.autor_nome}.` : "Parecer da casa.",
+      p.texto,
+    ]),
+  ].join(" ");
+
   return (
     <div className="container-site max-w-3xl py-14">
       <Link
@@ -44,9 +57,15 @@ export default async function PaginaQuestao({ params }: Props) {
         {questao.pergunta}
       </h1>
 
+      {/* Leitura em voz alta da questao inteira, incluindo os pareceres. */}
+      <BotaoOuvir className="mt-5" rotulo="Ouvir esta questão" texto={textoCompleto} />
+
       <Cartao className="mt-8 border-azul-200 bg-gradient-to-br from-white to-azul-50">
         <CartaoCorpo className="sm:p-8">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-azul-700">Resposta</h2>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-azul-700">Resposta</h2>
+            <BotaoOuvir rotulo="Ouvir só a resposta" texto={questao.resposta} />
+          </div>
           <div className="mt-3 space-y-3 text-base leading-relaxed text-texto">
             {questao.resposta
               .split(/\n{2,}/)
