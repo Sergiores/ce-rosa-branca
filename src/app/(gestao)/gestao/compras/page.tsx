@@ -1,7 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Trash2, ArrowUpCircle, ArrowDownCircle } from "lucide-react";
+import { ArrowUpCircle, ArrowDownCircle } from "lucide-react";
 import { Cartao, CartaoCorpo, Etiqueta, Vazio } from "@/components/ui";
+import { BotaoExcluir } from "@/components/gestao/BotaoExcluir";
 import { FormularioDocumento } from "./FormularioDocumento";
 import { formatarData } from "@/lib/datas";
 import { formatarMoeda } from "@/lib/utils";
@@ -92,16 +93,12 @@ export default async function PaginaCompras() {
               </Link>
 
               {podeEditar ? (
-                <form action={excluirDocumento}>
-                  <input type="hidden" name="id" value={d.id} />
-                  <button
-                    type="submit"
-                    aria-label="Excluir documento e suas duplicatas"
-                    className="grid h-9 w-9 place-items-center rounded-full text-rose-600 hover:bg-rose-50"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </form>
+                <BotaoExcluir
+                  acao={excluirDocumento}
+                  id={d.id}
+                  rotulo="Excluir documento"
+                  mensagem={`Excluir o documento ${d.numero} de ${d.fornecedor_cliente}? As duplicatas geradas por ele e as baixas já registradas serão apagadas junto. Esta ação não pode ser desfeita.`}
+                />
               ) : null}
             </div>
           ))}

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { Trash2 } from "lucide-react";
 import { AreaTexto, Campo, Cartao, CartaoCorpo, Etiqueta, Rotulo, Vazio } from "@/components/ui";
+import { BotaoExcluir } from "@/components/gestao/BotaoExcluir";
 import { FormularioConteudo } from "@/components/gestao/Formulario";
 import { UploadImagem } from "@/components/gestao/UploadImagem";
 import { exigirTela } from "@/lib/auth/permissoes";
@@ -85,16 +85,12 @@ export default async function PaginaProjetosGestao({
                 >
                   Editar
                 </a>
-                <form action={excluir}>
-                  <input type="hidden" name="id" value={p.id} />
-                  <button
-                    type="submit"
-                    aria-label="Excluir"
-                    className="grid h-9 w-9 place-items-center rounded-full text-rose-600 hover:bg-rose-50"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </form>
+                <BotaoExcluir
+                  acao={excluir}
+                  id={p.id}
+                  rotulo="Excluir projeto"
+                  mensagem={`Excluir o projeto "${p.titulo}"? Esta ação não pode ser desfeita.`}
+                />
               </div>
             </div>
           ))}

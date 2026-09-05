@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { ArrowLeft, ExternalLink, Trash2 } from "lucide-react";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 import {
   AreaTexto, Campo, Cartao, CartaoCorpo, Etiqueta, Rotulo, Vazio,
 } from "@/components/ui";
 import { FormularioConteudo } from "@/components/gestao/Formulario";
+import { BotaoExcluir } from "@/components/gestao/BotaoExcluir";
 import { exigirTela } from "@/lib/auth/permissoes";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import {
@@ -167,16 +168,12 @@ export default async function EditorQuestao({
                         {p.status === "publicado" ? "Publicado" : "Rascunho"}
                       </Etiqueta>
                       {podeEditar ? (
-                        <form action={excluir}>
-                          <input type="hidden" name="id" value={p.id} />
-                          <button
-                            type="submit"
-                            aria-label="Excluir parecer"
-                            className="grid h-8 w-8 place-items-center rounded-full text-rose-600 hover:bg-rose-50"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </form>
+                        <BotaoExcluir
+                          acao={excluir}
+                          id={p.id}
+                          rotulo="Excluir parecer"
+                          mensagem="Excluir este parecer? Esta ação não pode ser desfeita."
+                        />
                       ) : null}
                     </div>
                     <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-texto">
@@ -213,15 +210,14 @@ export default async function EditorQuestao({
       ) : null}
 
       {questao && podeEditar ? (
-        <form action={apagarQuestao} className="mt-6">
-          <input type="hidden" name="id" value={questao.id} />
-          <button
-            type="submit"
-            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-rose-700 hover:bg-rose-50"
-          >
-            <Trash2 className="h-4 w-4" /> Excluir esta questão e seus pareceres
-          </button>
-        </form>
+        <div className="mt-6">
+          <BotaoExcluir
+            acao={apagarQuestao}
+            id={questao.id}
+            comTexto="Excluir esta questão e seus pareceres"
+            mensagem={`Excluir a questão ${questao.numero} e todos os seus pareceres? Esta ação não pode ser desfeita.`}
+          />
+        </div>
       ) : null}
     </div>
   );

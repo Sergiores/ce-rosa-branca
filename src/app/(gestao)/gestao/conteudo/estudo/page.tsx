@@ -1,9 +1,10 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Eye, EyeOff, Pencil, Plus, Search, Trash2, X } from "lucide-react";
+import { Eye, EyeOff, Pencil, Plus, Search, X } from "lucide-react";
 import {
   Botao, BotaoLink, Campo, Cartao, Etiqueta, Rotulo, Selecao, Vazio,
 } from "@/components/ui";
+import { BotaoExcluir } from "@/components/gestao/BotaoExcluir";
 import { exigirTela } from "@/lib/auth/permissoes";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import { alternarPublicacaoQuestao, excluirQuestao } from "@/lib/gestao/acoes-conteudo";
@@ -212,17 +213,12 @@ export default async function NavegadorQuestoes({
                               </button>
                             </form>
 
-                            <form action={excluir}>
-                              <input type="hidden" name="id" value={q.id} />
-                              <button
-                                type="submit"
-                                aria-label="Excluir"
-                                title="Excluir questão e seus pareceres"
-                                className="grid h-9 w-9 place-items-center rounded-full text-rose-600 hover:bg-rose-50"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </form>
+                            <BotaoExcluir
+                              acao={excluir}
+                              id={q.id}
+                              rotulo="Excluir questão"
+                              mensagem={`Excluir a questão ${q.numero}${pareceres > 0 ? ` e seus ${pareceres} parecer(es)` : ""}? Esta ação não pode ser desfeita.`}
+                            />
                           </div>
                         </td>
                       ) : null}

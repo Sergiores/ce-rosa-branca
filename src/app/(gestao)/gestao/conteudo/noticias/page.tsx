@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Plus, Star, Eye, EyeOff, Trash2, Pencil } from "lucide-react";
 import { BotaoLink, Cartao, Etiqueta, Vazio } from "@/components/ui";
+import { BotaoExcluir } from "@/components/gestao/BotaoExcluir";
 import { formatarData } from "@/lib/datas";
 import { exigirTela } from "@/lib/auth/permissoes";
 import { criarClienteServidor } from "@/lib/supabase/server";
@@ -96,16 +97,12 @@ export default async function ListaNoticias() {
                       </button>
                     </form>
 
-                    <form action={excluir}>
-                      <input type="hidden" name="id" value={n.id} />
-                      <button
-                        type="submit"
-                        aria-label="Excluir"
-                        className="grid h-9 w-9 place-items-center rounded-full text-rose-600 hover:bg-rose-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </form>
+                    <BotaoExcluir
+                      acao={excluir}
+                      id={n.id}
+                      rotulo="Excluir notícia"
+                      mensagem={`Excluir a notícia "${n.titulo}"? Esta ação não pode ser desfeita.`}
+                    />
                   </div>
                 ) : null}
               </div>

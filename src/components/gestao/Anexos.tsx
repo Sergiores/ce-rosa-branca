@@ -102,7 +102,8 @@ export function Anexos({
     else setErro(resultado?.erro ?? "Não foi possível abrir o arquivo.");
   }
 
-  function remover(id: string) {
+  function remover(id: string, nome: string) {
+    if (!window.confirm(`Excluir o anexo "${nome}"? Esta ação não pode ser desfeita.`)) return;
     iniciarTransicao(async () => {
       const resultado = await excluirAnexo(id);
       if (resultado?.erro) setErro(resultado.erro);
@@ -139,7 +140,7 @@ export function Anexos({
               {!somenteLeitura ? (
                 <button
                   type="button"
-                  onClick={() => remover(a.id)}
+                  onClick={() => remover(a.id, a.nome_arquivo)}
                   aria-label="Excluir anexo"
                   className="grid h-9 w-9 place-items-center rounded-full text-rose-600 hover:bg-rose-50"
                 >

@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { ArrowLeft, Lock, Trash2, Undo2 } from "lucide-react";
+import { ArrowLeft, Lock, Undo2 } from "lucide-react";
 import {
   AreaTexto, Campo, Cartao, CartaoCorpo, Etiqueta, Rotulo, Selecao,
 } from "@/components/ui";
 import { FormularioConteudo } from "@/components/gestao/Formulario";
 import { Anexos } from "@/components/gestao/Anexos";
+import { BotaoExcluir } from "@/components/gestao/BotaoExcluir";
 import { formatarData, formatarDataHora } from "@/lib/datas";
 import { exigirTela } from "@/lib/auth/permissoes";
 import { criarClienteServidor } from "@/lib/supabase/server";
@@ -39,9 +40,9 @@ export default async function FormAta({ params }: { params: Promise<{ id: string
     await reabrirAta(id);
   }
 
-  async function excluir() {
+  async function excluir(dados: FormData) {
     "use server";
-    await excluirAta(id);
+    await excluirAta(String(dados.get("id")));
   }
 
   return (
@@ -182,14 +183,14 @@ export default async function FormAta({ params }: { params: Promise<{ id: string
       ) : null}
 
       {ata && podeEditar && !aprovada ? (
-        <form action={excluir} className="mt-6">
-          <button
-            type="submit"
-            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-rose-700 hover:bg-rose-50"
-          >
-            <Trash2 className="h-4 w-4" /> Excluir esta ata
-          </button>
-        </form>
+        <div className="mt-6">
+          <BotaoExcluir
+            acao={excluir}
+            id={ata.id}
+            comTexto="Excluir esta ata"
+            mensagem={`Excluir a ata nº ${ata.numero}/${ata.ano} e seus anexos? Esta ação não pode ser desfeita.`}
+          />
+        </div>
       ) : null}
     </div>
   );

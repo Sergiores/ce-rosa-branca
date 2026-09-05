@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { ArrowLeft, Ban, Undo2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Cartao, CartaoCorpo, Etiqueta, Vazio } from "@/components/ui";
 import { FormularioBaixa } from "./FormularioBaixa";
 import { CobrancaPix } from "./CobrancaPix";
+import { BotaoConfirmar } from "@/components/gestao/BotaoConfirmar";
 import { formatarData, formatarDataHora } from "@/lib/datas";
 import { formatarMoeda } from "@/lib/utils";
 import { exigirTela } from "@/lib/auth/permissoes";
@@ -130,16 +131,16 @@ export default async function PaginaTitulo({ params }: { params: Promise<{ id: s
                       {formatarMoeda(b.valor)}
                     </span>
                     {podeEditar && !estorno ? (
-                      <form action={estornarBaixa}>
-                        <input type="hidden" name="baixa_id" value={b.id} />
-                        <input type="hidden" name="tipo" value={titulo.tipo} />
-                        <button
-                          type="submit"
-                          className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium text-texto-suave hover:bg-azul-50 hover:text-azul-700"
-                        >
-                          <Undo2 className="h-3.5 w-3.5" /> estornar
-                        </button>
-                      </form>
+                      <BotaoConfirmar
+                        acao={estornarBaixa}
+                        id={b.id}
+                        nomeCampoId="baixa_id"
+                        campos={{ tipo: titulo.tipo }}
+                        rotulo="estornar"
+                        icone="estornar"
+                        discreto
+                        mensagem={`Estornar a baixa de ${formatarMoeda(b.valor)}? Será lançado um valor negativo; a baixa original continua no histórico.`}
+                      />
                     ) : null}
                   </li>
                 );
@@ -155,16 +156,16 @@ export default async function PaginaTitulo({ params }: { params: Promise<{ id: s
       </Cartao>
 
       {podeEditar && !titulo.cancelado && Number(titulo.valor_pago) === 0 ? (
-        <form action={cancelarTitulo} className="mt-6">
-          <input type="hidden" name="id" value={titulo.id} />
-          <input type="hidden" name="tipo" value={titulo.tipo} />
-          <button
-            type="submit"
-            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-rose-700 hover:bg-rose-50"
-          >
-            <Ban className="h-4 w-4" /> Cancelar este título
-          </button>
-        </form>
+        <div className="mt-6">
+          <BotaoConfirmar
+            acao={cancelarTitulo}
+            id={titulo.id}
+            campos={{ tipo: titulo.tipo }}
+            rotulo="Cancelar este título"
+            icone="cancelar"
+            mensagem="Cancelar este título? Ele deixa de contar nos saldos e relatórios."
+          />
+        </div>
       ) : null}
 
       <p className="mt-6 text-xs text-texto-suave">
