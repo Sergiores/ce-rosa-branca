@@ -269,6 +269,26 @@ export async function salvarQuestao(_estado: Resultado, dados: FormData): Promis
   redirect("/gestao/conteudo/estudo?salvo=1");
 }
 
+export async function excluirQuestao(id: string) {
+  await exigirTela("conteudo", true);
+  const supabase = await criarClienteServidor();
+  await supabase.from("questoes").delete().eq("id", id);
+  revalidarSite();
+  revalidatePath("/gestao/conteudo/estudo");
+}
+
+/** Publica ou volta a rascunho sem abrir o formulario. */
+export async function alternarPublicacaoQuestao(id: string, publicar: boolean) {
+  await exigirTela("conteudo", true);
+  const supabase = await criarClienteServidor();
+  await supabase
+    .from("questoes")
+    .update({ status: publicar ? "publicado" : "rascunho" })
+    .eq("id", id);
+  revalidarSite();
+  revalidatePath("/gestao/conteudo/estudo");
+}
+
 export async function salvarParecer(_estado: Resultado, dados: FormData): Promise<Resultado> {
   await exigirTela("conteudo", true);
   const supabase = await criarClienteServidor();
@@ -293,7 +313,7 @@ export async function salvarParecer(_estado: Resultado, dados: FormData): Promis
   if (error) return { erro: error.message };
 
   revalidarSite();
-  redirect(`/gestao/conteudo/estudo?questao=${questao_id}&salvo=1`);
+  redirect(`/gestao/conteudo/estudo/${questao_id}?salvo=1`);
 }
 
 export async function excluirParecer(id: string) {

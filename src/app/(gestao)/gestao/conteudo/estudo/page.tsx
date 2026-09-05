@@ -1,30 +1,43 @@
+import Link from "next/link";
 import type { Metadata } from "next";
-import { Search, Trash2, X } from "lucide-react";
+import { Eye, EyeOff, Pencil, Plus, Search, Trash2, X } from "lucide-react";
 import {
-  AreaTexto, Botao, Campo, Cartao, CartaoCorpo, Etiqueta, Rotulo, Vazio,
+  Botao, BotaoLink, Campo, Cartao, Etiqueta, Rotulo, Selecao, Vazio,
 } from "@/components/ui";
-import { FormularioConteudo } from "@/components/gestao/Formulario";
 import { exigirTela } from "@/lib/auth/permissoes";
 import { criarClienteServidor } from "@/lib/supabase/server";
-import { excluirParecer, salvarParecer, salvarQuestao } from "@/lib/gestao/acoes-conteudo";
-import type { Parecer, Questao } from "@/lib/tipos";
+import { alternarPublicacaoQuestao, excluirQuestao } from "@/lib/gestao/acoes-conteudo";
+import type { Questao } from "@/lib/tipos";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Livro dos Espíritos" };
 
-export default async function EstudoGestao({
+const POR_PAGINA = 25;
+
+type Linha = Questao & { pareceres: { count: number }[] };
+
+export default async function NavegadorQuestoes({
   searchParams,
 }: {
-  searchParams: Promise<{ questao?: string; editar?: string; q?: string }>;
+  searchParams: Promise<{ q?: string; status?: string; pagina?: string }>;
 }) {
-  await exigirTela("conteudo");
-  const { questao: questaoId, editar, q } = await searchParams;
-  const busca = q?.trim() ?? "";
+  const sessao = await exigirTela("conteudo");
+  const podeEditar = sessao.podeEditar("conteudo");
+
+  const filtros = await searchParams;
+  const busca = filtros.q?.trim() ?? "";
+  const status = filtros.status ?? "";
+  const pagina = Math.max(1, Number(filtros.pagina ?? 1) || 1);
 
   const supabase = await criarClienteServidor();
 
-  // A gestao enxerga rascunhos tambem — o filtro de status vale so para o site.
-  let consulta = supabase.from("questoes").select("*").order("numero");
+  let consulta = supabase
+    .from("questoes")
+    .select("*, pareceres(count)", { count: "exact" })
+    .order("numero")
+    .range((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA - 1);
+
+  if (status === "publicado" || status === "rascunho") consulta = consulta.eq("status", status);
   if (busca) {
     const numero = Number(busca);
     const alvo = busca.replace(/[%,()]/g, " ");
@@ -32,242 +45,226 @@ export default async function EstudoGestao({
       ? consulta.or(`numero.eq.${numero},pergunta.ilike.%${alvo}%,resposta.ilike.%${alvo}%`)
       : consulta.or(`pergunta.ilike.%${alvo}%,resposta.ilike.%${alvo}%`);
   }
-  const { data: dadosQuestoes } = await consulta;
-  const questoes = (dadosQuestoes ?? []) as Questao[];
 
-  const selecionada = questoes.find((x) => x.id === questaoId) ?? questoes[0];
-  const emEdicaoQuestao = questoes.find((x) => x.id === editar);
+  const { data, count } = await consulta;
+  const questoes = (data ?? []) as Linha[];
+  const total = count ?? 0;
+  const ultimaPagina = Math.max(1, Math.ceil(total / POR_PAGINA));
 
-  let pareceres: Parecer[] = [];
-  if (selecionada) {
-    const { data } = await supabase
-      .from("pareceres")
-      .select("*")
-      .eq("questao_id", selecionada.id)
-      .order("criado_em");
-    pareceres = (data ?? []) as Parecer[];
+  // Totais gerais, independentes do filtro aplicado.
+  const [{ count: totalGeral }, { count: totalPublicadas }] = await Promise.all([
+    supabase.from("questoes").select("id", { count: "exact", head: true }),
+    supabase
+      .from("questoes")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "publicado"),
+  ]);
+
+  const paramsPara = (p: number) => {
+    const u = new URLSearchParams();
+    if (busca) u.set("q", busca);
+    if (status) u.set("status", status);
+    if (p > 1) u.set("pagina", String(p));
+    const s = u.toString();
+    return `/gestao/conteudo/estudo${s ? `?${s}` : ""}`;
+  };
+
+  async function publicar(dados: FormData) {
+    "use server";
+    await alternarPublicacaoQuestao(String(dados.get("id")), dados.get("publicar") === "1");
   }
-
-  const preservaBusca = busca ? `&q=${encodeURIComponent(busca)}` : "";
 
   async function excluir(dados: FormData) {
     "use server";
-    await excluirParecer(String(dados.get("id")));
+    await excluirQuestao(String(dados.get("id")));
   }
 
   return (
     <div className="mx-auto max-w-5xl">
-      <h1 className="text-2xl font-semibold tracking-tight text-texto">
-        Estudo do Livro dos Espíritos
-      </h1>
-      <p className="mt-1 text-texto-suave">
-        Cadastre a questão com a resposta da obra e registre o parecer dos médiuns.
-        Rascunhos não aparecem no site.
-      </p>
-
-      <div className="mt-8 grid gap-6 lg:grid-cols-[22rem_1fr]">
-        {/* Lista com busca */}
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <form className="mb-3 flex gap-2">
-            <div className="relative min-w-0 flex-1">
+          <h1 className="text-2xl font-semibold tracking-tight text-texto">
+            Estudo do Livro dos Espíritos
+          </h1>
+          <p className="mt-1 text-texto-suave">
+            {totalGeral ?? 0} questões cadastradas · {totalPublicadas ?? 0} publicadas no site.
+          </p>
+        </div>
+        {podeEditar ? (
+          <BotaoLink href="/gestao/conteudo/estudo/nova">
+            <Plus className="h-4 w-4" /> Nova questão
+          </BotaoLink>
+        ) : null}
+      </div>
+
+      {/* Filtros */}
+      <Cartao className="mt-6">
+        <form className="grid gap-4 p-5 sm:grid-cols-[1fr_12rem_auto] sm:items-end">
+          <div>
+            <Rotulo htmlFor="q">Buscar</Rotulo>
+            <div className="relative">
               <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-texto-suave" />
               <Campo
+                id="q"
                 name="q"
                 defaultValue={busca}
-                placeholder="Número ou palavra"
+                placeholder="Número da questão ou palavra do texto"
                 className="pl-10"
-                aria-label="Buscar questão"
               />
             </div>
-            <Botao type="submit" tamanho="sm">
-              Buscar
-            </Botao>
-            {busca ? (
-              <a
+          </div>
+          <div>
+            <Rotulo htmlFor="status">Situação</Rotulo>
+            <Selecao id="status" name="status" defaultValue={status}>
+              <option value="">Todas</option>
+              <option value="publicado">Publicadas</option>
+              <option value="rascunho">Rascunhos</option>
+            </Selecao>
+          </div>
+          <div className="flex gap-2">
+            <Botao type="submit">Filtrar</Botao>
+            {busca || status ? (
+              <Link
                 href="/gestao/conteudo/estudo"
-                aria-label="Limpar busca"
-                className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-texto-suave hover:bg-azul-50"
+                className="inline-flex h-11 items-center gap-2 rounded-full border border-borda bg-white px-5 text-sm font-medium text-texto-suave hover:bg-azul-50"
               >
-                <X className="h-4 w-4" />
-              </a>
+                <X className="h-4 w-4" /> Limpar
+              </Link>
             ) : null}
-          </form>
+          </div>
+        </form>
+      </Cartao>
 
-          {busca ? (
-            <p className="mb-2 text-xs text-texto-suave">
-              {questoes.length} resultado(s) para “{busca}”.
-            </p>
-          ) : null}
-
-          <Cartao className="max-h-[30rem] overflow-y-auto">
-            {questoes.length === 0 ? (
-              <div className="p-5">
-                <Vazio mensagem={busca ? "Nada encontrado." : "Nenhuma questão cadastrada."} />
-              </div>
-            ) : (
-              <div className="divide-y divide-borda">
-                {questoes.map((item) => (
-                  <a
-                    key={item.id}
-                    href={`/gestao/conteudo/estudo?questao=${item.id}${preservaBusca}`}
-                    className={
-                      item.id === selecionada?.id
-                        ? "block bg-azul-50 px-5 py-3"
-                        : "block px-5 py-3 hover:bg-azul-50/60"
-                    }
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-medium text-azul-700">
-                        Questão {item.numero}
-                      </span>
-                      {item.status === "rascunho" ? (
-                        <Etiqueta tom="ambar">Rascunho</Etiqueta>
-                      ) : null}
-                    </div>
-                    <p className="mt-0.5 line-clamp-2 text-sm text-texto">{item.pergunta}</p>
-                  </a>
-                ))}
-              </div>
-            )}
-          </Cartao>
-        </div>
-
-        <div className="space-y-6">
-          {/* Formulário de questão */}
-          <Cartao>
-            <CartaoCorpo className="sm:p-7">
-              <div className="mb-5 flex flex-wrap items-center gap-3">
-                <h2 className="font-semibold text-texto">
-                  {emEdicaoQuestao ? `Editar questão ${emEdicaoQuestao.numero}` : "Nova questão"}
-                </h2>
-                {emEdicaoQuestao ? (
-                  <Etiqueta tom={emEdicaoQuestao.status === "publicado" ? "verde" : "ambar"}>
-                    {emEdicaoQuestao.status === "publicado" ? "Publicada" : "Rascunho"}
-                  </Etiqueta>
-                ) : null}
-              </div>
-
-              <FormularioConteudo
-                acao={salvarQuestao}
-                key={emEdicaoQuestao?.id ?? "nova-questao"}
-                rotuloPublicar="Publicar questão"
-              >
-                {emEdicaoQuestao ? (
-                  <input type="hidden" name="id" value={emEdicaoQuestao.id} />
-                ) : null}
-
-                <div className="grid gap-5 sm:grid-cols-[8rem_1fr_1fr]">
-                  <div>
-                    <Rotulo htmlFor="numero">Número</Rotulo>
-                    <Campo
-                      id="numero"
-                      name="numero"
-                      type="number"
-                      required
-                      defaultValue={emEdicaoQuestao?.numero ?? ""}
-                    />
-                  </div>
-                  <div>
-                    <Rotulo htmlFor="parte">Parte</Rotulo>
-                    <Campo id="parte" name="parte" defaultValue={emEdicaoQuestao?.parte ?? ""} />
-                  </div>
-                  <div>
-                    <Rotulo htmlFor="capitulo">Capítulo</Rotulo>
-                    <Campo
-                      id="capitulo"
-                      name="capitulo"
-                      defaultValue={emEdicaoQuestao?.capitulo ?? ""}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Rotulo htmlFor="pergunta">Pergunta</Rotulo>
-                  <AreaTexto
-                    id="pergunta"
-                    name="pergunta"
-                    rows={3}
-                    required
-                    defaultValue={emEdicaoQuestao?.pergunta ?? ""}
-                  />
-                </div>
-
-                <div>
-                  <Rotulo htmlFor="resposta">Resposta da obra</Rotulo>
-                  <AreaTexto
-                    id="resposta"
-                    name="resposta"
-                    rows={6}
-                    required
-                    defaultValue={emEdicaoQuestao?.resposta ?? ""}
-                  />
-                </div>
-              </FormularioConteudo>
-            </CartaoCorpo>
-          </Cartao>
-
-          {/* Pareceres da questão selecionada */}
-          {selecionada ? (
-            <Cartao>
-              <CartaoCorpo className="sm:p-7">
-                <div className="mb-5 flex flex-wrap items-center gap-3">
-                  <h2 className="font-semibold text-texto">
-                    Pareceres — questão {selecionada.numero}
-                  </h2>
-                  <a
-                    href={`/gestao/conteudo/estudo?questao=${selecionada.id}&editar=${selecionada.id}${preservaBusca}`}
-                    className="text-sm font-medium text-azul-700 hover:text-azul-800"
-                  >
-                    editar esta questão
-                  </a>
-                </div>
-
-                {pareceres.length > 0 ? (
-                  <div className="mb-6 space-y-3">
-                    {pareceres.map((p) => (
-                      <div key={p.id} className="rounded-xl border border-borda bg-white p-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <Etiqueta tom={p.status === "publicado" ? "verde" : "ambar"}>
-                            {p.status === "publicado" ? "Publicado" : "Rascunho"}
-                          </Etiqueta>
-                          <form action={excluir}>
-                            <input type="hidden" name="id" value={p.id} />
-                            <button
-                              type="submit"
-                              aria-label="Excluir parecer"
-                              className="grid h-8 w-8 place-items-center rounded-full text-rose-600 hover:bg-rose-50"
+      {/* Navegador */}
+      <div className="mt-6">
+        {questoes.length === 0 ? (
+          <Vazio
+            mensagem={
+              busca || status
+                ? "Nenhuma questão para os filtros escolhidos."
+                : "Nenhuma questão cadastrada."
+            }
+          />
+        ) : (
+          <Cartao className="overflow-x-auto">
+            <table className="w-full min-w-[46rem] text-sm">
+              <thead>
+                <tr className="border-b border-borda bg-azul-50/60 text-left">
+                  <th className="w-20 px-5 py-3 font-semibold text-texto">Nº</th>
+                  <th className="px-4 py-3 font-semibold text-texto">Pergunta</th>
+                  <th className="w-40 px-4 py-3 font-semibold text-texto">Situação</th>
+                  <th className="w-24 px-4 py-3 text-center font-semibold text-texto">Pareceres</th>
+                  {podeEditar ? <th className="w-32 px-4 py-3" /> : null}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-borda">
+                {questoes.map((q) => {
+                  const pareceres = q.pareceres?.[0]?.count ?? 0;
+                  const publicada = q.status === "publicado";
+                  return (
+                    <tr key={q.id} className="align-top hover:bg-azul-50/40">
+                      <td className="px-5 py-3 font-medium text-azul-700">
+                        <Link href={`/gestao/conteudo/estudo/${q.id}`}>{q.numero}</Link>
+                      </td>
+                      <td className="px-4 py-3">
+                        <Link
+                          href={`/gestao/conteudo/estudo/${q.id}`}
+                          className="line-clamp-2 text-texto hover:text-azul-700"
+                        >
+                          {q.pergunta}
+                        </Link>
+                        <p className="mt-0.5 truncate text-xs text-texto-suave">{q.capitulo}</p>
+                      </td>
+                      <td className="px-4 py-3">
+                        <Etiqueta tom={publicada ? "verde" : "ambar"}>
+                          {publicada ? "Publicada" : "Rascunho"}
+                        </Etiqueta>
+                      </td>
+                      <td className="px-4 py-3 text-center text-texto-suave">
+                        {pareceres > 0 ? pareceres : "—"}
+                      </td>
+                      {podeEditar ? (
+                        <td className="px-4 py-3">
+                          <div className="flex items-center justify-end gap-1">
+                            <Link
+                              href={`/gestao/conteudo/estudo/${q.id}`}
+                              aria-label="Editar"
+                              title="Editar"
+                              className="grid h-9 w-9 place-items-center rounded-full text-azul-700 hover:bg-azul-100"
                             >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </form>
-                        </div>
-                        <p className="mt-2 whitespace-pre-line text-sm text-texto">{p.texto}</p>
-                        {p.autor_nome ? (
-                          <p className="mt-2 text-xs text-texto-suave">— {p.autor_nome}</p>
-                        ) : null}
-                      </div>
-                    ))}
-                  </div>
-                ) : null}
+                              <Pencil className="h-4 w-4" />
+                            </Link>
 
-                <FormularioConteudo acao={salvarParecer} key={`parecer-${selecionada.id}`}>
-                  <input type="hidden" name="questao_id" value={selecionada.id} />
+                            <form action={publicar}>
+                              <input type="hidden" name="id" value={q.id} />
+                              <input type="hidden" name="publicar" value={publicada ? "0" : "1"} />
+                              <button
+                                type="submit"
+                                aria-label={publicada ? "Voltar a rascunho" : "Publicar"}
+                                title={publicada ? "Voltar a rascunho" : "Publicar"}
+                                className="grid h-9 w-9 place-items-center rounded-full text-azul-700 hover:bg-azul-100"
+                              >
+                                {publicada ? (
+                                  <EyeOff className="h-4 w-4" />
+                                ) : (
+                                  <Eye className="h-4 w-4" />
+                                )}
+                              </button>
+                            </form>
 
-                  <div>
-                    <Rotulo htmlFor="autor_nome">Médium / autor do parecer</Rotulo>
-                    <Campo id="autor_nome" name="autor_nome" />
-                  </div>
-
-                  <div>
-                    <Rotulo htmlFor="texto">Parecer</Rotulo>
-                    <AreaTexto id="texto" name="texto" rows={6} required />
-                  </div>
-                </FormularioConteudo>
-              </CartaoCorpo>
-            </Cartao>
-          ) : null}
-        </div>
+                            <form action={excluir}>
+                              <input type="hidden" name="id" value={q.id} />
+                              <button
+                                type="submit"
+                                aria-label="Excluir"
+                                title="Excluir questão e seus pareceres"
+                                className="grid h-9 w-9 place-items-center rounded-full text-rose-600 hover:bg-rose-50"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </form>
+                          </div>
+                        </td>
+                      ) : null}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </Cartao>
+        )}
       </div>
+
+      {/* Paginação */}
+      {total > POR_PAGINA ? (
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+          <p className="text-sm text-texto-suave">
+            Mostrando {(pagina - 1) * POR_PAGINA + 1}–{Math.min(pagina * POR_PAGINA, total)} de{" "}
+            {total}
+          </p>
+          <div className="flex items-center gap-2">
+            {pagina > 1 ? (
+              <Link
+                href={paramsPara(pagina - 1)}
+                className="rounded-full border border-borda bg-white px-4 py-2 text-sm font-medium text-azul-700 hover:bg-azul-50"
+              >
+                Anterior
+              </Link>
+            ) : null}
+            <span className="text-sm text-texto-suave">
+              página {pagina} de {ultimaPagina}
+            </span>
+            {pagina < ultimaPagina ? (
+              <Link
+                href={paramsPara(pagina + 1)}
+                className="rounded-full border border-borda bg-white px-4 py-2 text-sm font-medium text-azul-700 hover:bg-azul-50"
+              >
+                Próxima
+              </Link>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
