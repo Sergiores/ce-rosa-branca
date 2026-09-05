@@ -103,3 +103,11 @@ export async function excluirAta(id: string) {
   revalidatePath("/gestao/atas");
   redirect("/gestao/atas");
 }
+
+/** Exclusao a partir da lista: apenas atualiza a propria lista, sem redirecionar. */
+export async function excluirAtaDaLista(dados: FormData) {
+  await exigirTela("atas", true);
+  const supabase = await criarClienteServidor();
+  await supabase.from("atas").delete().eq("id", String(dados.get("id")));
+  revalidatePath("/gestao/atas");
+}
