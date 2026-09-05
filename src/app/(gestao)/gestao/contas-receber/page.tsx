@@ -2,13 +2,17 @@ import type { Metadata } from "next";
 import { CalendarPlus } from "lucide-react";
 import { Botao, Campo, Cartao, CartaoCorpo, Rotulo } from "@/components/ui";
 import {
-  FiltrosBarra, IndicadoresTitulos, TabelaTitulos, carregarTitulos, type FiltrosTitulos,
+  FiltrosTitulosBarra, IndicadoresTitulos, TabelaTitulos, carregarTitulos,
+  type FiltrosTitulos,
 } from "@/components/gestao/ListaTitulos";
+import { CabecalhoLista } from "@/components/gestao/Lista";
 import { exigirTela } from "@/lib/auth/permissoes";
 import { gerarMensalidades } from "@/lib/gestao/acoes-financeiro";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Contas a receber" };
+
+const BASE = "/gestao/contas-receber";
 
 export default async function ContasReceber({
   searchParams,
@@ -24,14 +28,15 @@ export default async function ContasReceber({
 
   return (
     <div className="mx-auto max-w-5xl">
-      <h1 className="text-2xl font-semibold tracking-tight text-texto">Contas a receber</h1>
-      <p className="mt-1 text-texto-suave">
-        Mensalidades dos membros e recebimentos. Clique no título para dar baixa ou gerar o Pix.
-      </p>
+      <CabecalhoLista
+        titulo="Contas a receber"
+        descricao="Mensalidades dos membros e recebimentos. Clique no título para dar baixa ou gerar o Pix."
+        novoHref="/gestao/compras/novo"
+        novoRotulo="Lançar documento"
+        podeEditar={sessao.podeEditar("compras")}
+      />
 
-      <div className="mt-8">
-        <IndicadoresTitulos titulos={titulos} />
-      </div>
+      <IndicadoresTitulos titulos={titulos} />
 
       {podeEditar ? (
         <Cartao className="mt-6 border-azul-200 bg-azul-50/60">
@@ -58,11 +63,17 @@ export default async function ContasReceber({
         </Cartao>
       ) : null}
 
-      <FiltrosBarra filtros={filtros} />
+      <FiltrosTitulosBarra base={BASE} filtros={filtros} />
 
       <div className="mt-6">
         <TabelaTitulos titulos={titulos} />
       </div>
+
+      {titulos.length > 0 ? (
+        <p className="mt-4 text-sm text-texto-suave">
+          {titulos.length} título(s) listado(s).
+        </p>
+      ) : null}
     </div>
   );
 }

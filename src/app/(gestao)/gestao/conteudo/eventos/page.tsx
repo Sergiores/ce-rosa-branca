@@ -1,37 +1,58 @@
+import Link from "next/link";
 import type { Metadata } from "next";
-import { AreaTexto, Campo, Cartao, CartaoCorpo, Etiqueta, Rotulo, Vazio } from "@/components/ui";
+import { Eye, EyeOff, MapPin, Pencil } from "lucide-react";
+import { Cartao, Etiqueta, Vazio } from "@/components/ui";
 import { BotaoExcluir } from "@/components/gestao/BotaoExcluir";
-import { FormularioConteudo } from "@/components/gestao/Formulario";
-import { UploadImagem } from "@/components/gestao/UploadImagem";
+import {
+  CabecalhoLista, FiltrosLista, OPCOES_PUBLICACAO, Paginacao,
+} from "@/components/gestao/Lista";
 import { formatarDataHora } from "@/lib/datas";
 import { exigirTela } from "@/lib/auth/permissoes";
 import { criarClienteServidor } from "@/lib/supabase/server";
-import { excluirEvento, salvarEvento } from "@/lib/gestao/acoes-conteudo";
+import { alternarPublicacao, excluirEvento } from "@/lib/gestao/acoes-conteudo";
 import type { Evento } from "@/lib/tipos";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Eventos" };
 
-/** Converte ISO para o formato aceito por <input type="datetime-local">. */
-function paraCampoLocal(iso: string | null | undefined) {
-  if (!iso) return "";
-  const d = new Date(iso);
-  const desloc = d.getTimezoneOffset() * 60000;
-  return new Date(d.getTime() - desloc).toISOString().slice(0, 16);
-}
+const BASE = "/gestao/conteudo/eventos";
+const POR_PAGINA = 20;
 
-export default async function PaginaEventosGestao({
+export default async function ListaEventos({
   searchParams,
 }: {
-  searchParams: Promise<{ editar?: string }>;
+  searchParams: Promise<{ q?: string; status?: string; quando?: string; pagina?: string }>;
 }) {
-  await exigirTela("conteudo");
-  const { editar } = await searchParams;
+  const sessao = await exigirTela("conteudo");
+  const podeEditar = sessao.podeEditar("conteudo");
+
+  const filtros = await searchParams;
+  const busca = filtros.q?.trim() ?? "";
+  const status = filtros.status ?? "";
+  const pagina = Math.max(1, Number(filtros.pagina ?? 1) || 1);
 
   const supabase = await criarClienteServidor();
-  const { data } = await supabase.from("eventos").select("*").order("inicio", { ascending: false });
+  let consulta = supabase
+    .from("eventos")
+    .select("*", { count: "exact" })
+    .order("inicio", { ascending: false })
+    .range((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA - 1);
+
+  if (status === "publicado" || status === "rascunho") consulta = consulta.eq("status", status);
+  if (busca) {
+    const alvo = busca.replace(/[%,()]/g, " ");
+    consulta = consulta.or(`titulo.ilike.%${alvo}%,descricao.ilike.%${alvo}%,local.ilike.%${alvo}%`);
+  }
+
+  const { data, count } = await consulta;
   const eventos = (data ?? []) as Evento[];
-  const emEdicao = eventos.find((e) => e.id === editar);
+  const total = count ?? 0;
+  const agora = Date.now();
+
+  async function publicar(dados: FormData) {
+    "use server";
+    await alternarPublicacao("eventos", String(dados.get("id")), dados.get("publicar") === "1");
+  }
 
   async function excluir(dados: FormData) {
     "use server";
@@ -39,94 +60,123 @@ export default async function PaginaEventosGestao({
   }
 
   return (
-    <div className="mx-auto max-w-4xl">
-      <h1 className="text-2xl font-semibold tracking-tight text-texto">Eventos</h1>
-      <p className="mt-1 text-texto-suave">Programação exibida na página de eventos e na home.</p>
+    <div className="mx-auto max-w-5xl">
+      <CabecalhoLista
+        titulo="Eventos"
+        descricao="Programação exibida na página de eventos e na home."
+        novoHref={`${BASE}/novo`}
+        novoRotulo="Novo evento"
+        podeEditar={podeEditar}
+      />
 
-      <Cartao className="mt-8">
-        <CartaoCorpo className="sm:p-8">
-          <h2 className="mb-5 font-semibold text-texto">{emEdicao ? "Editar evento" : "Novo evento"}</h2>
+      <FiltrosLista
+        base={BASE}
+        busca={busca}
+        status={status}
+        opcoesStatus={OPCOES_PUBLICACAO}
+        placeholder="Título, descrição ou local"
+      />
 
-          <FormularioConteudo acao={salvarEvento} key={emEdicao?.id ?? "novo"}>
-            {emEdicao ? <input type="hidden" name="id" value={emEdicao.id} /> : null}
+      <div className="mt-6">
+        {eventos.length === 0 ? (
+          <Vazio
+            mensagem={
+              busca || status
+                ? "Nenhum evento para os filtros escolhidos."
+                : "Nenhum evento cadastrado."
+            }
+          />
+        ) : (
+          <Cartao className="overflow-x-auto">
+            <table className="w-full min-w-[46rem] text-sm">
+              <thead>
+                <tr className="border-b border-borda bg-azul-50/60 text-left">
+                  <th className="w-44 px-5 py-3 font-semibold text-texto">Quando</th>
+                  <th className="px-4 py-3 font-semibold text-texto">Evento</th>
+                  <th className="w-36 px-4 py-3 font-semibold text-texto">Situação</th>
+                  {podeEditar ? <th className="w-32 px-4 py-3" /> : null}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-borda">
+                {eventos.map((e) => {
+                  const publicado = e.status === "publicado";
+                  const passado = new Date(e.inicio).getTime() < agora;
+                  return (
+                    <tr key={e.id} className="align-top hover:bg-azul-50/40">
+                      <td className="px-5 py-3">
+                        <Link href={`${BASE}/${e.id}`} className="font-medium text-azul-700">
+                          {formatarDataHora(e.inicio)}
+                        </Link>
+                        {passado ? (
+                          <p className="mt-0.5 text-xs text-texto-suave">já realizado</p>
+                        ) : null}
+                      </td>
+                      <td className="px-4 py-3">
+                        <Link
+                          href={`${BASE}/${e.id}`}
+                          className="line-clamp-2 font-medium text-texto hover:text-azul-700"
+                        >
+                          {e.titulo}
+                        </Link>
+                        {e.local ? (
+                          <p className="mt-0.5 flex items-center gap-1 text-xs text-texto-suave">
+                            <MapPin className="h-3 w-3" /> {e.local}
+                          </p>
+                        ) : null}
+                      </td>
+                      <td className="px-4 py-3">
+                        <Etiqueta tom={publicado ? "verde" : "ambar"}>
+                          {publicado ? "Publicado" : "Rascunho"}
+                        </Etiqueta>
+                      </td>
+                      {podeEditar ? (
+                        <td className="px-4 py-3">
+                          <div className="flex items-center justify-end gap-1">
+                            <Link
+                              href={`${BASE}/${e.id}`}
+                              aria-label="Editar"
+                              title="Editar"
+                              className="grid h-9 w-9 place-items-center rounded-full text-azul-700 hover:bg-azul-100"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Link>
+                            <form action={publicar}>
+                              <input type="hidden" name="id" value={e.id} />
+                              <input type="hidden" name="publicar" value={publicado ? "0" : "1"} />
+                              <button
+                                type="submit"
+                                aria-label={publicado ? "Voltar a rascunho" : "Publicar"}
+                                title={publicado ? "Voltar a rascunho" : "Publicar"}
+                                className="grid h-9 w-9 place-items-center rounded-full text-azul-700 hover:bg-azul-100"
+                              >
+                                {publicado ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                              </button>
+                            </form>
+                            <BotaoExcluir
+                              acao={excluir}
+                              id={e.id}
+                              rotulo="Excluir evento"
+                              mensagem={`Excluir o evento "${e.titulo}"? Esta ação não pode ser desfeita.`}
+                            />
+                          </div>
+                        </td>
+                      ) : null}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </Cartao>
+        )}
+      </div>
 
-            <div>
-              <Rotulo htmlFor="titulo">Título</Rotulo>
-              <Campo id="titulo" name="titulo" required defaultValue={emEdicao?.titulo ?? ""} />
-            </div>
-
-            <div className="grid gap-5 sm:grid-cols-2">
-              <div>
-                <Rotulo htmlFor="inicio">Início</Rotulo>
-                <Campo
-                  id="inicio"
-                  name="inicio"
-                  type="datetime-local"
-                  required
-                  defaultValue={paraCampoLocal(emEdicao?.inicio)}
-                />
-              </div>
-              <div>
-                <Rotulo htmlFor="fim">Fim (opcional)</Rotulo>
-                <Campo
-                  id="fim"
-                  name="fim"
-                  type="datetime-local"
-                  defaultValue={paraCampoLocal(emEdicao?.fim)}
-                />
-              </div>
-            </div>
-
-            <div>
-              <Rotulo htmlFor="local">Local</Rotulo>
-              <Campo id="local" name="local" defaultValue={emEdicao?.local ?? ""} />
-            </div>
-
-            <div>
-              <Rotulo htmlFor="descricao">Descrição</Rotulo>
-              <AreaTexto id="descricao" name="descricao" rows={5} defaultValue={emEdicao?.descricao ?? ""} />
-            </div>
-
-            <UploadImagem valorInicial={emEdicao?.imagem_url} pasta="eventos" />
-          </FormularioConteudo>
-        </CartaoCorpo>
-      </Cartao>
-
-      <h2 className="mb-4 mt-10 font-semibold text-texto">Eventos cadastrados</h2>
-      {eventos.length === 0 ? (
-        <Vazio mensagem="Nenhum evento cadastrado." />
-      ) : (
-        <Cartao className="divide-y divide-borda overflow-hidden">
-          {eventos.map((e) => (
-            <div key={e.id} className="flex flex-wrap items-center gap-4 px-5 py-4">
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <Etiqueta tom={e.status === "publicado" ? "verde" : "ambar"}>
-                    {e.status === "publicado" ? "Publicado" : "Rascunho"}
-                  </Etiqueta>
-                  <span className="text-xs text-texto-suave">{formatarDataHora(e.inicio)}</span>
-                </div>
-                <p className="mt-1.5 truncate font-medium text-texto">{e.titulo}</p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <a
-                  href={`/gestao/conteudo/eventos?editar=${e.id}`}
-                  className="rounded-full px-4 py-2 text-sm font-medium text-azul-700 hover:bg-azul-50"
-                >
-                  Editar
-                </a>
-                <BotaoExcluir
-                  acao={excluir}
-                  id={e.id}
-                  rotulo="Excluir evento"
-                  mensagem={`Excluir o evento "${e.titulo}"? Esta ação não pode ser desfeita.`}
-                />
-              </div>
-            </div>
-          ))}
-        </Cartao>
-      )}
+      <Paginacao
+        base={BASE}
+        pagina={pagina}
+        total={total}
+        porPagina={POR_PAGINA}
+        filtros={{ q: busca, status }}
+      />
     </div>
   );
 }

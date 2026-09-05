@@ -133,7 +133,7 @@ export async function lancarDocumento(_estado: Resultado, dados: FormData): Prom
     }
   }
 
-  const { error } = await supabase.rpc("lancar_documento", {
+  const { data: idCriado, error } = await supabase.rpc("lancar_documento", {
     p_tipo_movimento: tipoMovimento,
     p_data_emissao: dataEmissao,
     p_numero: numeroDoc,
@@ -155,7 +155,7 @@ export async function lancarDocumento(_estado: Resultado, dados: FormData): Prom
   revalidatePath("/gestao/compras");
   revalidatePath("/gestao/contas-pagar");
   revalidatePath("/gestao/contas-receber");
-  redirect("/gestao/compras?salvo=1");
+  redirect(`/gestao/compras/${idCriado}?salvo=1`);
 }
 
 export async function excluirDocumento(dados: FormData) {

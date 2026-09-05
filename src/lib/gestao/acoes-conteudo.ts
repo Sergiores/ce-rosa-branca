@@ -23,6 +23,26 @@ function revalidarSite(...caminhos: string[]) {
   );
 }
 
+/* -------------------------------------- Publicar / voltar a rascunho */
+
+type TabelaPublicavel = "mensagens_do_dia" | "eventos" | "projetos" | "questoes" | "pareceres";
+
+/** Alterna a publicacao sem abrir o formulario, direto pela lista. */
+export async function alternarPublicacao(
+  tabela: TabelaPublicavel,
+  id: string,
+  publicar: boolean,
+) {
+  await exigirTela("conteudo", true);
+  const supabase = await criarClienteServidor();
+  await supabase
+    .from(tabela)
+    .update({ status: publicar ? "publicado" : "rascunho" })
+    .eq("id", id);
+  revalidarSite();
+  revalidatePath("/gestao/conteudo");
+}
+
 /* ------------------------------------------------------------------ Notícias */
 
 export async function salvarNoticia(_estado: Resultado, dados: FormData): Promise<Resultado> {
