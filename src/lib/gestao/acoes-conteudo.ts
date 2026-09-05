@@ -254,6 +254,7 @@ export async function salvarQuestao(_estado: Resultado, dados: FormData): Promis
     capitulo: texto(dados, "capitulo") || null,
     pergunta,
     resposta,
+    status: texto(dados, "acao") === "publicar" ? ("publicado" as const) : ("rascunho" as const),
   };
 
   const { error } = id

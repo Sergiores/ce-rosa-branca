@@ -8,19 +8,21 @@
 -- ============================================================
 
 -- ---------------------------------------------------------------- Questao 1
-insert into public.questoes (numero, parte, capitulo, pergunta, resposta)
+insert into public.questoes (numero, parte, capitulo, pergunta, resposta, status)
 values (
   1,
   'Parte Primeira — Das Causas Primárias',
   'Capítulo I — De Deus',
   'O que é Deus?',
-  'Deus é a inteligência suprema, causa primária de todas as coisas.'
+  'Deus é a inteligência suprema, causa primária de todas as coisas.',
+  'publicado'
 )
 on conflict (numero) do update
   set parte = excluded.parte,
       capitulo = excluded.capitulo,
       pergunta = excluded.pergunta,
-      resposta = excluded.resposta;
+      resposta = excluded.resposta,
+      status = excluded.status;
 
 insert into public.pareceres (questao_id, autor_nome, texto, status)
 select q.id, 'Grupo de Estudo da Casa',
@@ -42,19 +44,21 @@ where q.numero = 1
   );
 
 -- -------------------------------------------------------------- Questao 919
-insert into public.questoes (numero, parte, capitulo, pergunta, resposta)
+insert into public.questoes (numero, parte, capitulo, pergunta, resposta, status)
 values (
   919,
   'Parte Terceira — Das Leis Morais',
   'Capítulo XII — Da Perfeição Moral',
   'Qual o meio prático mais eficaz que tem o homem de se melhorar nesta vida e de resistir ao arrastamento do mal?',
-  'Um sábio da antiguidade vo-lo disse: "Conhece-te a ti mesmo."'
+  'Um sábio da antiguidade vo-lo disse: "Conhece-te a ti mesmo."',
+  'publicado'
 )
 on conflict (numero) do update
   set parte = excluded.parte,
       capitulo = excluded.capitulo,
       pergunta = excluded.pergunta,
-      resposta = excluded.resposta;
+      resposta = excluded.resposta,
+      status = excluded.status;
 
 insert into public.pareceres (questao_id, autor_nome, texto, status)
 select q.id, 'Grupo de Estudo da Casa',

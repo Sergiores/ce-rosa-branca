@@ -73,6 +73,7 @@ export type Questao = {
   capitulo: string | null;
   pergunta: string;
   resposta: string;
+  status: StatusPublicacao;
 };
 
 export type Parecer = {

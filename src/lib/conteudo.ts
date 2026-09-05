@@ -124,10 +124,26 @@ export async function obterPagina(slug: string) {
   }, null);
 }
 
-export async function listarQuestoes() {
+/** Busca por numero exato ou por trecho da pergunta/resposta. */
+export async function listarQuestoes(busca?: string) {
   return seguro<Questao[]>(async () => {
     const supabase = await criarClienteServidor();
-    const { data } = await supabase.from("questoes").select("*").order("numero");
+    let consulta = supabase
+      .from("questoes")
+      .select("*")
+      .eq("status", "publicado")
+      .order("numero");
+
+    const termo = busca?.trim();
+    if (termo) {
+      const numero = Number(termo);
+      const alvo = termo.replace(/[%,()]/g, " ");
+      consulta = Number.isInteger(numero)
+        ? consulta.or(`numero.eq.${numero},pergunta.ilike.%${alvo}%,resposta.ilike.%${alvo}%`)
+        : consulta.or(`pergunta.ilike.%${alvo}%,resposta.ilike.%${alvo}%`);
+    }
+
+    const { data } = await consulta;
     return (data ?? []) as Questao[];
   }, []);
 }
@@ -140,6 +156,7 @@ export async function obterQuestaoComPareceres(numero: number) {
         .from("questoes")
         .select("*")
         .eq("numero", numero)
+        .eq("status", "publicado")
         .maybeSingle();
       if (!questao) return { questao: null, pareceres: [] };
       const { data: pareceres } = await supabase

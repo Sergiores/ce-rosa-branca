@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { Trash2 } from "lucide-react";
-import { AreaTexto, Campo, Cartao, CartaoCorpo, Etiqueta, Rotulo, Vazio } from "@/components/ui";
+import { Search, Trash2, X } from "lucide-react";
+import {
+  AreaTexto, Botao, Campo, Cartao, CartaoCorpo, Etiqueta, Rotulo, Vazio,
+} from "@/components/ui";
 import { FormularioConteudo } from "@/components/gestao/Formulario";
 import { exigirTela } from "@/lib/auth/permissoes";
 import { criarClienteServidor } from "@/lib/supabase/server";
@@ -13,17 +15,28 @@ export const metadata: Metadata = { title: "Livro dos Espíritos" };
 export default async function EstudoGestao({
   searchParams,
 }: {
-  searchParams: Promise<{ questao?: string; editar?: string }>;
+  searchParams: Promise<{ questao?: string; editar?: string; q?: string }>;
 }) {
   await exigirTela("conteudo");
-  const { questao: questaoId, editar } = await searchParams;
+  const { questao: questaoId, editar, q } = await searchParams;
+  const busca = q?.trim() ?? "";
 
   const supabase = await criarClienteServidor();
-  const { data: dadosQuestoes } = await supabase.from("questoes").select("*").order("numero");
+
+  // A gestao enxerga rascunhos tambem — o filtro de status vale so para o site.
+  let consulta = supabase.from("questoes").select("*").order("numero");
+  if (busca) {
+    const numero = Number(busca);
+    const alvo = busca.replace(/[%,()]/g, " ");
+    consulta = Number.isInteger(numero)
+      ? consulta.or(`numero.eq.${numero},pergunta.ilike.%${alvo}%,resposta.ilike.%${alvo}%`)
+      : consulta.or(`pergunta.ilike.%${alvo}%,resposta.ilike.%${alvo}%`);
+  }
+  const { data: dadosQuestoes } = await consulta;
   const questoes = (dadosQuestoes ?? []) as Questao[];
 
-  const selecionada = questoes.find((q) => q.id === questaoId) ?? questoes[0];
-  const emEdicaoQuestao = questoes.find((q) => q.id === editar);
+  const selecionada = questoes.find((x) => x.id === questaoId) ?? questoes[0];
+  const emEdicaoQuestao = questoes.find((x) => x.id === editar);
 
   let pareceres: Parecer[] = [];
   if (selecionada) {
@@ -34,6 +47,8 @@ export default async function EstudoGestao({
       .order("criado_em");
     pareceres = (data ?? []) as Parecer[];
   }
+
+  const preservaBusca = busca ? `&q=${encodeURIComponent(busca)}` : "";
 
   async function excluir(dados: FormData) {
     "use server";
@@ -47,30 +62,69 @@ export default async function EstudoGestao({
       </h1>
       <p className="mt-1 text-texto-suave">
         Cadastre a questão com a resposta da obra e registre o parecer dos médiuns.
+        Rascunhos não aparecem no site.
       </p>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[20rem_1fr]">
-        {/* Lista de questões */}
+      <div className="mt-8 grid gap-6 lg:grid-cols-[22rem_1fr]">
+        {/* Lista com busca */}
         <div>
-          <Cartao className="max-h-[28rem] overflow-y-auto">
+          <form className="mb-3 flex gap-2">
+            <div className="relative min-w-0 flex-1">
+              <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-texto-suave" />
+              <Campo
+                name="q"
+                defaultValue={busca}
+                placeholder="Número ou palavra"
+                className="pl-10"
+                aria-label="Buscar questão"
+              />
+            </div>
+            <Botao type="submit" tamanho="sm">
+              Buscar
+            </Botao>
+            {busca ? (
+              <a
+                href="/gestao/conteudo/estudo"
+                aria-label="Limpar busca"
+                className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-texto-suave hover:bg-azul-50"
+              >
+                <X className="h-4 w-4" />
+              </a>
+            ) : null}
+          </form>
+
+          {busca ? (
+            <p className="mb-2 text-xs text-texto-suave">
+              {questoes.length} resultado(s) para “{busca}”.
+            </p>
+          ) : null}
+
+          <Cartao className="max-h-[30rem] overflow-y-auto">
             {questoes.length === 0 ? (
               <div className="p-5">
-                <Vazio mensagem="Nenhuma questão cadastrada." />
+                <Vazio mensagem={busca ? "Nada encontrado." : "Nenhuma questão cadastrada."} />
               </div>
             ) : (
               <div className="divide-y divide-borda">
-                {questoes.map((q) => (
+                {questoes.map((item) => (
                   <a
-                    key={q.id}
-                    href={`/gestao/conteudo/estudo?questao=${q.id}`}
+                    key={item.id}
+                    href={`/gestao/conteudo/estudo?questao=${item.id}${preservaBusca}`}
                     className={
-                      q.id === selecionada?.id
+                      item.id === selecionada?.id
                         ? "block bg-azul-50 px-5 py-3"
                         : "block px-5 py-3 hover:bg-azul-50/60"
                     }
                   >
-                    <span className="text-xs font-medium text-azul-700">Questão {q.numero}</span>
-                    <p className="mt-0.5 line-clamp-2 text-sm text-texto">{q.pergunta}</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-medium text-azul-700">
+                        Questão {item.numero}
+                      </span>
+                      {item.status === "rascunho" ? (
+                        <Etiqueta tom="ambar">Rascunho</Etiqueta>
+                      ) : null}
+                    </div>
+                    <p className="mt-0.5 line-clamp-2 text-sm text-texto">{item.pergunta}</p>
                   </a>
                 ))}
               </div>
@@ -82,15 +136,21 @@ export default async function EstudoGestao({
           {/* Formulário de questão */}
           <Cartao>
             <CartaoCorpo className="sm:p-7">
-              <h2 className="mb-5 font-semibold text-texto">
-                {emEdicaoQuestao ? `Editar questão ${emEdicaoQuestao.numero}` : "Nova questão"}
-              </h2>
+              <div className="mb-5 flex flex-wrap items-center gap-3">
+                <h2 className="font-semibold text-texto">
+                  {emEdicaoQuestao ? `Editar questão ${emEdicaoQuestao.numero}` : "Nova questão"}
+                </h2>
+                {emEdicaoQuestao ? (
+                  <Etiqueta tom={emEdicaoQuestao.status === "publicado" ? "verde" : "ambar"}>
+                    {emEdicaoQuestao.status === "publicado" ? "Publicada" : "Rascunho"}
+                  </Etiqueta>
+                ) : null}
+              </div>
 
               <FormularioConteudo
                 acao={salvarQuestao}
                 key={emEdicaoQuestao?.id ?? "nova-questao"}
-                rotuloPublicar="Salvar questão"
-                mostrarRascunho={false}
+                rotuloPublicar="Publicar questão"
               >
                 {emEdicaoQuestao ? (
                   <input type="hidden" name="id" value={emEdicaoQuestao.id} />
@@ -113,7 +173,11 @@ export default async function EstudoGestao({
                   </div>
                   <div>
                     <Rotulo htmlFor="capitulo">Capítulo</Rotulo>
-                    <Campo id="capitulo" name="capitulo" defaultValue={emEdicaoQuestao?.capitulo ?? ""} />
+                    <Campo
+                      id="capitulo"
+                      name="capitulo"
+                      defaultValue={emEdicaoQuestao?.capitulo ?? ""}
+                    />
                   </div>
                 </div>
 
@@ -151,7 +215,7 @@ export default async function EstudoGestao({
                     Pareceres — questão {selecionada.numero}
                   </h2>
                   <a
-                    href={`/gestao/conteudo/estudo?questao=${selecionada.id}&editar=${selecionada.id}`}
+                    href={`/gestao/conteudo/estudo?questao=${selecionada.id}&editar=${selecionada.id}${preservaBusca}`}
                     className="text-sm font-medium text-azul-700 hover:text-azul-800"
                   >
                     editar esta questão
