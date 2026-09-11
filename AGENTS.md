@@ -4,6 +4,38 @@ Site público e painel de gestão de uma casa espírita. Next.js 16 (App Router)
 
 ---
 
+## NUNCA FAÇA — leia antes de qualquer outra coisa
+
+Este app divide o banco com uma **loja em produção, com clientes pagantes**.
+As quatro regras abaixo existem porque quebrá-las derruba a loja, não este site.
+
+**1. Nunca execute nada de `supabase/` contra banco nenhum.**
+Sem `supabase db push`, sem `supabase db reset`, sem colar `.sql` daqui no SQL
+Editor. Todo arquivo daquela pasta escreve em `public`, que hoje é da loja. Um
+deles cria um trigger sem filtro em `auth.users` que **aborta todo cadastro novo
+da loja**. Detalhes em `supabase/LEIA-ME.md`.
+
+**2. Nunca crie nem altere tabela, view, tipo, função, trigger ou policy.**
+Nem por SQL, nem por CLI, nem pelo painel do Supabase. Mudança de estrutura sai
+de `D:\Projetos\BancodeDados`, que é outro repositório e outro chat. Aqui só se
+escreve código de aplicação.
+
+**3. Nunca escreva em `public`.** É o schema da loja. `public.profiles` e
+`rosabranca.profiles` são tabelas diferentes, com colunas diferentes.
+
+**4. Nunca acrescente um novo uso de `criarClienteAdmin()`.**
+Ela usa a service role, que ignora RLS **e alcança os dados da loja**, não só os
+nossos. Isso foi verificado, não é hipótese. Os dois usos existentes (convite e
+signed URL) estão auditados e bastam. Precisando de mais um, pare e pergunte.
+
+### Preciso de uma coluna nova. O que faço?
+
+Pare e diga o que precisa. A migration é escrita e aplicada no outro repositório,
+com os portões que já existem lá. Quando a coluna existir, reflita ela em
+`src/lib/tipos.ts` à mão — não há types gerados — e siga usando `.from()` normal.
+
+---
+
 ## O banco é compartilhado. Leia isto antes de mexer em dados.
 
 Este projeto **não tem um banco só seu**. Ele vive dentro do projeto Supabase `ozlbqfvnsuupgmasdrrv`, que também atende outra aplicação, uma loja. A separação é por schema Postgres.
@@ -105,3 +137,9 @@ Regras que estão no banco, não na interface. Quebrar qualquer uma delas gera e
 ## Pendência conhecida
 
 `src/app/(gestao)/gestao/relatorios/page.tsx` pede `.limit(2000)` em `v_titulos_saldo`, mas o teto da API é 1000. Hoje não incomoda porque o volume é pequeno. Quando crescer, a tela vai truncar em silêncio e precisará paginar.
+
+**Usuário autenticado sem perfil aqui entra em laço de redirecionamento.**
+Uma conta da loja que faça login neste site passa pelo middleware, vai para
+`/gestao`, não acha perfil em `rosabranca.profiles`, volta para `/entrar`, e o
+middleware manda de novo para `/gestao`. O conserto é em
+`src/lib/auth/permissoes.ts` com o middleware, e ainda não foi feito.
