@@ -35,12 +35,40 @@ function competencia(data: string) {
   return data.slice(0, 7);
 }
 
+/** A API devolve no maximo 1000 linhas por requisicao, e este relatorio soma
+ *  a carteira inteira. Percorremos em blocos com `.range()` em vez de pedir
+ *  um `.limit()` maior, que truncaria em silencio. */
+const BLOCO = 1000;
+const MAX_BLOCOS = 50;
+
+async function carregarCarteira(
+  supabase: Awaited<ReturnType<typeof criarClienteServidor>>,
+): Promise<{ titulos: TituloComSaldo[]; truncado: boolean }> {
+  const titulos: TituloComSaldo[] = [];
+
+  for (let bloco = 0; bloco < MAX_BLOCOS; bloco++) {
+    const { data, error } = await supabase
+      .from("v_titulos_saldo")
+      .select("*")
+      .order("vencimento", { ascending: true })
+      .order("id", { ascending: true })
+      .range(bloco * BLOCO, (bloco + 1) * BLOCO - 1);
+
+    if (error) break;
+    const pagina = (data ?? []) as TituloComSaldo[];
+    titulos.push(...pagina);
+    if (pagina.length < BLOCO) return { titulos, truncado: false };
+  }
+
+  return { titulos, truncado: true };
+}
+
 export default async function PaginaRelatorios() {
   await exigirTela("relatorios");
   const supabase = await criarClienteServidor();
 
-  const { data } = await supabase.from("v_titulos_saldo").select("*").limit(2000);
-  const todos = ((data ?? []) as TituloComSaldo[]).filter((t) => !t.cancelado);
+  const { titulos, truncado } = await carregarCarteira(supabase);
+  const todos = titulos.filter((t) => !t.cancelado);
 
   const emAberto = todos.filter((t) => Number(t.saldo) > 0.005);
   const pagar = emAberto.filter((t) => t.tipo === "pagar");
@@ -89,6 +117,13 @@ export default async function PaginaRelatorios() {
       <p className="mt-1 text-texto-suave">
         Posição por vencimento, série mensal e extrato por contraparte.
       </p>
+
+      {truncado && (
+        <p className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900">
+          A carteira passou de {(MAX_BLOCOS * BLOCO).toLocaleString("pt-BR")} títulos e o
+          relatório mostra apenas os mais antigos. Os totais abaixo estão incompletos.
+        </p>
+      )}
 
       <div className="mt-8 grid gap-5 sm:grid-cols-3">
         <Cartao>

@@ -25,8 +25,10 @@ escreve código de aplicação.
 
 **4. Nunca acrescente um novo uso de `criarClienteAdmin()`.**
 Ela usa a service role, que ignora RLS **e alcança os dados da loja**, não só os
-nossos. Isso foi verificado, não é hipótese. Os dois usos existentes (convite e
-signed URL) estão auditados e bastam. Precisando de mais um, pare e pergunte.
+nossos. Isso foi verificado, não é hipótese. O único uso existente — o convite,
+em `src/lib/gestao/acoes-usuarios.ts` — está auditado e basta. A signed URL de
+anexo **não** usa a service role: sai por `criarClienteServidor()`, com RLS
+aplicado. Precisando de um uso novo, pare e pergunte.
 
 ### Preciso de uma coluna nova. O que faço?
 
@@ -130,16 +132,20 @@ Regras que estão no banco, não na interface. Quebrar qualquer uma delas gera e
 - Nomes em português, inclusive funções e variáveis.
 - `src/app/(site)/` é público, `src/app/(gestao)/` é restrito.
 - Server Actions em `src/lib/gestao/acoes-*.ts`.
-- `criarClienteAdmin()` ignora RLS. Use apenas em servidor, para convite e signed URL. Nunca importe em componente cliente.
+- `criarClienteAdmin()` ignora RLS. Hoje só o convite de usuário a usa. Nunca importe em componente cliente.
 - Tipos escritos à mão em `src/lib/tipos.ts`. Não há types gerados do banco, então uma coluna nova precisa ser refletida ali manualmente.
 - Listagens paginam com `.range()`. O limite de linhas por requisição da API é 1000.
 
-## Pendência conhecida
+## Resolvido (era pendência)
 
-`src/app/(gestao)/gestao/relatorios/page.tsx` pede `.limit(2000)` em `v_titulos_saldo`, mas o teto da API é 1000. Hoje não incomoda porque o volume é pequeno. Quando crescer, a tela vai truncar em silêncio e precisará paginar.
+**Conta autenticada sem perfil aqui.** `auth.users` é compartilhado, então uma
+conta da loja pode fazer login sem ter linha em `rosabranca.profiles`. Antes
+isso virava laço entre `/entrar` e `/gestao`. Hoje `estadoSessao()` em
+`src/lib/auth/permissoes.ts` distingue `anonimo`, `sem_perfil` e `inativo`, e
+`exigirSessao()` manda os dois últimos para `/sem-acesso`, que explica a
+situação e oferece logout. O middleware não mudou.
 
-**Usuário autenticado sem perfil aqui entra em laço de redirecionamento.**
-Uma conta da loja que faça login neste site passa pelo middleware, vai para
-`/gestao`, não acha perfil em `rosabranca.profiles`, volta para `/entrar`, e o
-middleware manda de novo para `/gestao`. O conserto é em
-`src/lib/auth/permissoes.ts` com o middleware, e ainda não foi feito.
+**Relatórios paginam.** `relatorios/page.tsx` varre `v_titulos_saldo` em blocos
+de 1000 com `.range()`, em vez do antigo `.limit(2000)` que o teto da API
+truncava em silêncio. Passando de 50 blocos a tela avisa que os totais estão
+incompletos.

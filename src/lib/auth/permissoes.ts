@@ -27,21 +27,34 @@ export type Sessao = {
   podeEditar: (tela: TelaKey) => boolean;
 };
 
-/** Carrega perfil e matriz de permissoes do usuario logado, ou null. */
-export async function obterSessao(): Promise<Sessao | null> {
+/**
+ * Por que existe: `auth.users` e compartilhado com a loja. Uma conta
+ * autenticada pode nao ter perfil em `rosabranca.profiles`, e antes disso
+ * virava laco de redirecionamento entre /entrar e /gestao. Aqui o motivo
+ * fica explicito para quem chama decidir o destino.
+ */
+export type EstadoSessao =
+  | { tipo: "anonimo" }
+  | { tipo: "sem_perfil" }
+  | { tipo: "inativo" }
+  | { tipo: "ok"; sessao: Sessao };
+
+export async function estadoSessao(): Promise<EstadoSessao> {
   const supabase = await criarClienteServidor();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return null;
+  if (!user) return { tipo: "anonimo" };
 
+  // maybeSingle: ausencia de perfil e caso previsto, nao erro.
   const { data: perfil } = await supabase
     .from("profiles")
     .select("id, nome, email, telefone, role, ativo")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
-  if (!perfil || !perfil.ativo) return null;
+  if (!perfil) return { tipo: "sem_perfil" };
+  if (!perfil.ativo) return { tipo: "inativo" };
 
   const { data: permissoes } = await supabase
     .from("permissoes")
@@ -52,18 +65,32 @@ export async function obterSessao(): Promise<Sessao | null> {
   const achar = (tela: TelaKey) => lista.find((p) => p.tela_key === tela);
 
   return {
-    perfil: perfil as Perfil,
-    permissoes: lista,
-    podeVer: (tela) => Boolean(achar(tela)?.ver),
-    podeEditar: (tela) => Boolean(achar(tela)?.editar),
+    tipo: "ok",
+    sessao: {
+      perfil: perfil as Perfil,
+      permissoes: lista,
+      podeVer: (tela) => Boolean(achar(tela)?.ver),
+      podeEditar: (tela) => Boolean(achar(tela)?.editar),
+    },
   };
 }
 
-/** Exige sessao valida; caso contrario redireciona para o login. */
+/** Carrega perfil e matriz de permissoes do usuario logado, ou null. */
+export async function obterSessao(): Promise<Sessao | null> {
+  const estado = await estadoSessao();
+  return estado.tipo === "ok" ? estado.sessao : null;
+}
+
+/**
+ * Exige sessao valida. Sem login vai para /entrar; logado sem perfil aqui vai
+ * para /sem-acesso — nunca de volta para /entrar, senao o middleware devolve
+ * para /gestao e o navegador fica em laco.
+ */
 export async function exigirSessao(): Promise<Sessao> {
-  const sessao = await obterSessao();
-  if (!sessao) redirect("/entrar");
-  return sessao;
+  const estado = await estadoSessao();
+  if (estado.tipo === "ok") return estado.sessao;
+  if (estado.tipo === "anonimo") redirect("/entrar");
+  redirect(estado.tipo === "inativo" ? "/sem-acesso?motivo=inativo" : "/sem-acesso");
 }
 
 /**
