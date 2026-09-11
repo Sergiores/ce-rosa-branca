@@ -2,6 +2,8 @@ import { createServerClient } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 
+import { SCHEMA_DB } from "./schema";
+
 /** Cliente para Server Components, Server Actions e Route Handlers. */
 export async function criarClienteServidor() {
   const cookieStore = await cookies();
@@ -10,6 +12,7 @@ export async function criarClienteServidor() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      db: { schema: SCHEMA_DB },
       cookies: {
         getAll() {
           return cookieStore.getAll();
@@ -37,6 +40,9 @@ export function criarClienteAdmin() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { autoRefreshToken: false, persistSession: false } },
+    {
+      db: { schema: SCHEMA_DB },
+      auth: { autoRefreshToken: false, persistSession: false },
+    },
   );
 }

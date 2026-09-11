@@ -1,6 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+import { SCHEMA_DB } from "./schema";
+
 /**
  * Renova a sessao e protege /gestao/*.
  * Isto e conveniencia de UX: a protecao real dos dados e o RLS no Postgres.
@@ -12,6 +14,7 @@ export async function atualizarSessao(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      db: { schema: SCHEMA_DB },
       cookies: {
         getAll() {
           return request.cookies.getAll();

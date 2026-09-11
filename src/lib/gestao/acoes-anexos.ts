@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { criarClienteServidor } from "@/lib/supabase/server";
+import { BUCKET_ANEXOS } from "@/lib/supabase/schema";
 import { exigirSessao } from "@/lib/auth/permissoes";
 import type { Anexo, EntidadeAnexo } from "@/lib/tipos";
 
@@ -79,7 +80,7 @@ export async function urlAssinada(anexoId: string) {
   if (!anexo) return { erro: "Anexo não encontrado." };
 
   const { data, error } = await supabase.storage
-    .from("anexos")
+    .from(BUCKET_ANEXOS)
     .createSignedUrl(anexo.storage_path as string, 120);
 
   if (error || !data) return { erro: error?.message ?? "Não foi possível gerar o link." };
@@ -97,7 +98,7 @@ export async function excluirAnexo(anexoId: string) {
     .maybeSingle();
   if (!anexo) return { erro: "Anexo não encontrado." };
 
-  await supabase.storage.from("anexos").remove([anexo.storage_path as string]);
+  await supabase.storage.from(BUCKET_ANEXOS).remove([anexo.storage_path as string]);
   const { error } = await supabase.from("anexos").delete().eq("id", anexoId);
   if (error) return { erro: error.message };
 

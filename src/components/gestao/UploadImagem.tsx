@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { ImagePlus, Loader2, X } from "lucide-react";
 import { Rotulo } from "@/components/ui";
 import { criarClienteNavegador } from "@/lib/supabase/client";
+import { BUCKET_MIDIA } from "@/lib/supabase/schema";
 import { slugificar } from "@/lib/utils";
 
 const TIPOS = ["image/jpeg", "image/png", "image/webp"];
@@ -47,7 +48,7 @@ export function UploadImagem({
     const caminho = `${pasta}/${Date.now()}-${slugificar(arquivo.name.replace(/\.[^.]+$/, ""))}.${extensao}`;
 
     const { error } = await supabase.storage
-      .from("midia")
+      .from(BUCKET_MIDIA)
       .upload(caminho, arquivo, { cacheControl: "3600", upsert: false });
 
     if (error) {
@@ -56,7 +57,7 @@ export function UploadImagem({
       return;
     }
 
-    const { data } = supabase.storage.from("midia").getPublicUrl(caminho);
+    const { data } = supabase.storage.from(BUCKET_MIDIA).getPublicUrl(caminho);
     setUrl(data.publicUrl);
     setEnviando(false);
   }

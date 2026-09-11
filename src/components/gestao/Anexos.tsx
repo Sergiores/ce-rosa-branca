@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { Download, FileText, Loader2, Paperclip, Trash2 } from "lucide-react";
 import { criarClienteNavegador } from "@/lib/supabase/client";
+import { BUCKET_ANEXOS } from "@/lib/supabase/schema";
 import { formatarDataHora } from "@/lib/datas";
 import { slugificar } from "@/lib/utils";
 import {
@@ -68,7 +69,7 @@ export function Anexos({
     const base = slugificar(arquivo.name.replace(/\.[^.]+$/, "")) || "arquivo";
     const caminho = `${entidade}/${entidadeId}/${Date.now()}-${base}.${extensao}`;
 
-    const { error } = await supabase.storage.from("anexos").upload(caminho, arquivo);
+    const { error } = await supabase.storage.from(BUCKET_ANEXOS).upload(caminho, arquivo);
     if (error) {
       setErro(error.message);
       setEnviando(false);
@@ -86,7 +87,7 @@ export function Anexos({
 
     if (resultado?.erro) {
       // Registro falhou: remove o arquivo para não deixar lixo no bucket.
-      await supabase.storage.from("anexos").remove([caminho]);
+      await supabase.storage.from(BUCKET_ANEXOS).remove([caminho]);
       setErro(resultado.erro);
     } else {
       await recarregar();

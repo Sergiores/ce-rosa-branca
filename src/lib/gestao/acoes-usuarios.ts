@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { criarClienteAdmin, criarClienteServidor } from "@/lib/supabase/server";
+import { SCHEMA_DB } from "@/lib/supabase/schema";
 import { exigirTela } from "@/lib/auth/permissoes";
 import type { Papel } from "@/lib/tipos";
 import type { Resultado } from "@/lib/gestao/acoes-conteudo";
@@ -30,8 +31,12 @@ export async function convidarUsuario(_estado: Resultado, dados: FormData): Prom
   const admin = criarClienteAdmin();
   const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/definir-senha`;
 
+  // `projeto` e obrigatorio: auth.users e compartilhado com os outros
+  // projetos deste banco, e a trigger so cria o perfil aqui quando o
+  // metadata marca este schema. Sem isso, o convite cria a conta e o
+  // usuario fica sem perfil, incapaz de entrar.
   const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
-    data: { nome },
+    data: { nome, projeto: SCHEMA_DB },
     redirectTo,
   });
 
