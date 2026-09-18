@@ -120,6 +120,19 @@ export async function listarEventos() {
   }, []);
 }
 
+export async function obterEvento(id: string) {
+  return seguro<Evento | null>(async () => {
+    const supabase = await criarClienteServidor();
+    const { data } = await supabase
+      .from("eventos")
+      .select("*")
+      .eq("id", id)
+      .eq("status", "publicado")
+      .maybeSingle();
+    return (data as Evento) ?? null;
+  }, null);
+}
+
 export async function listarProjetos() {
   return seguro<Projeto[]>(async () => {
     const supabase = await criarClienteServidor();

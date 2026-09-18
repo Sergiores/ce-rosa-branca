@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {
+  CalendarDays,
   Store,
   HeartHandshake,
   BookOpen,
@@ -10,7 +11,7 @@ import {
 } from "lucide-react";
 import { CarrosselNoticias } from "@/components/site/CarrosselNoticias";
 import { Calendario } from "@/components/site/Calendario";
-import { BotaoLink, Cartao, CartaoCorpo, Etiqueta, TituloSecao, Vazio } from "@/components/ui";
+import { Cartao, CartaoCorpo, Etiqueta, TituloSecao, Vazio } from "@/components/ui";
 import { formatarData, formatarDataLonga } from "@/lib/datas";
 import {
   listarDestaques,
@@ -79,14 +80,6 @@ export default async function PaginaInicial({
               Uma casa de acolhimento, estudo e oração. Aqui você encontra a agenda da semana,
               nossas mensagens, os projetos sociais e o estudo da doutrina espírita.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <BotaoLink href="#agenda" tamanho="lg">
-                Ver a agenda
-              </BotaoLink>
-              <BotaoLink href="/sobre" variante="contorno" tamanho="lg">
-                Conheça a Rosa Branca
-              </BotaoLink>
-            </div>
           </div>
         </div>
       </section>
@@ -158,36 +151,53 @@ export default async function PaginaInicial({
               </Cartao>
             ) : (
               eventos.map((e) => (
-                <Cartao key={e.id} className="transition-shadow hover:shadow-md hover:shadow-marca-900/10">
-                  <CartaoCorpo className="flex gap-5 sm:p-6">
-                    <div className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-marca-50 text-marca-700">
-                      <span className="text-xl font-semibold leading-none">
-                        {formatarData(e.inicio, "dd")}
-                      </span>
-                      <span className="mt-1 text-xs uppercase tracking-wide">
-                        {formatarData(e.inicio, "MMM")}
-                      </span>
-                    </div>
-                    <div className="min-w-0">
-                      <h4 className="font-semibold leading-snug text-texto">{e.titulo}</h4>
-                      <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-sm text-texto-suave">
-                        <span className="inline-flex items-center gap-1">
-                          <Clock className="h-3.5 w-3.5" />
-                          {formatarData(e.inicio, "HH:mm")}
-                        </span>
-                        {e.local ? (
-                          <span className="inline-flex items-center gap-1">
-                            <MapPin className="h-3.5 w-3.5" />
-                            {e.local}
+                <Link key={e.id} href={`/eventos/${e.id}`} className="group block">
+                  <Cartao className="overflow-hidden transition-shadow group-hover:shadow-md group-hover:shadow-marca-900/10">
+                    <CartaoCorpo className="flex gap-5 sm:p-6">
+                      {e.imagem_url ? (
+                        <div
+                          className="h-20 w-20 shrink-0 rounded-2xl bg-marca-100 bg-cover bg-center"
+                          style={{ backgroundImage: `url(${e.imagem_url})` }}
+                        />
+                      ) : (
+                        <div className="grid h-20 w-20 shrink-0 place-items-center rounded-2xl bg-marca-50 text-marca-700">
+                          <span className="text-xl font-semibold leading-none">
+                            {formatarData(e.inicio, "dd")}
                           </span>
+                          <span className="mt-1 text-xs uppercase tracking-wide">
+                            {formatarData(e.inicio, "MMM")}
+                          </span>
+                        </div>
+                      )}
+                      <div className="min-w-0">
+                        <h4 className="font-semibold leading-snug text-texto group-hover:text-marca-700">
+                          {e.titulo}
+                        </h4>
+                        <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-sm text-texto-suave">
+                          <span className="inline-flex items-center gap-1">
+                            <CalendarDays className="h-3.5 w-3.5" />
+                            {formatarData(e.inicio, "dd/MM")}
+                          </span>
+                          <span className="inline-flex items-center gap-1">
+                            <Clock className="h-3.5 w-3.5" />
+                            {formatarData(e.inicio, "HH:mm")}
+                          </span>
+                          {e.local ? (
+                            <span className="inline-flex items-center gap-1">
+                              <MapPin className="h-3.5 w-3.5" />
+                              {e.local}
+                            </span>
+                          ) : null}
+                        </div>
+                        {e.descricao ? (
+                          <p className="mt-2 line-clamp-2 text-sm text-texto-suave">
+                            {e.descricao}
+                          </p>
                         ) : null}
                       </div>
-                      {e.descricao ? (
-                        <p className="mt-2 line-clamp-2 text-sm text-texto-suave">{e.descricao}</p>
-                      ) : null}
-                    </div>
-                  </CartaoCorpo>
-                </Cartao>
+                    </CartaoCorpo>
+                  </Cartao>
+                </Link>
               ))
             )}
 
