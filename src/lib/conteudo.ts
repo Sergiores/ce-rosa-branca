@@ -87,6 +87,27 @@ export async function listarProximosEventos(limite = 4) {
   }, []);
 }
 
+/**
+ * Eventos de um mes civil, para a grade do calendario. Diferente de
+ * `listarProximosEventos`, traz tambem os dias que ja passaram: um calendario
+ * que so marca o futuro fica com meia grade vazia depois do dia 20.
+ */
+export async function listarEventosDoMes(ano: number, mes: number) {
+  return seguro<Evento[]>(async () => {
+    const supabase = await criarClienteServidor();
+    const inicio = new Date(Date.UTC(ano, mes - 1, 1));
+    const fim = new Date(Date.UTC(ano, mes, 1));
+    const { data } = await supabase
+      .from("eventos")
+      .select("*")
+      .eq("status", "publicado")
+      .gte("inicio", inicio.toISOString())
+      .lt("inicio", fim.toISOString())
+      .order("inicio", { ascending: true });
+    return (data ?? []) as Evento[];
+  }, []);
+}
+
 export async function listarEventos() {
   return seguro<Evento[]>(async () => {
     const supabase = await criarClienteServidor();

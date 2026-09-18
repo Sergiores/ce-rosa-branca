@@ -38,7 +38,7 @@ export default async function PaginaEventos() {
         <div className="space-y-12">
           {[...porMes.entries()].map(([mes, lista]) => (
             <section key={mes}>
-              <h2 className="mb-5 text-lg font-semibold capitalize text-marca-700">{mes}</h2>
+              <h2 className="mb-5 text-lg font-semibold text-marca-700 first-letter:uppercase">{mes}</h2>
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {lista.map((e) => (
                   <Cartao key={e.id} className="h-full overflow-hidden">

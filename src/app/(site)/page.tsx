@@ -1,10 +1,20 @@
 import Link from "next/link";
-import { CalendarDays, HeartHandshake, BookOpen, Sparkles, ArrowRight } from "lucide-react";
+import {
+  Store,
+  HeartHandshake,
+  BookOpen,
+  Sparkles,
+  ArrowRight,
+  MapPin,
+  Clock,
+} from "lucide-react";
 import { CarrosselNoticias } from "@/components/site/CarrosselNoticias";
+import { Calendario } from "@/components/site/Calendario";
 import { BotaoLink, Cartao, CartaoCorpo, Etiqueta, TituloSecao, Vazio } from "@/components/ui";
 import { formatarData, formatarDataLonga } from "@/lib/datas";
 import {
   listarDestaques,
+  listarEventosDoMes,
   listarNoticias,
   listarProjetos,
   listarProximosEventos,
@@ -14,14 +24,34 @@ import { registrarAcesso } from "@/lib/metricas";
 
 export const dynamic = "force-dynamic";
 
-export default async function PaginaInicial() {
+/** Le `?mes=AAAA-MM` da URL; fora disso, o mes corrente. */
+function mesPedido(valor: string | undefined, hoje: Date) {
+  const casa = /^(\d{4})-(\d{2})$/.exec(valor ?? "");
+  if (casa) {
+    const ano = Number(casa[1]);
+    const mes = Number(casa[2]);
+    if (ano >= 2000 && ano <= 2100 && mes >= 1 && mes <= 12) return { ano, mes };
+  }
+  return { ano: hoje.getFullYear(), mes: hoje.getMonth() + 1 };
+}
+
+export default async function PaginaInicial({
+  searchParams,
+}: {
+  searchParams: Promise<{ mes?: string }>;
+}) {
   await registrarAcesso("/");
 
-  const [destaques, noticias, mensagem, eventos, projetos] = await Promise.all([
+  const hoje = new Date();
+  const { mes: mesParam } = await searchParams;
+  const { ano, mes } = mesPedido(mesParam, hoje);
+
+  const [destaques, noticias, mensagem, eventos, eventosDoMes, projetos] = await Promise.all([
     listarDestaques(),
     listarNoticias(6),
     obterMensagemDoDia(),
-    listarProximosEventos(3),
+    listarProximosEventos(4),
+    listarEventosDoMes(ano, mes),
     listarProjetos(),
   ]);
 
@@ -32,23 +62,26 @@ export default async function PaginaInicial() {
     <>
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-b from-marca-100 via-marca-50 to-fundo">
-        <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-marca-200/50 blur-3xl" />
+        <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-marca-200/50 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-40 -left-24 h-80 w-80 rounded-full bg-marca-100/70 blur-3xl" />
+
         <div className="container-site relative py-16 sm:py-24">
           <div className="animar-surgir max-w-3xl">
             <Etiqueta tom="marca">
               <Sparkles className="h-3.5 w-3.5" />
               Caridade, estudo e trabalho
             </Etiqueta>
+
             <h1 className="mt-5 text-4xl font-semibold leading-[1.1] tracking-tight text-texto sm:text-6xl">
               Casa Espírita <span className="text-marca-600">Rosa Branca</span>
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-relaxed text-texto-suave">
-              Uma casa de acolhimento, estudo e oração. Aqui você encontra as atividades da semana,
-              nossas mensagens, projetos sociais e o estudo da doutrina espírita.
+              Uma casa de acolhimento, estudo e oração. Aqui você encontra a agenda da semana,
+              nossas mensagens, os projetos sociais e o estudo da doutrina espírita.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <BotaoLink href="/eventos" tamanho="lg">
-                Programação da casa
+              <BotaoLink href="#agenda" tamanho="lg">
+                Ver a agenda
               </BotaoLink>
               <BotaoLink href="/sobre" variante="contorno" tamanho="lg">
                 Conheça a Rosa Branca
@@ -87,6 +120,85 @@ export default async function PaginaInicial() {
             )}
           </CartaoCorpo>
         </Cartao>
+      </section>
+
+      {/* Agenda: calendario do mes + proximos encontros, lado a lado */}
+      <section id="agenda" className="container-site mt-20 scroll-mt-24">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <TituloSecao
+            className="mb-0"
+            titulo="Agenda da casa"
+            descricao="Palestras, estudos, passes e atividades abertas à comunidade."
+          />
+          <Link
+            href="/eventos"
+            className="hidden shrink-0 items-center gap-1 text-sm font-medium text-marca-700 hover:text-marca-800 sm:inline-flex"
+          >
+            Calendário completo <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_1.1fr]">
+          <Cartao>
+            <CartaoCorpo className="sm:p-8">
+              <Calendario ano={ano} mes={mes} eventos={eventosDoMes} hoje={hoje} />
+            </CartaoCorpo>
+          </Cartao>
+
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-texto-suave">
+              Próximos encontros
+            </h3>
+
+            {eventos.length === 0 ? (
+              <Cartao>
+                <CartaoCorpo className="sm:p-8">
+                  <Vazio mensagem="Nenhum encontro agendado no momento." />
+                </CartaoCorpo>
+              </Cartao>
+            ) : (
+              eventos.map((e) => (
+                <Cartao key={e.id} className="transition-shadow hover:shadow-md hover:shadow-marca-900/10">
+                  <CartaoCorpo className="flex gap-5 sm:p-6">
+                    <div className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-marca-50 text-marca-700">
+                      <span className="text-xl font-semibold leading-none">
+                        {formatarData(e.inicio, "dd")}
+                      </span>
+                      <span className="mt-1 text-xs uppercase tracking-wide">
+                        {formatarData(e.inicio, "MMM")}
+                      </span>
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="font-semibold leading-snug text-texto">{e.titulo}</h4>
+                      <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-sm text-texto-suave">
+                        <span className="inline-flex items-center gap-1">
+                          <Clock className="h-3.5 w-3.5" />
+                          {formatarData(e.inicio, "HH:mm")}
+                        </span>
+                        {e.local ? (
+                          <span className="inline-flex items-center gap-1">
+                            <MapPin className="h-3.5 w-3.5" />
+                            {e.local}
+                          </span>
+                        ) : null}
+                      </div>
+                      {e.descricao ? (
+                        <p className="mt-2 line-clamp-2 text-sm text-texto-suave">{e.descricao}</p>
+                      ) : null}
+                    </div>
+                  </CartaoCorpo>
+                </Cartao>
+              ))
+            )}
+
+            <Link
+              href="/eventos"
+              className="inline-flex items-center gap-1 text-sm font-medium text-marca-700 hover:text-marca-800 sm:hidden"
+            >
+              Calendário completo <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
       </section>
 
       {/* Notícias */}
@@ -136,36 +248,6 @@ export default async function PaginaInicial() {
         </div>
       </section>
 
-      {/* Próximos eventos */}
-      <section className="container-site mt-20">
-        <TituloSecao titulo="Próximos encontros" descricao="Palestras, estudos e atividades." />
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {eventos.length === 0 ? (
-            <div className="sm:col-span-2 lg:col-span-3">
-              <Vazio mensagem="Nenhum evento agendado no momento." />
-            </div>
-          ) : (
-            eventos.map((e) => (
-              <Cartao key={e.id} className="h-full">
-                <CartaoCorpo>
-                  <div className="flex items-center gap-2 text-marca-600">
-                    <CalendarDays className="h-4 w-4" />
-                    <span className="text-sm font-medium">
-                      {formatarData(e.inicio, "dd/MM 'às' HH:mm")}
-                    </span>
-                  </div>
-                  <h3 className="mt-3 text-lg font-semibold text-texto">{e.titulo}</h3>
-                  {e.local ? <p className="mt-1 text-sm text-texto-suave">{e.local}</p> : null}
-                  {e.descricao ? (
-                    <p className="mt-3 line-clamp-3 text-sm text-texto-suave">{e.descricao}</p>
-                  ) : null}
-                </CartaoCorpo>
-              </Cartao>
-            ))
-          )}
-        </div>
-      </section>
-
       {/* Atalhos */}
       <section className="container-site mt-20">
         <div className="grid gap-6 lg:grid-cols-3">
@@ -205,7 +287,7 @@ export default async function PaginaInicial() {
 
           <Cartao>
             <CartaoCorpo className="sm:p-8">
-              <Sparkles className="h-8 w-8 text-marca-600" />
+              <Store className="h-8 w-8 text-marca-600" />
               <h3 className="mt-4 text-xl font-semibold text-texto">Loja online</h3>
               <p className="mt-2 text-sm text-texto-suave">
                 Livros e materiais de estudo. A renda apoia as atividades da casa.
