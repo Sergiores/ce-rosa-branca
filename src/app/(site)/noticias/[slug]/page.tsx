@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 import { formatarDataLonga } from "@/lib/datas";
+import { emParagrafos } from "@/lib/utils";
 import { obterNoticia } from "@/lib/conteudo";
 import { registrarAcesso, registrarVisualizacao } from "@/lib/metricas";
 
@@ -59,12 +60,11 @@ export default async function PaginaNoticia({ params }: Props) {
         ) : null}
 
         <div className="mt-8 space-y-4 text-base leading-relaxed text-texto">
-          {noticia.corpo
-            .split(/\n{2,}/)
-            .filter(Boolean)
-            .map((paragrafo, i) => (
-              <p key={i}>{paragrafo}</p>
-            ))}
+          {emParagrafos(noticia.corpo).map((paragrafo, i) => (
+            <p key={i} className="whitespace-pre-line">
+              {paragrafo}
+            </p>
+          ))}
         </div>
       </div>
     </article>

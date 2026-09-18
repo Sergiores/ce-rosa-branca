@@ -13,6 +13,22 @@ export function formatarMoeda(valor: number | string) {
   }).format(Number.isFinite(n) ? n : 0);
 }
 
+/**
+ * Quebra um texto de textarea em paragrafos.
+ *
+ * Normaliza CRLF antes de dividir: o textarea manda `\r\n` em Windows, entao
+ * uma regex de `\n{2,}` nao encontra a linha em branco e o texto inteiro sai
+ * como um paragrafo so. As quebras simples que sobram dentro de cada paragrafo
+ * dependem de `whitespace-pre-line` no elemento que recebe o texto.
+ */
+export function emParagrafos(texto: string) {
+  return texto
+    .replace(/\r\n?/g, "\n")
+    .split(/\n{2,}/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+}
+
 export function slugificar(texto: string) {
   return texto
     .normalize("NFD")

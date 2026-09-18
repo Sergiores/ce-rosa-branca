@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowLeft, CalendarDays, Clock, MapPin } from "lucide-react";
 import { formatarData, formatarDataLonga } from "@/lib/datas";
+import { emParagrafos } from "@/lib/utils";
 import { obterEvento } from "@/lib/conteudo";
 import { registrarAcesso, registrarVisualizacao } from "@/lib/metricas";
 
@@ -86,14 +87,16 @@ export default async function PaginaEvento({ params }: Props) {
           ) : null}
         </div>
 
+        {/* `whitespace-pre-line` preserva a quebra de linha simples: sabores e
+            valores sao digitados um por linha, sem linha em branco entre eles,
+            e sem isso tudo virava um paragrafo so. */}
         {evento.descricao ? (
           <div className="mt-8 space-y-4 text-base leading-relaxed text-texto">
-            {evento.descricao
-              .split(/\n{2,}/)
-              .filter(Boolean)
-              .map((paragrafo, i) => (
-                <p key={i}>{paragrafo}</p>
-              ))}
+            {emParagrafos(evento.descricao).map((paragrafo, i) => (
+              <p key={i} className="whitespace-pre-line">
+                {paragrafo}
+              </p>
+            ))}
           </div>
         ) : null}
       </div>
