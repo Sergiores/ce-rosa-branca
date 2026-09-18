@@ -72,7 +72,7 @@ export default async function PaginaAudiencia() {
                 {maisAcessadas.map((p) => (
                   <li key={p.path} className="flex items-center justify-between gap-3 py-2.5">
                     <span className="truncate text-sm text-texto">{p.path}</span>
-                    <span className="shrink-0 text-sm font-medium text-azul-700">{p.acessos}</span>
+                    <span className="shrink-0 text-sm font-medium text-marca-700">{p.acessos}</span>
                   </li>
                 ))}
               </ul>
@@ -90,7 +90,7 @@ export default async function PaginaAudiencia() {
                 {maisVistas.map((n) => (
                   <li key={n.id} className="flex items-center justify-between gap-3 py-2.5">
                     <span className="truncate text-sm text-texto">{n.titulo}</span>
-                    <span className="shrink-0 text-sm font-medium text-azul-700">
+                    <span className="shrink-0 text-sm font-medium text-marca-700">
                       {n.visualizacoes}
                     </span>
                   </li>
@@ -116,7 +116,7 @@ function Indicador({
   return (
     <Cartao>
       <CartaoCorpo>
-        <Icone className="h-6 w-6 text-azul-600" />
+        <Icone className="h-6 w-6 text-marca-600" />
         <p className="mt-3 text-sm text-texto-suave">{rotulo}</p>
         <p className="mt-1 text-3xl font-semibold text-texto">{valor.toLocaleString("pt-BR")}</p>
       </CartaoCorpo>

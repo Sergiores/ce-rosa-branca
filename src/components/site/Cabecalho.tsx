@@ -24,12 +24,12 @@ export function Cabecalho({ lojaUrl }: { lojaUrl?: string }) {
     <header className="sticky top-0 z-50 border-b border-borda/70 bg-white/85 backdrop-blur-md">
       <div className="container-site flex h-18 items-center justify-between py-3">
         <Link href="/" className="flex items-center gap-3">
-          <span className="grid h-10 w-10 place-items-center rounded-full bg-azul-600 text-sm font-semibold text-white shadow-md shadow-azul-600/25">
+          <span className="grid h-10 w-10 place-items-center rounded-full bg-marca-600 text-sm font-semibold text-white shadow-md shadow-marca-600/25">
             RB
           </span>
           <span className="leading-tight">
             <span className="block text-sm font-semibold text-texto">Casa Espírita</span>
-            <span className="block text-sm text-azul-600">Rosa Branca</span>
+            <span className="block text-sm text-marca-600">Rosa Branca</span>
           </span>
         </Link>
 
@@ -42,7 +42,7 @@ export function Cabecalho({ lojaUrl }: { lojaUrl?: string }) {
                 href={item.href}
                 className={cn(
                   "rounded-full px-4 py-2 text-sm font-medium transition-colors",
-                  ativo ? "bg-azul-100 text-azul-800" : "text-texto-suave hover:bg-azul-50 hover:text-azul-700",
+                  ativo ? "bg-marca-100 text-marca-800" : "text-texto-suave hover:bg-marca-50 hover:text-marca-700",
                 )}
               >
                 {item.rotulo}
@@ -57,7 +57,7 @@ export function Cabecalho({ lojaUrl }: { lojaUrl?: string }) {
               href={lojaUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden items-center gap-2 rounded-full bg-azul-600 px-5 py-2.5 text-sm font-medium text-white shadow-md shadow-azul-600/20 transition-all hover:bg-azul-700 hover:shadow-lg sm:inline-flex"
+              className="hidden items-center gap-2 rounded-full bg-marca-600 px-5 py-2.5 text-sm font-medium text-white shadow-md shadow-marca-600/20 transition-all hover:bg-marca-700 hover:shadow-lg sm:inline-flex"
             >
               <ShoppingBag className="h-4 w-4" />
               Loja
@@ -65,7 +65,7 @@ export function Cabecalho({ lojaUrl }: { lojaUrl?: string }) {
           ) : null}
           <Link
             href="/entrar"
-            className="hidden rounded-full border border-azul-200 px-5 py-2.5 text-sm font-medium text-azul-700 transition-colors hover:bg-azul-50 sm:inline-flex"
+            className="hidden rounded-full border border-marca-200 px-5 py-2.5 text-sm font-medium text-marca-700 transition-colors hover:bg-marca-50 sm:inline-flex"
           >
             Entrar
           </Link>
@@ -73,7 +73,7 @@ export function Cabecalho({ lojaUrl }: { lojaUrl?: string }) {
             type="button"
             aria-label="Abrir menu"
             onClick={() => setAberto((v) => !v)}
-            className="grid h-10 w-10 place-items-center rounded-full text-azul-700 hover:bg-azul-50 lg:hidden"
+            className="grid h-10 w-10 place-items-center rounded-full text-marca-700 hover:bg-marca-50 lg:hidden"
           >
             {aberto ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -88,7 +88,7 @@ export function Cabecalho({ lojaUrl }: { lojaUrl?: string }) {
                 key={item.href}
                 href={item.href}
                 onClick={() => setAberto(false)}
-                className="rounded-xl px-3 py-3 text-sm font-medium text-texto-suave hover:bg-azul-50 hover:text-azul-700"
+                className="rounded-xl px-3 py-3 text-sm font-medium text-texto-suave hover:bg-marca-50 hover:text-marca-700"
               >
                 {item.rotulo}
               </Link>
@@ -96,7 +96,7 @@ export function Cabecalho({ lojaUrl }: { lojaUrl?: string }) {
             <Link
               href="/entrar"
               onClick={() => setAberto(false)}
-              className="mt-2 rounded-xl bg-azul-100 px-3 py-3 text-center text-sm font-medium text-azul-800"
+              className="mt-2 rounded-xl bg-marca-100 px-3 py-3 text-center text-sm font-medium text-marca-800"
             >
               Entrar na área restrita
             </Link>
@@ -105,7 +105,7 @@ export function Cabecalho({ lojaUrl }: { lojaUrl?: string }) {
                 href={lojaUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-2 rounded-xl bg-azul-600 px-3 py-3 text-center text-sm font-medium text-white"
+                className="mt-2 rounded-xl bg-marca-600 px-3 py-3 text-center text-sm font-medium text-white"
               >
                 Loja online
               </a>

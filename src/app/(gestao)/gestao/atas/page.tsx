@@ -114,7 +114,7 @@ export default async function ListaAtas({
           <Cartao className="overflow-x-auto">
             <table className="w-full min-w-[48rem] text-sm">
               <thead>
-                <tr className="border-b border-borda bg-azul-50/60 text-left">
+                <tr className="border-b border-borda bg-marca-50/60 text-left">
                   <th className="w-24 px-5 py-3 font-semibold text-texto">Nº</th>
                   <th className="px-4 py-3 font-semibold text-texto">Ata</th>
                   <th className="w-32 px-4 py-3 font-semibold text-texto">Reunião</th>
@@ -126,8 +126,8 @@ export default async function ListaAtas({
                 {atas.map((a) => {
                   const aprovada = a.status === "aprovada";
                   return (
-                    <tr key={a.id} className="align-top hover:bg-azul-50/40">
-                      <td className="px-5 py-3 font-medium text-azul-700">
+                    <tr key={a.id} className="align-top hover:bg-marca-50/40">
+                      <td className="px-5 py-3 font-medium text-marca-700">
                         <Link href={`${BASE}/${a.id}`}>
                           {a.numero}/{a.ano}
                         </Link>
@@ -135,7 +135,7 @@ export default async function ListaAtas({
                       <td className="px-4 py-3">
                         <Link
                           href={`${BASE}/${a.id}`}
-                          className="line-clamp-2 font-medium text-texto hover:text-azul-700"
+                          className="line-clamp-2 font-medium text-texto hover:text-marca-700"
                         >
                           {a.titulo}
                         </Link>
@@ -152,7 +152,7 @@ export default async function ListaAtas({
                             {aprovada ? "Aprovada" : "Rascunho"}
                           </Etiqueta>
                           {a.visivel_voluntarios ? (
-                            <Etiqueta tom="azul">Voluntários</Etiqueta>
+                            <Etiqueta tom="marca">Voluntários</Etiqueta>
                           ) : null}
                         </div>
                       </td>
@@ -163,7 +163,7 @@ export default async function ListaAtas({
                               href={`${BASE}/${a.id}`}
                               aria-label={aprovada ? "Ver ata" : "Editar"}
                               title={aprovada ? "Ver ata" : "Editar"}
-                              className="grid h-9 w-9 place-items-center rounded-full text-azul-700 hover:bg-azul-100"
+                              className="grid h-9 w-9 place-items-center rounded-full text-marca-700 hover:bg-marca-100"
                             >
                               {aprovada ? (
                                 <Eye className="h-4 w-4" />

@@ -7,9 +7,9 @@ import { formatarMoeda } from "@/lib/utils";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import type { StatusTitulo, TipoTitulo, TituloComSaldo } from "@/lib/tipos";
 
-const TOM: Record<StatusTitulo, "verde" | "ambar" | "vermelho" | "azul" | "cinza"> = {
+const TOM: Record<StatusTitulo, "verde" | "ambar" | "vermelho" | "marca" | "cinza"> = {
   pago: "verde",
-  parcial: "azul",
+  parcial: "marca",
   aberto: "ambar",
   vencido: "vermelho",
   cancelado: "cinza",
@@ -106,15 +106,15 @@ function Indicador({
   Icone,
   rotulo,
   valor,
-  tom = "azul",
+  tom = "marca",
 }: {
   Icone: typeof Wallet;
   rotulo: string;
   valor: number;
-  tom?: "azul" | "verde" | "vermelho";
+  tom?: "marca" | "verde" | "vermelho";
 }) {
   const cor =
-    tom === "vermelho" ? "text-rose-600" : tom === "verde" ? "text-emerald-600" : "text-azul-600";
+    tom === "vermelho" ? "text-rose-600" : tom === "verde" ? "text-emerald-600" : "text-marca-600";
   return (
     <Cartao>
       <CartaoCorpo>
@@ -172,7 +172,7 @@ export function TabelaTitulos({ titulos }: { titulos: TituloComSaldo[] }) {
     <Cartao className="overflow-x-auto">
       <table className="w-full min-w-[46rem] text-sm">
         <thead>
-          <tr className="border-b border-borda bg-azul-50/60 text-left">
+          <tr className="border-b border-borda bg-marca-50/60 text-left">
             <th className="w-28 px-5 py-3 font-semibold text-texto">Vencimento</th>
             <th className="px-4 py-3 font-semibold text-texto">Descrição</th>
             <th className="px-4 py-3 font-semibold text-texto">Contraparte</th>
@@ -183,14 +183,14 @@ export function TabelaTitulos({ titulos }: { titulos: TituloComSaldo[] }) {
         </thead>
         <tbody className="divide-y divide-borda">
           {titulos.map((t) => (
-            <tr key={t.id} className="align-top hover:bg-azul-50/40">
+            <tr key={t.id} className="align-top hover:bg-marca-50/40">
               <td className="whitespace-nowrap px-5 py-3">
-                <Link href={`/gestao/titulos/${t.id}`} className="font-medium text-azul-700">
+                <Link href={`/gestao/titulos/${t.id}`} className="font-medium text-marca-700">
                   {formatarData(t.vencimento)}
                 </Link>
               </td>
               <td className="px-4 py-3">
-                <Link href={`/gestao/titulos/${t.id}`} className="text-texto hover:text-azul-700">
+                <Link href={`/gestao/titulos/${t.id}`} className="text-texto hover:text-marca-700">
                   {t.descricao}
                   {t.total_parcelas > 1 ? ` (${t.parcela}/${t.total_parcelas})` : ""}
                 </Link>

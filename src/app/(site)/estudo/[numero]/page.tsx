@@ -42,13 +42,13 @@ export default async function PaginaQuestao({ params }: Props) {
     <div className="container-site max-w-3xl py-14">
       <Link
         href="/estudo"
-        className="inline-flex items-center gap-1 text-sm font-medium text-azul-700 hover:text-azul-800"
+        className="inline-flex items-center gap-1 text-sm font-medium text-marca-700 hover:text-marca-800"
       >
         <ArrowLeft className="h-4 w-4" /> Voltar ao estudo
       </Link>
 
       <div className="mt-6 flex flex-wrap items-center gap-2">
-        <Etiqueta tom="azul">Questão {questao.numero}</Etiqueta>
+        <Etiqueta tom="marca">Questão {questao.numero}</Etiqueta>
         {questao.parte ? <Etiqueta tom="cinza">{questao.parte}</Etiqueta> : null}
         {questao.capitulo ? <Etiqueta tom="cinza">{questao.capitulo}</Etiqueta> : null}
       </div>
@@ -60,10 +60,10 @@ export default async function PaginaQuestao({ params }: Props) {
       {/* Leitura em voz alta da questao inteira, incluindo os pareceres. */}
       <BotaoOuvir className="mt-5" rotulo="Ouvir esta questão" texto={textoCompleto} />
 
-      <Cartao className="mt-8 border-azul-200 bg-gradient-to-br from-white to-azul-50">
+      <Cartao className="mt-8 border-marca-200 bg-gradient-to-br from-white to-marca-50">
         <CartaoCorpo className="sm:p-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-azul-700">Resposta</h2>
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-marca-700">Resposta</h2>
             <BotaoOuvir rotulo="Ouvir só a resposta" texto={questao.resposta} />
           </div>
           <div className="mt-3 space-y-3 text-base leading-relaxed text-texto">
@@ -79,7 +79,7 @@ export default async function PaginaQuestao({ params }: Props) {
 
       <section className="mt-10">
         <h2 className="flex items-center gap-2 text-lg font-semibold text-texto">
-          <MessageSquareQuote className="h-5 w-5 text-azul-600" />
+          <MessageSquareQuote className="h-5 w-5 text-marca-600" />
           Parecer dos médiuns
         </h2>
 

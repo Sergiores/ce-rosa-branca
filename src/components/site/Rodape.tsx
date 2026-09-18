@@ -8,7 +8,7 @@ export function Rodape({ lojaUrl }: { lojaUrl?: string }) {
       <div className="container-site grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <div className="flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded-full bg-azul-600 text-sm font-semibold text-white">
+            <span className="grid h-10 w-10 place-items-center rounded-full bg-marca-600 text-sm font-semibold text-white">
               RB
             </span>
             <span className="text-sm font-semibold text-texto">Casa Espírita Rosa Branca</span>
@@ -22,20 +22,20 @@ export function Rodape({ lojaUrl }: { lojaUrl?: string }) {
         <div>
           <h4 className="text-sm font-semibold text-texto">Navegação</h4>
           <ul className="mt-4 space-y-2 text-sm text-texto-suave">
-            <li><Link className="hover:text-azul-700" href="/noticias">Notícias</Link></li>
-            <li><Link className="hover:text-azul-700" href="/eventos">Eventos</Link></li>
-            <li><Link className="hover:text-azul-700" href="/projetos">Projetos</Link></li>
-            <li><Link className="hover:text-azul-700" href="/estudo">Livro dos Espíritos</Link></li>
+            <li><Link className="hover:text-marca-700" href="/noticias">Notícias</Link></li>
+            <li><Link className="hover:text-marca-700" href="/eventos">Eventos</Link></li>
+            <li><Link className="hover:text-marca-700" href="/projetos">Projetos</Link></li>
+            <li><Link className="hover:text-marca-700" href="/estudo">Livro dos Espíritos</Link></li>
           </ul>
         </div>
 
         <div>
           <h4 className="text-sm font-semibold text-texto">Institucional</h4>
           <ul className="mt-4 space-y-2 text-sm text-texto-suave">
-            <li><Link className="hover:text-azul-700" href="/sobre">A Casa</Link></li>
-            <li><Link className="hover:text-azul-700" href="/sobre/missao">Missão e valores</Link></li>
-            <li><Link className="hover:text-azul-700" href="/contato">Contato</Link></li>
-            <li><Link className="hover:text-azul-700" href="/entrar">Área restrita</Link></li>
+            <li><Link className="hover:text-marca-700" href="/sobre">A Casa</Link></li>
+            <li><Link className="hover:text-marca-700" href="/sobre/missao">Missão e valores</Link></li>
+            <li><Link className="hover:text-marca-700" href="/contato">Contato</Link></li>
+            <li><Link className="hover:text-marca-700" href="/entrar">Área restrita</Link></li>
           </ul>
         </div>
 
@@ -49,7 +49,7 @@ export function Rodape({ lojaUrl }: { lojaUrl?: string }) {
               href={lojaUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 inline-flex rounded-full bg-azul-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-azul-700"
+              className="mt-4 inline-flex rounded-full bg-marca-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-marca-700"
             >
               Visitar a loja
             </a>

@@ -43,9 +43,9 @@ export default async function PaginaMissao() {
         </div>
       ) : (
         <div className="grid gap-6">
-          <Cartao className="border-azul-200 bg-gradient-to-br from-white to-azul-50">
+          <Cartao className="border-marca-200 bg-gradient-to-br from-white to-marca-50">
             <CartaoCorpo className="sm:p-8">
-              <Compass className="h-7 w-7 text-azul-600" />
+              <Compass className="h-7 w-7 text-marca-600" />
               <h2 className="mt-3 text-xl font-semibold text-texto">Missão</h2>
               <p className="mt-2 leading-relaxed text-texto-suave">{PADRAO.missao}</p>
             </CartaoCorpo>
@@ -53,7 +53,7 @@ export default async function PaginaMissao() {
 
           <Cartao>
             <CartaoCorpo className="sm:p-8">
-              <Eye className="h-7 w-7 text-azul-600" />
+              <Eye className="h-7 w-7 text-marca-600" />
               <h2 className="mt-3 text-xl font-semibold text-texto">Visão</h2>
               <p className="mt-2 leading-relaxed text-texto-suave">{PADRAO.visao}</p>
             </CartaoCorpo>
@@ -61,12 +61,12 @@ export default async function PaginaMissao() {
 
           <Cartao>
             <CartaoCorpo className="sm:p-8">
-              <Gem className="h-7 w-7 text-azul-600" />
+              <Gem className="h-7 w-7 text-marca-600" />
               <h2 className="mt-3 text-xl font-semibold text-texto">Valores</h2>
               <ul className="mt-3 space-y-2">
                 {PADRAO.valores.map((v) => (
                   <li key={v} className="flex items-start gap-2 text-texto-suave">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-azul-400" />
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-marca-400" />
                     {v}
                   </li>
                 ))}

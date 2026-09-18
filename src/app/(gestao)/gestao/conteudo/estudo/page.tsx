@@ -127,7 +127,7 @@ export default async function NavegadorQuestoes({
             {busca || status ? (
               <Link
                 href="/gestao/conteudo/estudo"
-                className="inline-flex h-11 items-center gap-2 rounded-full border border-borda bg-white px-5 text-sm font-medium text-texto-suave hover:bg-azul-50"
+                className="inline-flex h-11 items-center gap-2 rounded-full border border-borda bg-white px-5 text-sm font-medium text-texto-suave hover:bg-marca-50"
               >
                 <X className="h-4 w-4" /> Limpar
               </Link>
@@ -150,7 +150,7 @@ export default async function NavegadorQuestoes({
           <Cartao className="overflow-x-auto">
             <table className="w-full min-w-[46rem] text-sm">
               <thead>
-                <tr className="border-b border-borda bg-azul-50/60 text-left">
+                <tr className="border-b border-borda bg-marca-50/60 text-left">
                   <th className="w-20 px-5 py-3 font-semibold text-texto">Nº</th>
                   <th className="px-4 py-3 font-semibold text-texto">Pergunta</th>
                   <th className="w-40 px-4 py-3 font-semibold text-texto">Situação</th>
@@ -163,14 +163,14 @@ export default async function NavegadorQuestoes({
                   const pareceres = q.pareceres?.[0]?.count ?? 0;
                   const publicada = q.status === "publicado";
                   return (
-                    <tr key={q.id} className="align-top hover:bg-azul-50/40">
-                      <td className="px-5 py-3 font-medium text-azul-700">
+                    <tr key={q.id} className="align-top hover:bg-marca-50/40">
+                      <td className="px-5 py-3 font-medium text-marca-700">
                         <Link href={`/gestao/conteudo/estudo/${q.id}`}>{q.numero}</Link>
                       </td>
                       <td className="px-4 py-3">
                         <Link
                           href={`/gestao/conteudo/estudo/${q.id}`}
-                          className="line-clamp-2 text-texto hover:text-azul-700"
+                          className="line-clamp-2 text-texto hover:text-marca-700"
                         >
                           {q.pergunta}
                         </Link>
@@ -191,7 +191,7 @@ export default async function NavegadorQuestoes({
                               href={`/gestao/conteudo/estudo/${q.id}`}
                               aria-label="Editar"
                               title="Editar"
-                              className="grid h-9 w-9 place-items-center rounded-full text-azul-700 hover:bg-azul-100"
+                              className="grid h-9 w-9 place-items-center rounded-full text-marca-700 hover:bg-marca-100"
                             >
                               <Pencil className="h-4 w-4" />
                             </Link>
@@ -203,7 +203,7 @@ export default async function NavegadorQuestoes({
                                 type="submit"
                                 aria-label={publicada ? "Voltar a rascunho" : "Publicar"}
                                 title={publicada ? "Voltar a rascunho" : "Publicar"}
-                                className="grid h-9 w-9 place-items-center rounded-full text-azul-700 hover:bg-azul-100"
+                                className="grid h-9 w-9 place-items-center rounded-full text-marca-700 hover:bg-marca-100"
                               >
                                 {publicada ? (
                                   <EyeOff className="h-4 w-4" />
@@ -242,7 +242,7 @@ export default async function NavegadorQuestoes({
             {pagina > 1 ? (
               <Link
                 href={paramsPara(pagina - 1)}
-                className="rounded-full border border-borda bg-white px-4 py-2 text-sm font-medium text-azul-700 hover:bg-azul-50"
+                className="rounded-full border border-borda bg-white px-4 py-2 text-sm font-medium text-marca-700 hover:bg-marca-50"
               >
                 Anterior
               </Link>
@@ -253,7 +253,7 @@ export default async function NavegadorQuestoes({
             {pagina < ultimaPagina ? (
               <Link
                 href={paramsPara(pagina + 1)}
-                className="rounded-full border border-borda bg-white px-4 py-2 text-sm font-medium text-azul-700 hover:bg-azul-50"
+                className="rounded-full border border-borda bg-white px-4 py-2 text-sm font-medium text-marca-700 hover:bg-marca-50"
               >
                 Próxima
               </Link>

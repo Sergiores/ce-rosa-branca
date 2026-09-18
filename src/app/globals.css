@@ -1,22 +1,28 @@
 @import "tailwindcss";
 
+/*
+  Paleta oficial da casa, amostrada dos posts do Instagram @centrorosabranca:
+  rosewood #976c5f sobre creme #f2ece0. O tom exato da marca fica em marca-500;
+  marca-600 e acima sao levemente mais profundos para que texto branco sobre
+  eles passe o contraste AA (4.5:1).
+*/
 @theme {
-  --color-azul-50: #f0f7ff;
-  --color-azul-100: #dceeff;
-  --color-azul-200: #b9dcff;
-  --color-azul-300: #85c3ff;
-  --color-azul-400: #4aa4fb;
-  --color-azul-500: #2186ec;
-  --color-azul-600: #1268ca;
-  --color-azul-700: #1153a3;
-  --color-azul-800: #144886;
-  --color-azul-900: #163d6f;
+  --color-marca-50: #fbf7f3;
+  --color-marca-100: #f4eae3;
+  --color-marca-200: #e8d6cb;
+  --color-marca-300: #d5b8a9;
+  --color-marca-400: #bd9585;
+  --color-marca-500: #976c5f;
+  --color-marca-600: #8a6154;
+  --color-marca-700: #6f4d43;
+  --color-marca-800: #573d35;
+  --color-marca-900: #3f2c26;
 
-  --color-fundo: #f7fbff;
+  --color-fundo: #f7f3ec;
   --color-superficie: #ffffff;
-  --color-borda: #e2edf9;
-  --color-texto: #12263f;
-  --color-texto-suave: #5b7290;
+  --color-borda: #e9ded3;
+  --color-texto: #3a2b25;
+  --color-texto-suave: #7b6a62;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
@@ -34,7 +40,7 @@
     -webkit-font-smoothing: antialiased;
   }
   ::selection {
-    background-color: var(--color-azul-200);
+    background-color: var(--color-marca-200);
   }
 }
 

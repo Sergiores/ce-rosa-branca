@@ -22,16 +22,16 @@ export default async function PaginaNoticias() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {noticias.map((n) => (
             <Link key={n.id} href={`/noticias/${n.slug}`} className="group">
-              <Cartao className="h-full overflow-hidden group-hover:shadow-lg group-hover:shadow-azul-900/10">
+              <Cartao className="h-full overflow-hidden group-hover:shadow-lg group-hover:shadow-marca-900/10">
                 <div
-                  className="h-44 bg-azul-100 bg-cover bg-center"
+                  className="h-44 bg-marca-100 bg-cover bg-center"
                   style={n.imagem_url ? { backgroundImage: `url(${n.imagem_url})` } : undefined}
                 />
                 <CartaoCorpo>
                   <p className="text-xs text-texto-suave">
                     {formatarData(n.publicado_em ?? n.criado_em)}
                   </p>
-                  <h2 className="mt-2 text-lg font-semibold leading-snug text-texto group-hover:text-azul-700">
+                  <h2 className="mt-2 text-lg font-semibold leading-snug text-texto group-hover:text-marca-700">
                     {n.titulo}
                   </h2>
                   {n.resumo ? (

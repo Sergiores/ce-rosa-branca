@@ -37,7 +37,7 @@ export default async function PaginaSobre() {
       <div className="mt-12 grid gap-6 sm:grid-cols-3">
         <Cartao>
           <CartaoCorpo>
-            <BookOpen className="h-7 w-7 text-azul-600" />
+            <BookOpen className="h-7 w-7 text-marca-600" />
             <h3 className="mt-3 font-semibold text-texto">Estudo</h3>
             <p className="mt-1 text-sm text-texto-suave">
               Grupos de estudo sistematizado da doutrina espírita.
@@ -46,7 +46,7 @@ export default async function PaginaSobre() {
         </Cartao>
         <Cartao>
           <CartaoCorpo>
-            <HeartHandshake className="h-7 w-7 text-azul-600" />
+            <HeartHandshake className="h-7 w-7 text-marca-600" />
             <h3 className="mt-3 font-semibold text-texto">Assistência</h3>
             <p className="mt-1 text-sm text-texto-suave">
               Atendimento fraterno, passes e amparo às famílias.
@@ -55,7 +55,7 @@ export default async function PaginaSobre() {
         </Cartao>
         <Cartao>
           <CartaoCorpo>
-            <Users className="h-7 w-7 text-azul-600" />
+            <Users className="h-7 w-7 text-marca-600" />
             <h3 className="mt-3 font-semibold text-texto">Voluntariado</h3>
             <p className="mt-1 text-sm text-texto-suave">
               Frentes de trabalho abertas a quem deseja servir.
@@ -67,7 +67,7 @@ export default async function PaginaSobre() {
       <div className="mt-12">
         <Link
           href="/sobre/missao"
-          className="inline-flex rounded-full bg-azul-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-azul-700"
+          className="inline-flex rounded-full bg-marca-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-marca-700"
         >
           Missão, visão e valores
         </Link>

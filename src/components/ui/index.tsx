@@ -6,16 +6,16 @@ import { cn } from "@/lib/utils";
 /* -------------------------------------------------- Botao */
 
 const botaoVariantes = cva(
-  "inline-flex items-center justify-center gap-2 rounded-full font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azul-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
+  "inline-flex items-center justify-center gap-2 rounded-full font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marca-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
   {
     variants: {
       variante: {
         primario:
-          "bg-azul-600 text-white shadow-md shadow-azul-600/20 hover:bg-azul-700 hover:shadow-lg hover:shadow-azul-600/25",
-        suave: "bg-azul-100 text-azul-800 hover:bg-azul-200",
+          "bg-marca-600 text-white shadow-md shadow-marca-600/20 hover:bg-marca-700 hover:shadow-lg hover:shadow-marca-600/25",
+        suave: "bg-marca-100 text-marca-800 hover:bg-marca-200",
         contorno:
-          "border border-azul-200 bg-white text-azul-700 hover:border-azul-300 hover:bg-azul-50",
-        fantasma: "text-azul-700 hover:bg-azul-50",
+          "border border-marca-200 bg-white text-marca-700 hover:border-marca-300 hover:bg-marca-50",
+        fantasma: "text-marca-700 hover:bg-marca-50",
         perigo: "bg-rose-600 text-white shadow-md shadow-rose-600/20 hover:bg-rose-700",
       },
       tamanho: {
@@ -54,7 +54,7 @@ export function Cartao({ className, ...props }: React.HTMLAttributes<HTMLDivElem
   return (
     <div
       className={cn(
-        "rounded-2xl border border-borda bg-superficie shadow-sm shadow-azul-900/5 transition-shadow",
+        "rounded-2xl border border-borda bg-superficie shadow-sm shadow-marca-900/5 transition-shadow",
         className,
       )}
       {...props}
@@ -81,14 +81,14 @@ const etiquetaVariantes = cva(
   {
     variants: {
       tom: {
-        azul: "bg-azul-100 text-azul-800",
+        marca: "bg-marca-100 text-marca-800",
         verde: "bg-emerald-100 text-emerald-800",
         ambar: "bg-amber-100 text-amber-800",
         vermelho: "bg-rose-100 text-rose-800",
         cinza: "bg-slate-100 text-slate-700",
       },
     },
-    defaultVariants: { tom: "azul" },
+    defaultVariants: { tom: "marca" },
   },
 );
 
@@ -103,7 +103,7 @@ export function Etiqueta({
 /* -------------------------------------------------- Campos */
 
 const campoBase =
-  "w-full rounded-xl border border-borda bg-white px-4 py-2.5 text-sm text-texto placeholder:text-texto-suave/60 transition-colors focus:border-azul-400 focus:outline-none focus:ring-2 focus:ring-azul-100 disabled:bg-slate-50";
+  "w-full rounded-xl border border-borda bg-white px-4 py-2.5 text-sm text-texto placeholder:text-texto-suave/60 transition-colors focus:border-marca-400 focus:outline-none focus:ring-2 focus:ring-marca-100 disabled:bg-slate-50";
 
 export function Campo({ className, ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input className={cn(campoBase, className)} {...props} />;

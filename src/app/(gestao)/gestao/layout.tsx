@@ -27,7 +27,7 @@ export default async function LayoutGestao({ children }: { children: React.React
       <header className="sticky top-0 z-30 border-b border-borda bg-white/90 backdrop-blur-md">
         <div className="flex h-16 items-center justify-between gap-4 px-5">
           <Link href="/gestao" className="flex items-center gap-3">
-            <span className="grid h-9 w-9 place-items-center rounded-full bg-azul-600 text-xs font-semibold text-white">
+            <span className="grid h-9 w-9 place-items-center rounded-full bg-marca-600 text-xs font-semibold text-white">
               RB
             </span>
             <span className="text-sm font-semibold text-texto">Gestão · Rosa Branca</span>
@@ -36,18 +36,18 @@ export default async function LayoutGestao({ children }: { children: React.React
           <div className="flex items-center gap-4">
             <div className="hidden text-right sm:block">
               <p className="text-sm font-medium text-texto">{sessao.perfil.nome || sessao.perfil.email}</p>
-              <p className="text-xs text-azul-600">{NOME_PAPEL[sessao.perfil.role] ?? sessao.perfil.role}</p>
+              <p className="text-xs text-marca-600">{NOME_PAPEL[sessao.perfil.role] ?? sessao.perfil.role}</p>
             </div>
             <Link
               href="/"
-              className="hidden rounded-full border border-azul-200 px-4 py-2 text-sm font-medium text-azul-700 hover:bg-azul-50 sm:inline-flex"
+              className="hidden rounded-full border border-marca-200 px-4 py-2 text-sm font-medium text-marca-700 hover:bg-marca-50 sm:inline-flex"
             >
               Ver site
             </Link>
             <form action={sair}>
               <button
                 type="submit"
-                className="rounded-full px-4 py-2 text-sm font-medium text-texto-suave hover:bg-azul-50 hover:text-azul-700"
+                className="rounded-full px-4 py-2 text-sm font-medium text-texto-suave hover:bg-marca-50 hover:text-marca-700"
               >
                 Sair
               </button>

@@ -71,7 +71,7 @@ export default async function PaginaUsuarios() {
                     </select>
                     <button
                       type="submit"
-                      className="ml-2 rounded-full px-3 py-2 text-sm font-medium text-azul-700 hover:bg-azul-50"
+                      className="ml-2 rounded-full px-3 py-2 text-sm font-medium text-marca-700 hover:bg-marca-50"
                     >
                       Salvar
                     </button>
@@ -82,7 +82,7 @@ export default async function PaginaUsuarios() {
                     <input type="hidden" name="ativo" value={u.ativo ? "0" : "1"} />
                     <button
                       type="submit"
-                      className="rounded-full px-3 py-2 text-sm font-medium text-texto-suave hover:bg-azul-50"
+                      className="rounded-full px-3 py-2 text-sm font-medium text-texto-suave hover:bg-marca-50"
                     >
                       {u.ativo ? "Desativar" : "Ativar"}
                     </button>

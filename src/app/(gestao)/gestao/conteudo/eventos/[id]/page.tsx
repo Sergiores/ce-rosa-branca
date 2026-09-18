@@ -46,7 +46,7 @@ export default async function EditorEvento({ params }: { params: Promise<{ id: s
     <div className="mx-auto max-w-3xl">
       <Link
         href="/gestao/conteudo/eventos"
-        className="inline-flex items-center gap-1 text-sm font-medium text-azul-700 hover:text-azul-800"
+        className="inline-flex items-center gap-1 text-sm font-medium text-marca-700 hover:text-marca-800"
       >
         <ArrowLeft className="h-4 w-4" /> Voltar aos eventos
       </Link>

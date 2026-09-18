@@ -38,18 +38,18 @@ export default async function PaginaEventos() {
         <div className="space-y-12">
           {[...porMes.entries()].map(([mes, lista]) => (
             <section key={mes}>
-              <h2 className="mb-5 text-lg font-semibold capitalize text-azul-700">{mes}</h2>
+              <h2 className="mb-5 text-lg font-semibold capitalize text-marca-700">{mes}</h2>
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {lista.map((e) => (
                   <Cartao key={e.id} className="h-full overflow-hidden">
                     {e.imagem_url ? (
                       <div
-                        className="h-36 bg-azul-100 bg-cover bg-center"
+                        className="h-36 bg-marca-100 bg-cover bg-center"
                         style={{ backgroundImage: `url(${e.imagem_url})` }}
                       />
                     ) : null}
                     <CartaoCorpo>
-                      <div className="flex items-center gap-2 text-azul-600">
+                      <div className="flex items-center gap-2 text-marca-600">
                         <CalendarDays className="h-4 w-4" />
                         <span className="text-sm font-medium">
                           {formatarData(e.inicio, "dd/MM 'às' HH:mm")}

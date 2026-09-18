@@ -123,7 +123,7 @@ export function Anexos({
         <ul className="mb-3 divide-y divide-borda rounded-xl border border-borda bg-white">
           {anexos.map((a) => (
             <li key={a.id} className="flex items-center gap-3 px-4 py-3">
-              <FileText className="h-4 w-4 shrink-0 text-azul-600" />
+              <FileText className="h-4 w-4 shrink-0 text-marca-600" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm text-texto">{a.nome_arquivo}</p>
                 <p className="text-xs text-texto-suave">
@@ -134,7 +134,7 @@ export function Anexos({
                 type="button"
                 onClick={() => baixar(a.id)}
                 aria-label="Baixar"
-                className="grid h-9 w-9 place-items-center rounded-full text-azul-700 hover:bg-azul-50"
+                className="grid h-9 w-9 place-items-center rounded-full text-marca-700 hover:bg-marca-50"
               >
                 <Download className="h-4 w-4" />
               </button>
@@ -163,7 +163,7 @@ export function Anexos({
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={enviando}
-            className="inline-flex items-center gap-2 rounded-full border border-azul-200 bg-white px-5 py-2.5 text-sm font-medium text-azul-700 hover:bg-azul-50 disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-full border border-marca-200 bg-white px-5 py-2.5 text-sm font-medium text-marca-700 hover:bg-marca-50 disabled:opacity-50"
           >
             {enviando ? <Loader2 className="h-4 w-4 animate-spin" /> : <Paperclip className="h-4 w-4" />}
             {enviando ? "Enviando..." : "Anexar arquivo"}

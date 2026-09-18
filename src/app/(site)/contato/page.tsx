@@ -32,14 +32,14 @@ export default async function PaginaContato() {
       <div className="grid gap-6 sm:grid-cols-2">
         <Cartao>
           <CartaoCorpo>
-            <MapPin className="h-6 w-6 text-azul-600" />
+            <MapPin className="h-6 w-6 text-marca-600" />
             <h3 className="mt-3 font-semibold text-texto">Endereço</h3>
             <p className="mt-1 text-sm text-texto-suave">A definir — atualize esta página na gestão.</p>
           </CartaoCorpo>
         </Cartao>
         <Cartao>
           <CartaoCorpo>
-            <Clock className="h-6 w-6 text-azul-600" />
+            <Clock className="h-6 w-6 text-marca-600" />
             <h3 className="mt-3 font-semibold text-texto">Horários</h3>
             <p className="mt-1 text-sm text-texto-suave">
               Consulte a página de eventos para a programação da semana.
@@ -48,14 +48,14 @@ export default async function PaginaContato() {
         </Cartao>
         <Cartao>
           <CartaoCorpo>
-            <Phone className="h-6 w-6 text-azul-600" />
+            <Phone className="h-6 w-6 text-marca-600" />
             <h3 className="mt-3 font-semibold text-texto">Telefone</h3>
             <p className="mt-1 text-sm text-texto-suave">A definir.</p>
           </CartaoCorpo>
         </Cartao>
         <Cartao>
           <CartaoCorpo>
-            <Mail className="h-6 w-6 text-azul-600" />
+            <Mail className="h-6 w-6 text-marca-600" />
             <h3 className="mt-3 font-semibold text-texto">E-mail</h3>
             <p className="mt-1 text-sm text-texto-suave">A definir.</p>
           </CartaoCorpo>

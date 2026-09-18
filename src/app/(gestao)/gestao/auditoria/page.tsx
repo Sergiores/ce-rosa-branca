@@ -14,7 +14,7 @@ const TABELAS = [
   "documentos", "documento_itens", "titulos", "baixas",
 ];
 
-const TOM_ACAO = { INSERT: "verde", UPDATE: "azul", DELETE: "vermelho" } as const;
+const TOM_ACAO = { INSERT: "verde", UPDATE: "marca", DELETE: "vermelho" } as const;
 
 /** Mostra apenas os campos que realmente mudaram. */
 function diferencas(r: RegistroAuditoria) {

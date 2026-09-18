@@ -94,7 +94,7 @@ export default async function ListaNoticias({
           <Cartao className="overflow-x-auto">
             <table className="w-full min-w-[46rem] text-sm">
               <thead>
-                <tr className="border-b border-borda bg-azul-50/60 text-left">
+                <tr className="border-b border-borda bg-marca-50/60 text-left">
                   <th className="px-5 py-3 font-semibold text-texto">Notícia</th>
                   <th className="w-32 px-4 py-3 font-semibold text-texto">Publicação</th>
                   <th className="w-40 px-4 py-3 font-semibold text-texto">Situação</th>
@@ -105,11 +105,11 @@ export default async function ListaNoticias({
                 {noticias.map((n) => {
                   const publicada = n.status === "publicado";
                   return (
-                    <tr key={n.id} className="align-top hover:bg-azul-50/40">
+                    <tr key={n.id} className="align-top hover:bg-marca-50/40">
                       <td className="px-5 py-3">
                         <Link
                           href={`${BASE}/${n.id}`}
-                          className="line-clamp-2 font-medium text-texto hover:text-azul-700"
+                          className="line-clamp-2 font-medium text-texto hover:text-marca-700"
                         >
                           {n.titulo}
                         </Link>
@@ -124,7 +124,7 @@ export default async function ListaNoticias({
                             {publicada ? "Publicada" : "Rascunho"}
                           </Etiqueta>
                           {n.destaque_carrossel ? (
-                            <Etiqueta tom="azul">
+                            <Etiqueta tom="marca">
                               <Star className="h-3 w-3" /> Carrossel
                             </Etiqueta>
                           ) : null}
@@ -137,7 +137,7 @@ export default async function ListaNoticias({
                               href={`${BASE}/${n.id}`}
                               aria-label="Editar"
                               title="Editar"
-                              className="grid h-9 w-9 place-items-center rounded-full text-azul-700 hover:bg-azul-100"
+                              className="grid h-9 w-9 place-items-center rounded-full text-marca-700 hover:bg-marca-100"
                             >
                               <Pencil className="h-4 w-4" />
                             </Link>
@@ -149,7 +149,7 @@ export default async function ListaNoticias({
                                 type="submit"
                                 aria-label={publicada ? "Voltar a rascunho" : "Publicar"}
                                 title={publicada ? "Voltar a rascunho" : "Publicar"}
-                                className="grid h-9 w-9 place-items-center rounded-full text-azul-700 hover:bg-azul-100"
+                                className="grid h-9 w-9 place-items-center rounded-full text-marca-700 hover:bg-marca-100"
                               >
                                 {publicada ? (
                                   <EyeOff className="h-4 w-4" />

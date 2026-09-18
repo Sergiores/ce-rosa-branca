@@ -35,7 +35,7 @@ export default async function PaginaNoticia({ params }: Props) {
     <article className="pb-16">
       {noticia.imagem_url ? (
         <div
-          className="h-64 w-full bg-azul-100 bg-cover bg-center sm:h-96"
+          className="h-64 w-full bg-marca-100 bg-cover bg-center sm:h-96"
           style={{ backgroundImage: `url(${noticia.imagem_url})` }}
         />
       ) : null}
@@ -43,7 +43,7 @@ export default async function PaginaNoticia({ params }: Props) {
       <div className="container-site max-w-3xl pt-10">
         <Link
           href="/noticias"
-          className="inline-flex items-center gap-1 text-sm font-medium text-azul-700 hover:text-azul-800"
+          className="inline-flex items-center gap-1 text-sm font-medium text-marca-700 hover:text-marca-800"
         >
           <ArrowLeft className="h-4 w-4" /> Voltar às notícias
         </Link>

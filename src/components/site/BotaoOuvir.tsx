@@ -146,8 +146,8 @@ export function BotaoOuvir({
         className={cn(
           "inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors",
           ativo
-            ? "bg-azul-600 text-white hover:bg-azul-700"
-            : "border border-azul-200 bg-white text-azul-700 hover:bg-azul-50",
+            ? "bg-marca-600 text-white hover:bg-marca-700"
+            : "border border-marca-200 bg-white text-marca-700 hover:bg-marca-50",
         )}
         aria-label={lendo ? "Pausar leitura" : ativo ? "Continuar leitura" : rotulo}
       >
@@ -166,16 +166,16 @@ export function BotaoOuvir({
           type="button"
           onClick={parar}
           aria-label="Parar leitura"
-          className="grid h-10 w-10 place-items-center rounded-full border border-azul-200 bg-white text-azul-700 hover:bg-azul-50"
+          className="grid h-10 w-10 place-items-center rounded-full border border-marca-200 bg-white text-marca-700 hover:bg-marca-50"
         >
           <Square className="h-3.5 w-3.5" />
         </button>
       ) : null}
 
       {ativo ? (
-        <div className="h-1.5 w-24 overflow-hidden rounded-full bg-azul-100" aria-hidden>
+        <div className="h-1.5 w-24 overflow-hidden rounded-full bg-marca-100" aria-hidden>
           <div
-            className="h-full rounded-full bg-azul-500 transition-all duration-500"
+            className="h-full rounded-full bg-marca-500 transition-all duration-500"
             style={{ width: `${progresso}%` }}
           />
         </div>

@@ -174,7 +174,7 @@ export default async function PaginaRelatorios() {
           </h2>
           <table className="w-full min-w-[34rem] text-sm">
             <thead>
-              <tr className="border-b border-borda bg-azul-50/60 text-left">
+              <tr className="border-b border-borda bg-marca-50/60 text-left">
                 <th className="px-6 py-3 font-semibold text-texto">Faixa</th>
                 <th className="px-4 py-3 text-right font-semibold text-texto">A pagar</th>
                 <th className="px-4 py-3 text-right font-semibold text-texto">A receber</th>
@@ -205,7 +205,7 @@ export default async function PaginaRelatorios() {
           ) : (
             <table className="w-full min-w-[34rem] text-sm">
               <thead>
-                <tr className="border-b border-borda bg-azul-50/60 text-left">
+                <tr className="border-b border-borda bg-marca-50/60 text-left">
                   <th className="px-6 py-3 font-semibold text-texto">Contraparte</th>
                   <th className="px-4 py-3 text-right font-semibold text-texto">A pagar</th>
                   <th className="px-4 py-3 text-right font-semibold text-texto">A receber</th>

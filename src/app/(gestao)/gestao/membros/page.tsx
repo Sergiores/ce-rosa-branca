@@ -96,7 +96,7 @@ export default async function ListaMembros({
           <Cartao className="overflow-x-auto">
             <table className="w-full min-w-[46rem] text-sm">
               <thead>
-                <tr className="border-b border-borda bg-azul-50/60 text-left">
+                <tr className="border-b border-borda bg-marca-50/60 text-left">
                   <th className="px-5 py-3 font-semibold text-texto">Membro</th>
                   <th className="w-36 px-4 py-3 font-semibold text-texto">Ingresso</th>
                   <th className="w-44 px-4 py-3 font-semibold text-texto">Mensalidade</th>
@@ -107,12 +107,12 @@ export default async function ListaMembros({
                 {membros.map((m) => {
                   const mensalidade = mensalidades.find((x) => x.membro_id === m.id);
                   return (
-                    <tr key={m.id} className="align-top hover:bg-azul-50/40">
+                    <tr key={m.id} className="align-top hover:bg-marca-50/40">
                       <td className="px-5 py-3">
                         <div className="flex flex-wrap items-center gap-2">
                           <Link
                             href={`${BASE}/${m.id}`}
-                            className="font-medium text-texto hover:text-azul-700"
+                            className="font-medium text-texto hover:text-marca-700"
                           >
                             {m.nome}
                           </Link>
@@ -128,7 +128,7 @@ export default async function ListaMembros({
                       </td>
                       <td className="px-4 py-3">
                         {mensalidade && mensalidade.ativo ? (
-                          <Etiqueta tom="azul">
+                          <Etiqueta tom="marca">
                             {formatarMoeda(mensalidade.valor)} · dia {mensalidade.dia_vencimento}
                           </Etiqueta>
                         ) : (
@@ -142,7 +142,7 @@ export default async function ListaMembros({
                               href={`${BASE}/${m.id}`}
                               aria-label="Editar"
                               title="Editar"
-                              className="grid h-9 w-9 place-items-center rounded-full text-azul-700 hover:bg-azul-100"
+                              className="grid h-9 w-9 place-items-center rounded-full text-marca-700 hover:bg-marca-100"
                             >
                               <Pencil className="h-4 w-4" />
                             </Link>

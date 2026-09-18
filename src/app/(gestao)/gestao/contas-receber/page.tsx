@@ -39,7 +39,7 @@ export default async function ContasReceber({
       <IndicadoresTitulos titulos={titulos} />
 
       {podeEditar ? (
-        <Cartao className="mt-6 border-azul-200 bg-azul-50/60">
+        <Cartao className="mt-6 border-marca-200 bg-marca-50/60">
           <CartaoCorpo>
             <form action={gerarMensalidades} className="flex flex-wrap items-end gap-4">
               <div>

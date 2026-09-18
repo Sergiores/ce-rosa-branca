@@ -26,8 +26,8 @@ export default async function PaginaEstudo({
 
   return (
     <div className="container-site py-14">
-      <div className="mb-8 flex items-start gap-4 rounded-2xl border border-azul-200 bg-gradient-to-br from-white to-azul-50 p-6 sm:p-8">
-        <BookOpen className="mt-1 h-8 w-8 shrink-0 text-azul-600" />
+      <div className="mb-8 flex items-start gap-4 rounded-2xl border border-marca-200 bg-gradient-to-br from-white to-marca-50 p-6 sm:p-8">
+        <BookOpen className="mt-1 h-8 w-8 shrink-0 text-marca-600" />
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-texto sm:text-3xl">
             Estudo do Livro dos Espíritos
@@ -57,7 +57,7 @@ export default async function PaginaEstudo({
         {busca ? (
           <Link
             href="/estudo"
-            className="inline-flex h-13 items-center gap-2 rounded-full border border-azul-200 bg-white px-6 text-sm font-medium text-azul-700 hover:bg-azul-50"
+            className="inline-flex h-13 items-center gap-2 rounded-full border border-marca-200 bg-white px-6 text-sm font-medium text-marca-700 hover:bg-marca-50"
           >
             <X className="h-4 w-4" /> Limpar
           </Link>
@@ -88,10 +88,10 @@ export default async function PaginaEstudo({
               <div className="grid gap-4 sm:grid-cols-2">
                 {lista.map((questao) => (
                   <Link key={questao.id} href={`/estudo/${questao.numero}`} className="group">
-                    <Cartao className="h-full group-hover:shadow-lg group-hover:shadow-azul-900/10">
+                    <Cartao className="h-full group-hover:shadow-lg group-hover:shadow-marca-900/10">
                       <CartaoCorpo>
-                        <Etiqueta tom="azul">Questão {questao.numero}</Etiqueta>
-                        <p className="mt-3 line-clamp-3 text-base font-medium leading-snug text-texto group-hover:text-azul-700">
+                        <Etiqueta tom="marca">Questão {questao.numero}</Etiqueta>
+                        <p className="mt-3 line-clamp-3 text-base font-medium leading-snug text-texto group-hover:text-marca-700">
                           {questao.pergunta}
                         </p>
                       </CartaoCorpo>

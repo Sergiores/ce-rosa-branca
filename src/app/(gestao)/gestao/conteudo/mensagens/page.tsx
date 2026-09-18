@@ -89,7 +89,7 @@ export default async function ListaMensagens({
           <Cartao className="overflow-x-auto">
             <table className="w-full min-w-[44rem] text-sm">
               <thead>
-                <tr className="border-b border-borda bg-azul-50/60 text-left">
+                <tr className="border-b border-borda bg-marca-50/60 text-left">
                   <th className="w-32 px-5 py-3 font-semibold text-texto">Data</th>
                   <th className="px-4 py-3 font-semibold text-texto">Mensagem</th>
                   <th className="w-36 px-4 py-3 font-semibold text-texto">Situação</th>
@@ -100,12 +100,12 @@ export default async function ListaMensagens({
                 {mensagens.map((m) => {
                   const publicada = m.status === "publicado";
                   return (
-                    <tr key={m.id} className="align-top hover:bg-azul-50/40">
-                      <td className="px-5 py-3 font-medium text-azul-700">
+                    <tr key={m.id} className="align-top hover:bg-marca-50/40">
+                      <td className="px-5 py-3 font-medium text-marca-700">
                         <Link href={`${BASE}/${m.id}`}>{formatarData(m.data)}</Link>
                       </td>
                       <td className="px-4 py-3">
-                        <Link href={`${BASE}/${m.id}`} className="line-clamp-2 text-texto hover:text-azul-700">
+                        <Link href={`${BASE}/${m.id}`} className="line-clamp-2 text-texto hover:text-marca-700">
                           {m.texto}
                         </Link>
                         {m.autor ? (
@@ -124,7 +124,7 @@ export default async function ListaMensagens({
                               href={`${BASE}/${m.id}`}
                               aria-label="Editar"
                               title="Editar"
-                              className="grid h-9 w-9 place-items-center rounded-full text-azul-700 hover:bg-azul-100"
+                              className="grid h-9 w-9 place-items-center rounded-full text-marca-700 hover:bg-marca-100"
                             >
                               <Pencil className="h-4 w-4" />
                             </Link>
@@ -135,7 +135,7 @@ export default async function ListaMensagens({
                                 type="submit"
                                 aria-label={publicada ? "Voltar a rascunho" : "Publicar"}
                                 title={publicada ? "Voltar a rascunho" : "Publicar"}
-                                className="grid h-9 w-9 place-items-center rounded-full text-azul-700 hover:bg-azul-100"
+                                className="grid h-9 w-9 place-items-center rounded-full text-marca-700 hover:bg-marca-100"
                               >
                                 {publicada ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                               </button>

@@ -117,7 +117,7 @@ export default async function ListaDocumentos({
           <Cartao className="overflow-x-auto">
             <table className="w-full min-w-[48rem] text-sm">
               <thead>
-                <tr className="border-b border-borda bg-azul-50/60 text-left">
+                <tr className="border-b border-borda bg-marca-50/60 text-left">
                   <th className="w-28 px-5 py-3 font-semibold text-texto">Emissão</th>
                   <th className="px-4 py-3 font-semibold text-texto">Documento</th>
                   <th className="w-32 px-4 py-3 font-semibold text-texto">Condição</th>
@@ -129,12 +129,12 @@ export default async function ListaDocumentos({
                 {documentos.map((d) => {
                   const entrada = d.tipo_movimento === "entrada";
                   return (
-                    <tr key={d.id} className="align-top hover:bg-azul-50/40">
+                    <tr key={d.id} className="align-top hover:bg-marca-50/40">
                       <td className="px-5 py-3 text-texto-suave">{formatarData(d.data_emissao)}</td>
                       <td className="px-4 py-3">
                         <Link
                           href={`${BASE}/${d.id}`}
-                          className="flex items-center gap-2 font-medium text-texto hover:text-azul-700"
+                          className="flex items-center gap-2 font-medium text-texto hover:text-marca-700"
                         >
                           {entrada ? (
                             <ArrowUpCircle className="h-4 w-4 shrink-0 text-rose-500" />
@@ -150,7 +150,7 @@ export default async function ListaDocumentos({
                         ) : null}
                       </td>
                       <td className="px-4 py-3">
-                        <Etiqueta tom={d.condicao === "prazo" ? "azul" : "cinza"}>
+                        <Etiqueta tom={d.condicao === "prazo" ? "marca" : "cinza"}>
                           {d.condicao === "prazo" ? "A prazo" : "À vista"}
                         </Etiqueta>
                       </td>
@@ -164,7 +164,7 @@ export default async function ListaDocumentos({
                               href={`${BASE}/${d.id}`}
                               aria-label="Ver documento"
                               title="Ver documento"
-                              className="grid h-9 w-9 place-items-center rounded-full text-azul-700 hover:bg-azul-100"
+                              className="grid h-9 w-9 place-items-center rounded-full text-marca-700 hover:bg-marca-100"
                             >
                               <Eye className="h-4 w-4" />
                             </Link>

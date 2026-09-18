@@ -36,12 +36,12 @@ export function CarrosselNoticias({ noticias }: { noticias: Noticia[] }) {
           {noticias.map((n) => (
             <article key={n.id} className="relative min-w-0 flex-[0_0_100%]">
               <div
-                className="relative flex min-h-[22rem] flex-col justify-end bg-azul-800 bg-cover bg-center p-8 sm:min-h-[26rem] sm:p-12"
+                className="relative flex min-h-[22rem] flex-col justify-end bg-marca-800 bg-cover bg-center p-8 sm:min-h-[26rem] sm:p-12"
                 style={n.imagem_url ? { backgroundImage: `url(${n.imagem_url})` } : undefined}
               >
-                <div className="absolute inset-0 bg-gradient-to-t from-azul-900/90 via-azul-900/55 to-azul-900/10" />
+                <div className="absolute inset-0 bg-gradient-to-t from-marca-900/90 via-marca-900/55 to-marca-900/10" />
                 <div className="relative max-w-2xl text-white">
-                  <p className="text-xs font-medium uppercase tracking-wider text-azul-200">
+                  <p className="text-xs font-medium uppercase tracking-wider text-marca-200">
                     {formatarDataLonga(n.publicado_em ?? n.criado_em)}
                   </p>
                   <h2 className="mt-3 text-2xl font-semibold leading-tight sm:text-4xl">
@@ -52,7 +52,7 @@ export function CarrosselNoticias({ noticias }: { noticias: Noticia[] }) {
                   ) : null}
                   <Link
                     href={`/noticias/${n.slug}`}
-                    className="mt-6 inline-flex rounded-full bg-white px-6 py-2.5 text-sm font-medium text-azul-800 transition-transform hover:scale-[1.02]"
+                    className="mt-6 inline-flex rounded-full bg-white px-6 py-2.5 text-sm font-medium text-marca-800 transition-transform hover:scale-[1.02]"
                   >
                     Ler notícia
                   </Link>
@@ -69,7 +69,7 @@ export function CarrosselNoticias({ noticias }: { noticias: Noticia[] }) {
             type="button"
             aria-label="Anterior"
             onClick={() => embla?.scrollPrev()}
-            className="absolute left-4 top-1/2 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-azul-800 shadow-lg transition-transform hover:scale-105 sm:grid"
+            className="absolute left-4 top-1/2 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-marca-800 shadow-lg transition-transform hover:scale-105 sm:grid"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -77,7 +77,7 @@ export function CarrosselNoticias({ noticias }: { noticias: Noticia[] }) {
             type="button"
             aria-label="Próxima"
             onClick={() => embla?.scrollNext()}
-            className="absolute right-4 top-1/2 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-azul-800 shadow-lg transition-transform hover:scale-105 sm:grid"
+            className="absolute right-4 top-1/2 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-marca-800 shadow-lg transition-transform hover:scale-105 sm:grid"
           >
             <ChevronRight className="h-5 w-5" />
           </button>

@@ -57,10 +57,10 @@ export function CobrancaPix({
   }
 
   return (
-    <Cartao className="mt-6 border-azul-200 bg-gradient-to-br from-white to-azul-50">
+    <Cartao className="mt-6 border-marca-200 bg-gradient-to-br from-white to-marca-50">
       <CartaoCorpo className="sm:p-8">
         <h2 className="flex items-center gap-2 font-semibold text-texto">
-          <QrCode className="h-5 w-5 text-azul-600" />
+          <QrCode className="h-5 w-5 text-marca-600" />
           Cobrança Pix
         </h2>
         <p className="mt-1 text-sm text-texto-suave">
@@ -76,7 +76,7 @@ export function CobrancaPix({
               className="rounded-xl border border-borda bg-white p-2"
             />
           ) : (
-            <div className="h-[220px] w-[220px] animate-pulse rounded-xl bg-azul-100" />
+            <div className="h-[220px] w-[220px] animate-pulse rounded-xl bg-marca-100" />
           )}
 
           <div className="min-w-0 flex-1">
@@ -87,7 +87,7 @@ export function CobrancaPix({
             <button
               type="button"
               onClick={copiar}
-              className="mt-3 inline-flex items-center gap-2 rounded-full bg-azul-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-azul-700"
+              className="mt-3 inline-flex items-center gap-2 rounded-full bg-marca-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-marca-700"
             >
               {copiado ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               {copiado ? "Copiado" : "Copiar código"}

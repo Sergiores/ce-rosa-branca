@@ -51,10 +51,10 @@ export default async function PainelGestao({
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {atalhos.map(({ href, titulo, texto, Icone }) => (
             <Link key={href} href={href} className="group">
-              <Cartao className="h-full group-hover:shadow-lg group-hover:shadow-azul-900/10">
+              <Cartao className="h-full group-hover:shadow-lg group-hover:shadow-marca-900/10">
                 <CartaoCorpo>
-                  <Icone className="h-7 w-7 text-azul-600" />
-                  <h2 className="mt-3 font-semibold text-texto group-hover:text-azul-700">{titulo}</h2>
+                  <Icone className="h-7 w-7 text-marca-600" />
+                  <h2 className="mt-3 font-semibold text-texto group-hover:text-marca-700">{titulo}</h2>
                   <p className="mt-1 text-sm text-texto-suave">{texto}</p>
                 </CartaoCorpo>
               </Cartao>

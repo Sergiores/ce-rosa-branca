@@ -25,7 +25,7 @@ function Botao({
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full font-medium transition-colors disabled:opacity-50",
         discreto
-          ? "px-3 py-1.5 text-xs text-texto-suave hover:bg-azul-50 hover:text-azul-700"
+          ? "px-3 py-1.5 text-xs text-texto-suave hover:bg-marca-50 hover:text-marca-700"
           : "px-4 py-2 text-sm text-rose-700 hover:bg-rose-50",
       )}
     >

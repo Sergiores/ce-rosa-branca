@@ -59,7 +59,7 @@ export function FormularioBaixa({
           <button
             type="button"
             onClick={() => setValor(saldo.toFixed(2).replace(".", ","))}
-            className="mt-1.5 text-xs font-medium text-azul-700 hover:text-azul-800"
+            className="mt-1.5 text-xs font-medium text-marca-700 hover:text-marca-800"
           >
             usar o saldo total ({formatarMoeda(saldo)})
           </button>

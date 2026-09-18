@@ -56,7 +56,7 @@ export default async function PaginaPermissoes() {
           <CartaoCorpo className="p-0">
             <table className="w-full min-w-[46rem] text-sm">
               <thead>
-                <tr className="border-b border-borda bg-azul-50/60">
+                <tr className="border-b border-borda bg-marca-50/60">
                   <th className="px-5 py-3 text-left font-semibold text-texto">Tela</th>
                   {PAPEIS.map((p) => (
                     <th key={p.valor} className="px-4 py-3 text-center font-semibold text-texto">
@@ -80,7 +80,7 @@ export default async function PaginaPermissoes() {
                                 type="checkbox"
                                 name={`ver:${chave}`}
                                 defaultChecked={atual?.ver ?? false}
-                                className="h-4 w-4 rounded border-borda text-azul-600 focus:ring-azul-400"
+                                className="h-4 w-4 rounded border-borda text-marca-600 focus:ring-marca-400"
                               />
                               ver
                             </label>
@@ -89,7 +89,7 @@ export default async function PaginaPermissoes() {
                                 type="checkbox"
                                 name={`editar:${chave}`}
                                 defaultChecked={atual?.editar ?? false}
-                                className="h-4 w-4 rounded border-borda text-azul-600 focus:ring-azul-400"
+                                className="h-4 w-4 rounded border-borda text-marca-600 focus:ring-marca-400"
                               />
                               editar
                             </label>

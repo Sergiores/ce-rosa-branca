@@ -121,7 +121,7 @@ export function FormularioDocumento() {
       <div className="rounded-2xl border border-borda bg-white p-5">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-sm font-semibold text-texto">Itens do documento</h3>
-          <span className="text-sm font-medium text-azul-700">Total: {formatarMoeda(total)}</span>
+          <span className="text-sm font-medium text-marca-700">Total: {formatarMoeda(total)}</span>
         </div>
 
         <div className="space-y-3">
@@ -168,7 +168,7 @@ export function FormularioDocumento() {
         <button
           type="button"
           onClick={() => setItens((a) => [...a, { descricao: "", quantidade: "1", valor: "" }])}
-          className="mt-4 inline-flex items-center gap-2 rounded-full border border-azul-200 px-4 py-2 text-sm font-medium text-azul-700 hover:bg-azul-50"
+          className="mt-4 inline-flex items-center gap-2 rounded-full border border-marca-200 px-4 py-2 text-sm font-medium text-marca-700 hover:bg-marca-50"
         >
           <Plus className="h-4 w-4" /> Adicionar item
         </button>
@@ -181,21 +181,21 @@ export function FormularioDocumento() {
           <Campo id="vencimento_avista" name="vencimento_avista" type="date" defaultValue={emissao} />
         </div>
       ) : (
-        <div className="rounded-2xl border border-azul-200 bg-azul-50/60 p-5">
+        <div className="rounded-2xl border border-marca-200 bg-marca-50/60 p-5">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <h3 className="text-sm font-semibold text-azul-800">Duplicatas</h3>
+            <h3 className="text-sm font-semibold text-marca-800">Duplicatas</h3>
             <div className="flex items-center gap-2">
               {[2, 3, 4, 6, 12].map((n) => (
                 <button
                   key={n}
                   type="button"
                   onClick={() => dividirParcelas(n)}
-                  className="rounded-full border border-azul-200 bg-white px-3 py-1.5 text-xs font-medium text-azul-700 hover:bg-azul-100"
+                  className="rounded-full border border-marca-200 bg-white px-3 py-1.5 text-xs font-medium text-marca-700 hover:bg-marca-100"
                 >
                   {n}x
                 </button>
               ))}
-              <Wand2 className="h-4 w-4 text-azul-500" />
+              <Wand2 className="h-4 w-4 text-marca-500" />
             </div>
           </div>
 
@@ -238,7 +238,7 @@ export function FormularioDocumento() {
             <button
               type="button"
               onClick={() => setParcelas((a) => [...a, { vencimento: hoje(), valor: "" }])}
-              className="inline-flex items-center gap-2 rounded-full border border-azul-200 bg-white px-4 py-2 text-sm font-medium text-azul-700 hover:bg-azul-100"
+              className="inline-flex items-center gap-2 rounded-full border border-marca-200 bg-white px-4 py-2 text-sm font-medium text-marca-700 hover:bg-marca-100"
             >
               <Plus className="h-4 w-4" /> Adicionar parcela
             </button>

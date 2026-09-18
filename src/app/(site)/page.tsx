@@ -31,16 +31,16 @@ export default async function PaginaInicial() {
   return (
     <>
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-azul-100 via-azul-50 to-fundo">
-        <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-azul-200/50 blur-3xl" />
+      <section className="relative overflow-hidden bg-gradient-to-b from-marca-100 via-marca-50 to-fundo">
+        <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-marca-200/50 blur-3xl" />
         <div className="container-site relative py-16 sm:py-24">
           <div className="animar-surgir max-w-3xl">
-            <Etiqueta tom="azul">
+            <Etiqueta tom="marca">
               <Sparkles className="h-3.5 w-3.5" />
               Caridade, estudo e trabalho
             </Etiqueta>
             <h1 className="mt-5 text-4xl font-semibold leading-[1.1] tracking-tight text-texto sm:text-6xl">
-              Casa Espírita <span className="text-azul-600">Rosa Branca</span>
+              Casa Espírita <span className="text-marca-600">Rosa Branca</span>
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-relaxed text-texto-suave">
               Uma casa de acolhimento, estudo e oração. Aqui você encontra as atividades da semana,
@@ -67,9 +67,9 @@ export default async function PaginaInicial() {
 
       {/* Mensagem do dia */}
       <section className="container-site mt-16">
-        <Cartao className="overflow-hidden border-azul-200 bg-gradient-to-br from-white to-azul-50">
+        <Cartao className="overflow-hidden border-marca-200 bg-gradient-to-br from-white to-marca-50">
           <CartaoCorpo className="sm:p-10">
-            <Etiqueta tom="azul">Mensagem do dia</Etiqueta>
+            <Etiqueta tom="marca">Mensagem do dia</Etiqueta>
             {mensagem ? (
               <>
                 <blockquote className="mt-5 text-xl leading-relaxed text-texto sm:text-2xl">
@@ -99,7 +99,7 @@ export default async function PaginaInicial() {
           />
           <Link
             href="/noticias"
-            className="hidden shrink-0 items-center gap-1 text-sm font-medium text-azul-700 hover:text-azul-800 sm:inline-flex"
+            className="hidden shrink-0 items-center gap-1 text-sm font-medium text-marca-700 hover:text-marca-800 sm:inline-flex"
           >
             Ver todas <ArrowRight className="h-4 w-4" />
           </Link>
@@ -113,16 +113,16 @@ export default async function PaginaInicial() {
           ) : (
             noticias.map((n) => (
               <Link key={n.id} href={`/noticias/${n.slug}`} className="group">
-                <Cartao className="h-full overflow-hidden group-hover:shadow-lg group-hover:shadow-azul-900/10">
+                <Cartao className="h-full overflow-hidden group-hover:shadow-lg group-hover:shadow-marca-900/10">
                   <div
-                    className="h-44 bg-azul-100 bg-cover bg-center"
+                    className="h-44 bg-marca-100 bg-cover bg-center"
                     style={n.imagem_url ? { backgroundImage: `url(${n.imagem_url})` } : undefined}
                   />
                   <CartaoCorpo>
                     <p className="text-xs text-texto-suave">
                       {formatarData(n.publicado_em ?? n.criado_em)}
                     </p>
-                    <h3 className="mt-2 text-lg font-semibold leading-snug text-texto group-hover:text-azul-700">
+                    <h3 className="mt-2 text-lg font-semibold leading-snug text-texto group-hover:text-marca-700">
                       {n.titulo}
                     </h3>
                     {n.resumo ? (
@@ -148,7 +148,7 @@ export default async function PaginaInicial() {
             eventos.map((e) => (
               <Cartao key={e.id} className="h-full">
                 <CartaoCorpo>
-                  <div className="flex items-center gap-2 text-azul-600">
+                  <div className="flex items-center gap-2 text-marca-600">
                     <CalendarDays className="h-4 w-4" />
                     <span className="text-sm font-medium">
                       {formatarData(e.inicio, "dd/MM 'às' HH:mm")}
@@ -169,16 +169,16 @@ export default async function PaginaInicial() {
       {/* Atalhos */}
       <section className="container-site mt-20">
         <div className="grid gap-6 lg:grid-cols-3">
-          <Cartao className="bg-azul-600 text-white">
+          <Cartao className="bg-marca-600 text-white">
             <CartaoCorpo className="sm:p-8">
-              <BookOpen className="h-8 w-8 text-azul-100" />
+              <BookOpen className="h-8 w-8 text-marca-100" />
               <h3 className="mt-4 text-xl font-semibold">Estudo do Livro dos Espíritos</h3>
-              <p className="mt-2 text-sm text-azul-100">
+              <p className="mt-2 text-sm text-marca-100">
                 Pergunta, resposta e o parecer dos nossos médiuns sobre cada texto.
               </p>
               <Link
                 href="/estudo"
-                className="mt-6 inline-flex items-center gap-1 rounded-full bg-white px-5 py-2.5 text-sm font-medium text-azul-700"
+                className="mt-6 inline-flex items-center gap-1 rounded-full bg-white px-5 py-2.5 text-sm font-medium text-marca-700"
               >
                 Estudar agora <ArrowRight className="h-4 w-4" />
               </Link>
@@ -187,7 +187,7 @@ export default async function PaginaInicial() {
 
           <Cartao>
             <CartaoCorpo className="sm:p-8">
-              <HeartHandshake className="h-8 w-8 text-azul-600" />
+              <HeartHandshake className="h-8 w-8 text-marca-600" />
               <h3 className="mt-4 text-xl font-semibold text-texto">Projetos sociais</h3>
               <p className="mt-2 text-sm text-texto-suave">
                 {projetos.length > 0
@@ -196,7 +196,7 @@ export default async function PaginaInicial() {
               </p>
               <Link
                 href="/projetos"
-                className="mt-6 inline-flex items-center gap-1 text-sm font-medium text-azul-700"
+                className="mt-6 inline-flex items-center gap-1 text-sm font-medium text-marca-700"
               >
                 Ver projetos <ArrowRight className="h-4 w-4" />
               </Link>
@@ -205,7 +205,7 @@ export default async function PaginaInicial() {
 
           <Cartao>
             <CartaoCorpo className="sm:p-8">
-              <Sparkles className="h-8 w-8 text-azul-600" />
+              <Sparkles className="h-8 w-8 text-marca-600" />
               <h3 className="mt-4 text-xl font-semibold text-texto">Loja online</h3>
               <p className="mt-2 text-sm text-texto-suave">
                 Livros e materiais de estudo. A renda apoia as atividades da casa.
@@ -215,7 +215,7 @@ export default async function PaginaInicial() {
                   href={lojaUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-6 inline-flex items-center gap-1 text-sm font-medium text-azul-700"
+                  className="mt-6 inline-flex items-center gap-1 text-sm font-medium text-marca-700"
                 >
                   Acessar a loja <ArrowRight className="h-4 w-4" />
                 </a>

@@ -42,8 +42,8 @@ export function NavegacaoLateral({ telasVisiveis }: { telasVisiveis: TelaKey[] }
             className={cn(
               "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
               ativo
-                ? "bg-azul-600 text-white shadow-md shadow-azul-600/20"
-                : "text-texto-suave hover:bg-azul-50 hover:text-azul-700",
+                ? "bg-marca-600 text-white shadow-md shadow-marca-600/20"
+                : "text-texto-suave hover:bg-marca-50 hover:text-marca-700",
             )}
           >
             <Icone className="h-4 w-4 shrink-0" />
@@ -60,7 +60,7 @@ export function NavegacaoLateral({ telasVisiveis }: { telasVisiveis: TelaKey[] }
         type="button"
         onClick={() => setAberto((v) => !v)}
         aria-label="Abrir menu da gestão"
-        className="fixed bottom-5 right-5 z-50 grid h-12 w-12 place-items-center rounded-full bg-azul-600 text-white shadow-lg lg:hidden"
+        className="fixed bottom-5 right-5 z-50 grid h-12 w-12 place-items-center rounded-full bg-marca-600 text-white shadow-lg lg:hidden"
       >
         {aberto ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </button>

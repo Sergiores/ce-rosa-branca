@@ -90,7 +90,7 @@ export default async function ListaEventos({
           <Cartao className="overflow-x-auto">
             <table className="w-full min-w-[46rem] text-sm">
               <thead>
-                <tr className="border-b border-borda bg-azul-50/60 text-left">
+                <tr className="border-b border-borda bg-marca-50/60 text-left">
                   <th className="w-44 px-5 py-3 font-semibold text-texto">Quando</th>
                   <th className="px-4 py-3 font-semibold text-texto">Evento</th>
                   <th className="w-36 px-4 py-3 font-semibold text-texto">Situação</th>
@@ -102,9 +102,9 @@ export default async function ListaEventos({
                   const publicado = e.status === "publicado";
                   const passado = new Date(e.inicio).getTime() < agora;
                   return (
-                    <tr key={e.id} className="align-top hover:bg-azul-50/40">
+                    <tr key={e.id} className="align-top hover:bg-marca-50/40">
                       <td className="px-5 py-3">
-                        <Link href={`${BASE}/${e.id}`} className="font-medium text-azul-700">
+                        <Link href={`${BASE}/${e.id}`} className="font-medium text-marca-700">
                           {formatarDataHora(e.inicio)}
                         </Link>
                         {passado ? (
@@ -114,7 +114,7 @@ export default async function ListaEventos({
                       <td className="px-4 py-3">
                         <Link
                           href={`${BASE}/${e.id}`}
-                          className="line-clamp-2 font-medium text-texto hover:text-azul-700"
+                          className="line-clamp-2 font-medium text-texto hover:text-marca-700"
                         >
                           {e.titulo}
                         </Link>
@@ -136,7 +136,7 @@ export default async function ListaEventos({
                               href={`${BASE}/${e.id}`}
                               aria-label="Editar"
                               title="Editar"
-                              className="grid h-9 w-9 place-items-center rounded-full text-azul-700 hover:bg-azul-100"
+                              className="grid h-9 w-9 place-items-center rounded-full text-marca-700 hover:bg-marca-100"
                             >
                               <Pencil className="h-4 w-4" />
                             </Link>
@@ -147,7 +147,7 @@ export default async function ListaEventos({
                                 type="submit"
                                 aria-label={publicado ? "Voltar a rascunho" : "Publicar"}
                                 title={publicado ? "Voltar a rascunho" : "Publicar"}
-                                className="grid h-9 w-9 place-items-center rounded-full text-azul-700 hover:bg-azul-100"
+                                className="grid h-9 w-9 place-items-center rounded-full text-marca-700 hover:bg-marca-100"
                               >
                                 {publicado ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                               </button>

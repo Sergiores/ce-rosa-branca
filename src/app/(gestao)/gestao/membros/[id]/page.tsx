@@ -15,8 +15,8 @@ import type { Membro, StatusTitulo, TituloComSaldo } from "@/lib/tipos";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Membro" };
 
-const TOM: Record<StatusTitulo, "verde" | "ambar" | "vermelho" | "azul" | "cinza"> = {
-  pago: "verde", parcial: "azul", aberto: "ambar", vencido: "vermelho", cancelado: "cinza",
+const TOM: Record<StatusTitulo, "verde" | "ambar" | "vermelho" | "marca" | "cinza"> = {
+  pago: "verde", parcial: "marca", aberto: "ambar", vencido: "vermelho", cancelado: "cinza",
 };
 const ROTULO: Record<StatusTitulo, string> = {
   pago: "Pago", parcial: "Parcial", aberto: "Em aberto", vencido: "Vencido", cancelado: "Cancelado",
@@ -61,7 +61,7 @@ export default async function EditorMembro({ params }: { params: Promise<{ id: s
     <div className="mx-auto max-w-3xl">
       <Link
         href="/gestao/membros"
-        className="inline-flex items-center gap-1 text-sm font-medium text-azul-700 hover:text-azul-800"
+        className="inline-flex items-center gap-1 text-sm font-medium text-marca-700 hover:text-marca-800"
       >
         <ArrowLeft className="h-4 w-4" /> Voltar aos membros
       </Link>
@@ -123,13 +123,13 @@ export default async function EditorMembro({ params }: { params: Promise<{ id: s
                 type="checkbox"
                 name="ativo"
                 defaultChecked={membro?.ativo ?? true}
-                className="h-4 w-4 rounded border-borda text-azul-600 focus:ring-azul-400"
+                className="h-4 w-4 rounded border-borda text-marca-600 focus:ring-marca-400"
               />
               <span className="text-sm text-texto">Membro ativo</span>
             </label>
 
-            <div className="rounded-2xl border border-azul-200 bg-azul-50/60 p-5">
-              <h3 className="mb-4 text-sm font-semibold text-azul-800">Mensalidade</h3>
+            <div className="rounded-2xl border border-marca-200 bg-marca-50/60 p-5">
+              <h3 className="mb-4 text-sm font-semibold text-marca-800">Mensalidade</h3>
               <div className="grid gap-5 sm:grid-cols-2">
                 <div>
                   <Rotulo htmlFor="mensalidade_valor">Valor mensal (R$)</Rotulo>
@@ -158,7 +158,7 @@ export default async function EditorMembro({ params }: { params: Promise<{ id: s
                   type="checkbox"
                   name="mensalidade_ativa"
                   defaultChecked={mensalidade?.ativo ?? true}
-                  className="h-4 w-4 rounded border-borda text-azul-600 focus:ring-azul-400"
+                  className="h-4 w-4 rounded border-borda text-marca-600 focus:ring-marca-400"
                 />
                 <span className="text-sm text-texto">
                   Gerar mensalidade para este membro no lote mensal
@@ -186,7 +186,7 @@ export default async function EditorMembro({ params }: { params: Promise<{ id: s
             ) : (
               <table className="w-full min-w-[34rem] text-sm">
                 <thead>
-                  <tr className="border-b border-borda bg-azul-50/60 text-left">
+                  <tr className="border-b border-borda bg-marca-50/60 text-left">
                     <th className="w-28 px-6 py-3 font-semibold text-texto">Vencimento</th>
                     <th className="px-4 py-3 font-semibold text-texto">Descrição</th>
                     <th className="w-28 px-4 py-3 text-right font-semibold text-texto">Valor</th>
@@ -195,9 +195,9 @@ export default async function EditorMembro({ params }: { params: Promise<{ id: s
                 </thead>
                 <tbody className="divide-y divide-borda">
                   {titulos.map((t) => (
-                    <tr key={t.id} className="hover:bg-azul-50/40">
+                    <tr key={t.id} className="hover:bg-marca-50/40">
                       <td className="px-6 py-3">
-                        <Link href={`/gestao/titulos/${t.id}`} className="font-medium text-azul-700">
+                        <Link href={`/gestao/titulos/${t.id}`} className="font-medium text-marca-700">
                           {formatarData(t.vencimento)}
                         </Link>
                       </td>

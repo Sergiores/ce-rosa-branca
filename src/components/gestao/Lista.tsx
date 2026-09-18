@@ -104,7 +104,7 @@ export function FiltrosLista({
           {temFiltro ? (
             <Link
               href={base}
-              className="inline-flex h-11 items-center gap-2 rounded-full border border-borda bg-white px-5 text-sm font-medium text-texto-suave hover:bg-azul-50"
+              className="inline-flex h-11 items-center gap-2 rounded-full border border-borda bg-white px-5 text-sm font-medium text-texto-suave hover:bg-marca-50"
             >
               <X className="h-4 w-4" /> Limpar
             </Link>
@@ -140,7 +140,7 @@ export function Paginacao({
         {pagina > 1 ? (
           <Link
             href={montarUrl(base, { ...filtros, pagina: pagina - 1 > 1 ? pagina - 1 : undefined })}
-            className="rounded-full border border-borda bg-white px-4 py-2 text-sm font-medium text-azul-700 hover:bg-azul-50"
+            className="rounded-full border border-borda bg-white px-4 py-2 text-sm font-medium text-marca-700 hover:bg-marca-50"
           >
             Anterior
           </Link>
@@ -151,7 +151,7 @@ export function Paginacao({
         {pagina < ultima ? (
           <Link
             href={montarUrl(base, { ...filtros, pagina: pagina + 1 })}
-            className="rounded-full border border-borda bg-white px-4 py-2 text-sm font-medium text-azul-700 hover:bg-azul-50"
+            className="rounded-full border border-borda bg-white px-4 py-2 text-sm font-medium text-marca-700 hover:bg-marca-50"
           >
             Próxima
           </Link>

@@ -46,8 +46,8 @@ export default async function PaginasInstitucionais({
               href={`/gestao/conteudo/paginas?slug=${p.slug}`}
               className={
                 ativo
-                  ? "rounded-full bg-azul-600 px-5 py-2.5 text-sm font-medium text-white"
-                  : "rounded-full border border-borda bg-white px-5 py-2.5 text-sm font-medium text-texto-suave hover:bg-azul-50"
+                  ? "rounded-full bg-marca-600 px-5 py-2.5 text-sm font-medium text-white"
+                  : "rounded-full border border-borda bg-white px-5 py-2.5 text-sm font-medium text-texto-suave hover:bg-marca-50"
               }
             >
               {p.titulo}

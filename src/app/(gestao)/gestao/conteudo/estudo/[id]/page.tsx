@@ -60,7 +60,7 @@ export default async function EditorQuestao({
     <div className="mx-auto max-w-3xl">
       <Link
         href="/gestao/conteudo/estudo"
-        className="inline-flex items-center gap-1 text-sm font-medium text-azul-700 hover:text-azul-800"
+        className="inline-flex items-center gap-1 text-sm font-medium text-marca-700 hover:text-marca-800"
       >
         <ArrowLeft className="h-4 w-4" /> Voltar às questões
       </Link>
@@ -79,7 +79,7 @@ export default async function EditorQuestao({
             href={`/estudo/${questao!.numero}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-sm font-medium text-azul-700 hover:text-azul-800"
+            className="inline-flex items-center gap-1 text-sm font-medium text-marca-700 hover:text-marca-800"
           >
             ver no site <ExternalLink className="h-3.5 w-3.5" />
           </a>

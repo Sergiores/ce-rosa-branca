@@ -24,7 +24,7 @@ export default async function PaginaProjetos() {
           {projetos.map((p) => (
             <Cartao key={p.id} className="h-full overflow-hidden">
               <div
-                className="h-40 bg-azul-100 bg-cover bg-center"
+                className="h-40 bg-marca-100 bg-cover bg-center"
                 style={p.imagem_url ? { backgroundImage: `url(${p.imagem_url})` } : undefined}
               />
               <CartaoCorpo>

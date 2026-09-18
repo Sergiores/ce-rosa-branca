@@ -15,8 +15,8 @@ import type { StatusTitulo, TituloComSaldo } from "@/lib/tipos";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Documento" };
 
-const TOM: Record<StatusTitulo, "verde" | "ambar" | "vermelho" | "azul" | "cinza"> = {
-  pago: "verde", parcial: "azul", aberto: "ambar", vencido: "vermelho", cancelado: "cinza",
+const TOM: Record<StatusTitulo, "verde" | "ambar" | "vermelho" | "marca" | "cinza"> = {
+  pago: "verde", parcial: "marca", aberto: "ambar", vencido: "vermelho", cancelado: "cinza",
 };
 const ROTULO: Record<StatusTitulo, string> = {
   pago: "Pago", parcial: "Parcial", aberto: "Em aberto", vencido: "Vencido", cancelado: "Cancelado",
@@ -77,7 +77,7 @@ export default async function DetalheDocumento({
     <div className="mx-auto max-w-3xl">
       <Link
         href="/gestao/compras"
-        className="inline-flex items-center gap-1 text-sm font-medium text-azul-700 hover:text-azul-800"
+        className="inline-flex items-center gap-1 text-sm font-medium text-marca-700 hover:text-marca-800"
       >
         <ArrowLeft className="h-4 w-4" /> Voltar aos documentos
       </Link>
@@ -99,7 +99,7 @@ export default async function DetalheDocumento({
         <h1 className="text-2xl font-semibold tracking-tight text-texto">
           {documento.fornecedor_cliente} · nº {documento.numero}
         </h1>
-        <Etiqueta tom={documento.condicao === "prazo" ? "azul" : "cinza"}>
+        <Etiqueta tom={documento.condicao === "prazo" ? "marca" : "cinza"}>
           {documento.condicao === "prazo" ? "A prazo" : "À vista"}
         </Etiqueta>
       </div>
@@ -129,7 +129,7 @@ export default async function DetalheDocumento({
           ) : (
             <table className="w-full min-w-[34rem] text-sm">
               <thead>
-                <tr className="border-b border-borda bg-azul-50/60 text-left">
+                <tr className="border-b border-borda bg-marca-50/60 text-left">
                   <th className="px-6 py-3 font-semibold text-texto">Produto</th>
                   <th className="w-24 px-4 py-3 text-right font-semibold text-texto">Qtd.</th>
                   <th className="w-32 px-4 py-3 text-right font-semibold text-texto">Unitário</th>
@@ -168,7 +168,7 @@ export default async function DetalheDocumento({
           ) : (
             <table className="w-full min-w-[34rem] text-sm">
               <thead>
-                <tr className="border-b border-borda bg-azul-50/60 text-left">
+                <tr className="border-b border-borda bg-marca-50/60 text-left">
                   <th className="w-24 px-6 py-3 font-semibold text-texto">Parcela</th>
                   <th className="px-4 py-3 font-semibold text-texto">Vencimento</th>
                   <th className="w-32 px-4 py-3 text-right font-semibold text-texto">Valor</th>
@@ -178,9 +178,9 @@ export default async function DetalheDocumento({
               </thead>
               <tbody className="divide-y divide-borda">
                 {titulos.map((t) => (
-                  <tr key={t.id} className="hover:bg-azul-50/40">
+                  <tr key={t.id} className="hover:bg-marca-50/40">
                     <td className="px-6 py-3">
-                      <Link href={`/gestao/titulos/${t.id}`} className="font-medium text-azul-700">
+                      <Link href={`/gestao/titulos/${t.id}`} className="font-medium text-marca-700">
                         {t.parcela}/{t.total_parcelas}
                       </Link>
                     </td>
@@ -238,7 +238,7 @@ function Dado({
   return (
     <div>
       <p className="text-sm text-texto-suave">{rotulo}</p>
-      <p className={destaque ? "mt-1 text-xl font-semibold text-azul-700" : "mt-1 font-medium text-texto"}>
+      <p className={destaque ? "mt-1 text-xl font-semibold text-marca-700" : "mt-1 font-medium text-texto"}>
         {valor}
       </p>
     </div>

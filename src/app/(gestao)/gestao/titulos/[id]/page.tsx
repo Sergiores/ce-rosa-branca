@@ -16,8 +16,8 @@ import type { Baixa, StatusTitulo, TituloComSaldo } from "@/lib/tipos";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Título" };
 
-const TOM: Record<StatusTitulo, "verde" | "ambar" | "vermelho" | "azul" | "cinza"> = {
-  pago: "verde", parcial: "azul", aberto: "ambar", vencido: "vermelho", cancelado: "cinza",
+const TOM: Record<StatusTitulo, "verde" | "ambar" | "vermelho" | "marca" | "cinza"> = {
+  pago: "verde", parcial: "marca", aberto: "ambar", vencido: "vermelho", cancelado: "cinza",
 };
 const ROTULO: Record<StatusTitulo, string> = {
   pago: "Pago", parcial: "Parcial", aberto: "Em aberto", vencido: "Vencido", cancelado: "Cancelado",
@@ -49,7 +49,7 @@ export default async function PaginaTitulo({ params }: { params: Promise<{ id: s
     <div className="mx-auto max-w-3xl">
       <Link
         href={voltarPara}
-        className="inline-flex items-center gap-1 text-sm font-medium text-azul-700 hover:text-azul-800"
+        className="inline-flex items-center gap-1 text-sm font-medium text-marca-700 hover:text-marca-800"
       >
         <ArrowLeft className="h-4 w-4" />
         Voltar a contas a {titulo.tipo === "pagar" ? "pagar" : "receber"}
@@ -187,7 +187,7 @@ function Dado({
   return (
     <div>
       <p className="text-sm text-texto-suave">{rotulo}</p>
-      <p className={destaque ? "mt-1 text-xl font-semibold text-azul-700" : "mt-1 font-medium text-texto"}>
+      <p className={destaque ? "mt-1 text-xl font-semibold text-marca-700" : "mt-1 font-medium text-texto"}>
         {valor}
       </p>
     </div>

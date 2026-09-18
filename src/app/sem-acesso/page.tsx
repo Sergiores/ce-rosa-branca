@@ -26,19 +26,19 @@ export default async function PaginaSemAcesso({
   const inativo = motivo === "inativo";
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-azul-100 via-azul-50 to-fundo px-5 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-marca-100 via-marca-50 to-fundo px-5 py-12">
       <div className="w-full max-w-md">
         <Link href="/" className="mb-8 flex items-center justify-center gap-3">
-          <span className="grid h-11 w-11 place-items-center rounded-full bg-azul-600 text-sm font-semibold text-white shadow-md shadow-azul-600/25">
+          <span className="grid h-11 w-11 place-items-center rounded-full bg-marca-600 text-sm font-semibold text-white shadow-md shadow-marca-600/25">
             RB
           </span>
           <span className="leading-tight">
             <span className="block text-sm font-semibold text-texto">Casa Espírita</span>
-            <span className="block text-sm text-azul-600">Rosa Branca</span>
+            <span className="block text-sm text-marca-600">Rosa Branca</span>
           </span>
         </Link>
 
-        <div className="rounded-3xl border border-borda bg-white p-8 shadow-lg shadow-azul-900/5">
+        <div className="rounded-3xl border border-borda bg-white p-8 shadow-lg shadow-marca-900/5">
           <h1 className="text-xl font-semibold text-texto">
             {inativo ? "Acesso suspenso" : "Esta conta não tem acesso"}
           </h1>
@@ -51,7 +51,7 @@ export default async function PaginaSemAcesso({
           <form action={sair} className="mt-6">
             <button
               type="submit"
-              className="w-full rounded-full bg-azul-600 px-5 py-2.5 text-sm font-medium text-white shadow-md shadow-azul-600/25 hover:bg-azul-700"
+              className="w-full rounded-full bg-marca-600 px-5 py-2.5 text-sm font-medium text-white shadow-md shadow-marca-600/25 hover:bg-marca-700"
             >
               Sair desta conta
             </button>
@@ -59,7 +59,7 @@ export default async function PaginaSemAcesso({
         </div>
 
         <p className="mt-6 text-center text-sm">
-          <Link href="/" className="text-azul-700 hover:text-azul-800">
+          <Link href="/" className="text-marca-700 hover:text-marca-800">
             Voltar ao site
           </Link>
         </p>

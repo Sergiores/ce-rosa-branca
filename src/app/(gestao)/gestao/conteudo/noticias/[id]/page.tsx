@@ -30,7 +30,7 @@ export default async function FormNoticia({ params }: { params: Promise<{ id: st
     <div className="mx-auto max-w-3xl">
       <Link
         href="/gestao/conteudo/noticias"
-        className="inline-flex items-center gap-1 text-sm font-medium text-azul-700 hover:text-azul-800"
+        className="inline-flex items-center gap-1 text-sm font-medium text-marca-700 hover:text-marca-800"
       >
         <ArrowLeft className="h-4 w-4" /> Voltar às notícias
       </Link>
@@ -95,7 +95,7 @@ export default async function FormNoticia({ params }: { params: Promise<{ id: st
                 type="checkbox"
                 name="destaque_carrossel"
                 defaultChecked={noticia?.destaque_carrossel ?? false}
-                className="h-4 w-4 rounded border-borda text-azul-600 focus:ring-azul-400"
+                className="h-4 w-4 rounded border-borda text-marca-600 focus:ring-marca-400"
               />
               <span className="text-sm text-texto">Exibir no carrossel da página inicial</span>
             </label>

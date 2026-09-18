@@ -85,12 +85,12 @@ export function UploadImagem({
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={enviando}
-          className="flex h-32 w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-borda bg-white text-sm text-texto-suave transition-colors hover:border-azul-300 hover:bg-azul-50"
+          className="flex h-32 w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-borda bg-white text-sm text-texto-suave transition-colors hover:border-marca-300 hover:bg-marca-50"
         >
           {enviando ? (
-            <Loader2 className="h-6 w-6 animate-spin text-azul-600" />
+            <Loader2 className="h-6 w-6 animate-spin text-marca-600" />
           ) : (
-            <ImagePlus className="h-6 w-6 text-azul-500" />
+            <ImagePlus className="h-6 w-6 text-marca-500" />
           )}
           {enviando ? "Enviando..." : "Escolher imagem (JPG, PNG ou WEBP, até 5 MB)"}
         </button>
