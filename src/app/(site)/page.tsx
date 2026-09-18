@@ -67,21 +67,21 @@ export default async function PaginaInicial({
         <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-marca-200/50 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-40 -left-24 h-80 w-80 rounded-full bg-marca-100/70 blur-3xl" />
 
-        <div className="container-site relative grid items-center gap-10 py-16 sm:py-20 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
+        <div className="container-site relative grid items-center gap-8 py-10 sm:py-16 lg:grid-cols-[1.05fr_1fr] lg:gap-14 lg:py-20">
           <div className="animar-surgir">
             <Etiqueta tom="marca">
               <Sparkles className="h-3.5 w-3.5" />
               No poder de Deus, tudo é possível
             </Etiqueta>
 
-            <h1 className="mt-6 font-marca text-5xl leading-[1.05] text-texto sm:text-6xl">
+            <h1 className="mt-5 font-marca text-4xl leading-[1.05] text-texto sm:text-5xl lg:text-6xl">
               <span className="block text-[0.32em] uppercase tracking-[0.34em] text-marca-600">
                 Casa Espírita
               </span>
-              <span className="mt-3 block">Rosa Branca</span>
+              <span className="mt-2 block sm:mt-3">Rosa Branca</span>
             </h1>
 
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-texto-suave">
+            <p className="mt-5 max-w-xl leading-relaxed text-texto-suave sm:text-lg">
               Uma casa de acolhimento, estudo e oração. Aqui você encontra a agenda da semana,
               nossas mensagens, os projetos sociais e o estudo da doutrina espírita.
             </p>
