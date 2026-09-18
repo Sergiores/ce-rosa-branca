@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/site/Logo";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { criarClienteServidor } from "@/lib/supabase/server";
@@ -28,14 +29,8 @@ export default async function PaginaSemAcesso({
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-marca-100 via-marca-50 to-fundo px-5 py-12">
       <div className="w-full max-w-md">
-        <Link href="/" className="mb-8 flex items-center justify-center gap-3">
-          <span className="grid h-11 w-11 place-items-center rounded-full bg-marca-600 text-sm font-semibold text-white shadow-md shadow-marca-600/25">
-            RB
-          </span>
-          <span className="leading-tight">
-            <span className="block text-sm font-semibold text-texto">Casa Espírita</span>
-            <span className="block text-sm text-marca-600">Rosa Branca</span>
-          </span>
+        <Link href="/" className="mb-8 flex justify-center">
+          <Logo />
         </Link>
 
         <div className="rounded-3xl border border-borda bg-white p-8 shadow-lg shadow-marca-900/5">

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/site/Logo";
 
 export function Rodape({ lojaUrl }: { lojaUrl?: string }) {
   const ano = new Date().getFullYear();
@@ -7,12 +8,7 @@ export function Rodape({ lojaUrl }: { lojaUrl?: string }) {
     <footer className="mt-20 border-t border-borda bg-white">
       <div className="container-site grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <div className="flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded-full bg-marca-600 text-sm font-semibold text-white">
-              RB
-            </span>
-            <span className="text-sm font-semibold text-texto">Casa Espírita Rosa Branca</span>
-          </div>
+          <Logo tamanho="sm" />
           <p className="mt-4 text-sm leading-relaxed text-texto-suave">
             Casa de estudo, oração e trabalho, aberta a todos que buscam consolo e esclarecimento à
             luz da doutrina espírita.

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   CalendarDays,
   Store,
@@ -66,20 +67,40 @@ export default async function PaginaInicial({
         <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-marca-200/50 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-40 -left-24 h-80 w-80 rounded-full bg-marca-100/70 blur-3xl" />
 
-        <div className="container-site relative py-16 sm:py-24">
-          <div className="animar-surgir max-w-3xl">
+        <div className="container-site relative grid items-center gap-10 py-16 sm:py-20 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
+          <div className="animar-surgir">
             <Etiqueta tom="marca">
               <Sparkles className="h-3.5 w-3.5" />
-              Caridade, estudo e trabalho
+              No poder de Deus, tudo é possível
             </Etiqueta>
 
-            <h1 className="mt-5 text-4xl font-semibold leading-[1.1] tracking-tight text-texto sm:text-6xl">
-              Casa Espírita <span className="text-marca-600">Rosa Branca</span>
+            <h1 className="mt-6 font-marca text-5xl leading-[1.05] text-texto sm:text-6xl">
+              <span className="block text-[0.32em] uppercase tracking-[0.34em] text-marca-600">
+                Casa Espírita
+              </span>
+              <span className="mt-3 block">Rosa Branca</span>
             </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-texto-suave">
+
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-texto-suave">
               Uma casa de acolhimento, estudo e oração. Aqui você encontra a agenda da semana,
               nossas mensagens, os projetos sociais e o estudo da doutrina espírita.
             </p>
+          </div>
+
+          {/* A foto e a propria arte da casa, recortada sem o texto gravado para
+              nao competir com o titulo. */}
+          <div className="animar-surgir relative">
+            <div className="overflow-hidden rounded-3xl border border-white/70 shadow-xl shadow-marca-900/10">
+              <Image
+                src="/marca/hero.webp"
+                alt="Mão erguida em prece diante de uma rosa branca iluminada pelo sol"
+                width={980}
+                height={912}
+                priority
+                sizes="(min-width: 1024px) 40vw, 100vw"
+                className="h-full w-full object-cover"
+              />
+            </div>
           </div>
         </div>
       </section>

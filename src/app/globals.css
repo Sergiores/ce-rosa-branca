@@ -25,6 +25,7 @@
   --color-texto-suave: #7b6a62;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-marca: var(--font-questrial), var(--font-inter), ui-sans-serif, sans-serif;
 
   --radius-xl2: 1.25rem;
 }

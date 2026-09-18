@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { NavegacaoLateral } from "@/components/gestao/NavegacaoLateral";
+import { MarcaRosa } from "@/components/site/Logo";
 import { exigirSessao, type TelaKey } from "@/lib/auth/permissoes";
 import { criarClienteServidor } from "@/lib/supabase/server";
 
@@ -27,10 +28,10 @@ export default async function LayoutGestao({ children }: { children: React.React
       <header className="sticky top-0 z-30 border-b border-borda bg-white/90 backdrop-blur-md">
         <div className="flex h-16 items-center justify-between gap-4 px-5">
           <Link href="/gestao" className="flex items-center gap-3">
-            <span className="grid h-9 w-9 place-items-center rounded-full bg-marca-600 text-xs font-semibold text-white">
-              RB
+            <span className="grid h-9 w-9 place-items-center rounded-full bg-marca-600 text-white">
+              <MarcaRosa className="h-5 w-5" />
             </span>
-            <span className="text-sm font-semibold text-texto">Gestão · Rosa Branca</span>
+            <span className="font-marca text-base text-texto">Gestão · Rosa Branca</span>
           </Link>
 
           <div className="flex items-center gap-4">

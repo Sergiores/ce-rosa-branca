@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/site/Logo";
 
 const NAV = [
   { href: "/", rotulo: "Início" },
@@ -23,14 +24,8 @@ export function Cabecalho({ lojaUrl }: { lojaUrl?: string }) {
   return (
     <header className="sticky top-0 z-50 border-b border-borda/70 bg-white/85 backdrop-blur-md">
       <div className="container-site flex h-18 items-center justify-between py-3">
-        <Link href="/" className="flex items-center gap-3">
-          <span className="grid h-10 w-10 place-items-center rounded-full bg-marca-600 text-sm font-semibold text-white shadow-md shadow-marca-600/25">
-            RB
-          </span>
-          <span className="leading-tight">
-            <span className="block text-sm font-semibold text-texto">Casa Espírita</span>
-            <span className="block text-sm text-marca-600">Rosa Branca</span>
-          </span>
+        <Link href="/" aria-label="Casa Espírita Rosa Branca — início">
+          <Logo tamanho="sm" />
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">
