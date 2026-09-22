@@ -279,44 +279,6 @@ export default async function PaginaTurma({ params }: { params: Promise<{ id: st
           <section className="mt-10">
             <h2 className="text-lg font-semibold text-texto">Alunos da turma</h2>
 
-            {podeEditar ? (
-              <Cartao className="mt-5">
-                <CartaoCorpo>
-                  {disponiveis.length === 0 ? (
-                    <p className="text-sm text-texto-suave">
-                      Todos os alunos cadastrados já estão nesta turma.{" "}
-                      <Link
-                        href="/gestao/estudos/alunos"
-                        className="font-medium text-marca-700 hover:text-marca-800"
-                      >
-                        Cadastrar novo aluno
-                      </Link>
-                    </p>
-                  ) : (
-                    <form action={matricularAluno} className="flex flex-wrap items-end gap-3">
-                      <input type="hidden" name="turma_id" value={id} />
-                      <div className="min-w-0 flex-1">
-                        <Rotulo htmlFor="aluno_id">Matricular aluno</Rotulo>
-                        <Selecao id="aluno_id" name="aluno_id" required>
-                          {disponiveis.map((a) => (
-                            <option key={a.id} value={a.id}>
-                              {a.nome}
-                            </option>
-                          ))}
-                        </Selecao>
-                      </div>
-                      <button
-                        type="submit"
-                        className="inline-flex h-11 items-center gap-2 rounded-full bg-marca-600 px-5 text-sm font-medium text-white hover:bg-marca-700"
-                      >
-                        <UserPlus className="h-4 w-4" /> Matricular
-                      </button>
-                    </form>
-                  )}
-                </CartaoCorpo>
-              </Cartao>
-            ) : null}
-
             {matriculas.length === 0 ? (
               <div className="mt-5">
                 <Vazio mensagem="Nenhum aluno matriculado nesta turma." />
@@ -383,6 +345,44 @@ export default async function PaginaTurma({ params }: { params: Promise<{ id: st
                 })}
               </Cartao>
             )}
+
+            {podeEditar ? (
+              <Cartao className="mt-5">
+                <CartaoCorpo>
+                  {disponiveis.length === 0 ? (
+                    <p className="text-sm text-texto-suave">
+                      Todos os alunos cadastrados já estão nesta turma.{" "}
+                      <Link
+                        href="/gestao/estudos/alunos"
+                        className="font-medium text-marca-700 hover:text-marca-800"
+                      >
+                        Cadastrar novo aluno
+                      </Link>
+                    </p>
+                  ) : (
+                    <form action={matricularAluno} className="flex flex-wrap items-end gap-3">
+                      <input type="hidden" name="turma_id" value={id} />
+                      <div className="min-w-0 flex-1">
+                        <Rotulo htmlFor="aluno_id">Matricular aluno</Rotulo>
+                        <Selecao id="aluno_id" name="aluno_id" required>
+                          {disponiveis.map((a) => (
+                            <option key={a.id} value={a.id}>
+                              {a.nome}
+                            </option>
+                          ))}
+                        </Selecao>
+                      </div>
+                      <button
+                        type="submit"
+                        className="inline-flex h-11 items-center gap-2 rounded-full bg-marca-600 px-5 text-sm font-medium text-white hover:bg-marca-700"
+                      >
+                        <UserPlus className="h-4 w-4" /> Matricular
+                      </button>
+                    </form>
+                  )}
+                </CartaoCorpo>
+              </Cartao>
+            ) : null}
           </section>
         </>
       )}
