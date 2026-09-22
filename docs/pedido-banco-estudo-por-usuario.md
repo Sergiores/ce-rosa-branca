@@ -68,13 +68,7 @@ contador sem ter insert, e guarda **hash de sessão, não id de usuário**. Ela
 responde "quantas visualizações", e não consegue responder "esta pessoa leu".
 São coisas diferentes: o que segue precisa de `user_id` de verdade.
 
-### Decisão pendente antes de escrever esta parte
-
-Quem pode favoritar? Hoje não existe cadastro público: o acesso é por convite
-da diretoria, e `auth.users` é compartilhado com a loja. Ver a seção
-"Decisão" no fim.
-
-### Migration (assumindo referência a `rosabranca.profiles`)
+### Migration
 
 ```sql
 create table rosabranca.questao_leitura (
@@ -129,23 +123,40 @@ por pessoa), vale decidir aí se `questao_leitura` fica de fora.
 
 ---
 
-## Decisão que trava a Entrega 2
+## Entrega 3 — cadastro público com papel `visitante`
 
-Favoritar exige conta. Hoje o site **não tem cadastro público** — a diretoria
-convida por e-mail. Dois caminhos:
+Decidido pela casa em 21/09/2026: **o cadastro fica aberto**. Quem frequenta a
+casa cria a própria conta e passa a ter lista de leitura e favoritos, sem
+depender de convite da diretoria.
 
-**A. Abrir cadastro público, com papel novo `visitante`** *(recomendado)*
-Quem frequenta a casa cria a própria conta e passa a ter lista de leitura e
-favoritos. Exige:
-- acrescentar `visitante` ao enum de papéis;
-- `permissoes` do `visitante` sem nenhuma tela de gestão;
-- a trigger de criação de perfil continua exigindo `projeto: 'rosabranca'` no
-  metadata — o `signUp` do site precisa mandar isso, senão a conta nasce sem
-  perfil (mesmo cuidado que já existe no convite).
+```sql
+-- Papel novo, sem nenhuma tela de gestao.
+alter type rosabranca.papel add value if not exists 'visitante';
+```
 
-**B. Manter só por convite**
-Nada muda no cadastro. Favoritos ficam disponíveis apenas para diretoria,
-voluntários, alunos e membros já convidados. Mais simples e mais fechado, mas
-o visitante comum do site não favorita nada.
+`alter type ... add value` não roda dentro de bloco transacional em algumas
+versões; aplicar em migration própria se o runner reclamar.
 
-A escolha muda o enum e o fluxo de cadastro, não o desenho das duas tabelas.
+A matriz de permissões do `visitante` entra sem nenhuma tela:
+
+```sql
+-- Nenhuma linha em rosabranca.permissoes para 'visitante', ou linhas com
+-- ver = false. O importante e que ele nao veja item nenhum de /gestao.
+```
+
+E a trigger que cria o perfil precisa nascer `visitante` — e não `membro` —
+quando a conta vier do cadastro público. Hoje ela cria todo mundo como
+`membro` e o convite promove depois, no servidor. Sugestão: manter a regra de
+só agir com `projeto: 'rosabranca'` no metadata, e usar um segundo campo do
+metadata (por exemplo `origem: 'cadastro-publico'`) para decidir entre
+`visitante` e `membro`. **O papel nunca deve vir cru do metadata** — foi assim
+que um furo apareceu antes, permitindo alguém se cadastrar como `diretoria`.
+
+### O que o app faz depois
+
+- Página de cadastro pública chamando `signUp` com
+  `data: { nome, projeto: SCHEMA_DB, origem: "cadastro-publico" }`.
+- Confirmação de e-mail e URLs de redirect do Supabase Auth apontando para o
+  domínio do site.
+- Botões de favoritar e a marca de lida na tela de estudo, visíveis só para
+  quem está logado, e a página de favoritos.
