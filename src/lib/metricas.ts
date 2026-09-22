@@ -2,6 +2,7 @@ import "server-only";
 
 import { createHash } from "node:crypto";
 import { headers } from "next/headers";
+import { after } from "next/server";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import type { EntidadeMetrica } from "@/lib/tipos";
 
@@ -26,31 +27,47 @@ async function referrer() {
   return h.get("referer");
 }
 
-/** Registra um acesso ao site. Falha silenciosa: metrica nunca derruba a pagina. */
+/**
+ * Registra um acesso ao site. Falha silenciosa: metrica nunca derruba a
+ * pagina. A gravacao roda com `after()`, depois da resposta ja ter saido —
+ * quem visita nao espera essa escrita para ver a pagina. `headers()` precisa
+ * ser lido aqui fora, antes do `after`, porque só é acessível durante o
+ * render da requisição.
+ */
 export async function registrarAcesso(path: string) {
-  try {
-    const supabase = await criarClienteServidor();
-    await supabase.rpc("registrar_acesso", {
-      p_path: path,
-      p_sessao_hash: await hashSessao(),
-      p_referrer: await referrer(),
-    });
-  } catch {
-    /* metricas sao best-effort */
-  }
+  const sessaoHash = await hashSessao();
+  const ref = await referrer();
+
+  after(async () => {
+    try {
+      const supabase = await criarClienteServidor();
+      await supabase.rpc("registrar_acesso", {
+        p_path: path,
+        p_sessao_hash: sessaoHash,
+        p_referrer: ref,
+      });
+    } catch {
+      /* metricas sao best-effort */
+    }
+  });
 }
 
 /** Registra a visualizacao de uma noticia, mensagem, pagina, evento ou projeto. */
 export async function registrarVisualizacao(entidade: EntidadeMetrica, entidadeId: string) {
-  try {
-    const supabase = await criarClienteServidor();
-    await supabase.rpc("registrar_visualizacao", {
-      p_entidade: entidade,
-      p_entidade_id: entidadeId,
-      p_sessao_hash: await hashSessao(),
-      p_referrer: await referrer(),
-    });
-  } catch {
-    /* metricas sao best-effort */
-  }
+  const sessaoHash = await hashSessao();
+  const ref = await referrer();
+
+  after(async () => {
+    try {
+      const supabase = await criarClienteServidor();
+      await supabase.rpc("registrar_visualizacao", {
+        p_entidade: entidade,
+        p_entidade_id: entidadeId,
+        p_sessao_hash: sessaoHash,
+        p_referrer: ref,
+      });
+    } catch {
+      /* metricas sao best-effort */
+    }
+  });
 }

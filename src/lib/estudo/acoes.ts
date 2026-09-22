@@ -1,24 +1,32 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { criarClienteServidor } from "@/lib/supabase/server";
 
 /**
  * Marca a questao como lida pelo usuario logado. Chamada automaticamente ao
  * abrir a pagina da questao — silenciosa e best-effort, como as RPCs de
  * metrica: anonimo nao tem linha nenhuma, e um erro aqui nunca deve quebrar
- * a leitura da pagina.
+ * a leitura da pagina. Roda com `after()`: quem abriu a questao ve o
+ * conteudo sem esperar essa escrita.
  */
 export async function marcarQuestaoLida(questaoId: string): Promise<void> {
-  const supabase = await criarClienteServidor();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return;
+  after(async () => {
+    try {
+      const supabase = await criarClienteServidor();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
 
-  await supabase
-    .from("questao_leitura")
-    .upsert({ user_id: user.id, questao_id: questaoId }, { onConflict: "user_id,questao_id" });
+      await supabase
+        .from("questao_leitura")
+        .upsert({ user_id: user.id, questao_id: questaoId }, { onConflict: "user_id,questao_id" });
+    } catch {
+      /* best-effort, como as demais marcas de leitura */
+    }
+  });
 }
 
 export type ResultadoFavorito = { erro: string } | { ok: true; favoritada: boolean };
