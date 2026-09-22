@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { criarClienteAdmin, criarClienteServidor } from "@/lib/supabase/server";
 import { SCHEMA_DB } from "@/lib/supabase/schema";
 import { exigirTela } from "@/lib/auth/permissoes";
@@ -60,7 +61,7 @@ export async function convidarUsuario(_estado: Resultado, dados: FormData): Prom
   }
 
   revalidatePath("/gestao/usuarios");
-  return { ok: true };
+  redirect("/gestao/usuarios?convidado=1");
 }
 
 export async function alterarPapel(dados: FormData) {

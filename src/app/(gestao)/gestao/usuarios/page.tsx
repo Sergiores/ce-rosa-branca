@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { UserPlus } from "lucide-react";
-import { Cartao, CartaoCorpo, Etiqueta, Vazio } from "@/components/ui";
-import { FormularioConvite } from "./FormularioConvite";
+import Link from "next/link";
+import { Cartao, Etiqueta, Vazio } from "@/components/ui";
 import { exigirTela } from "@/lib/auth/permissoes";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import { alterarPapel, alternarAtivo } from "@/lib/gestao/acoes-usuarios";
@@ -104,12 +104,12 @@ export default async function PaginaUsuarios() {
           </p>
         </div>
         {podeEditar ? (
-          <a
-            href="#convidar"
+          <Link
+            href="/gestao/usuarios/convidar"
             className="inline-flex shrink-0 items-center gap-2 rounded-full bg-marca-600 px-5 py-2.5 text-sm font-medium text-white shadow-md shadow-marca-600/20 hover:bg-marca-700"
           >
             <UserPlus className="h-4 w-4" /> Convidar usuário
-          </a>
+          </Link>
         ) : null}
       </div>
 
@@ -150,17 +150,6 @@ export default async function PaginaUsuarios() {
         </div>
       </details>
 
-      {podeEditar ? (
-        <Cartao className="mt-10 scroll-mt-24" id="convidar">
-          <CartaoCorpo className="sm:p-8">
-            <h2 className="mb-1 font-semibold text-texto">Convidar usuário</h2>
-            <p className="mb-5 text-sm text-texto-suave">
-              Confira antes na lista acima se a pessoa já não tem acesso.
-            </p>
-            <FormularioConvite />
-          </CartaoCorpo>
-        </Cartao>
-      ) : null}
     </div>
   );
 }

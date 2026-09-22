@@ -202,7 +202,9 @@ export async function registrarBaixa(_estado: Resultado, dados: FormData): Promi
   revalidatePath("/gestao/contas-pagar");
   revalidatePath("/gestao/contas-receber");
   revalidatePath(`/gestao/titulos/${tituloId}`);
-  return { ok: true };
+  // A baixa mora em pagina propria: volta para o titulo, onde o saldo novo
+  // e o historico ja aparecem.
+  redirect(`/gestao/titulos/${tituloId}`);
 }
 
 /** Estorno é lançamento negativo, nunca edição destrutiva da baixa original. */

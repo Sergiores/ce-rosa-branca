@@ -1,22 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { ArrowLeft, GraduationCap } from "lucide-react";
-import {
-  AreaTexto,
-  Campo,
-  Cartao,
-  CartaoCorpo,
-  Etiqueta,
-  Rotulo,
-  Selecao,
-  Vazio,
-} from "@/components/ui";
-import { FormularioSimples } from "@/components/gestao/Formulario";
+import { ArrowLeft, GraduationCap, Mail, Pencil, Phone } from "lucide-react";
+import { Cartao, CartaoCorpo, Etiqueta, Vazio } from "@/components/ui";
 import { formatarData } from "@/lib/datas";
 import { exigirTela } from "@/lib/auth/permissoes";
 import { historicoDoAluno, obterAluno } from "@/lib/gestao/estudos";
-import { salvarAluno } from "@/lib/gestao/acoes-estudos";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Aluno" };
@@ -48,25 +37,64 @@ export default async function PaginaAluno({ params }: { params: Promise<{ id: st
         <ArrowLeft className="h-4 w-4" /> Voltar aos alunos
       </Link>
 
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight text-texto">{aluno.nome}</h1>
-        {aluno.profile_id ? (
-          <Etiqueta tom="verde">Conta vinculada</Etiqueta>
-        ) : (
-          <Etiqueta tom="cinza">Sem conta vinculada</Etiqueta>
-        )}
+      <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-2xl font-semibold tracking-tight text-texto">{aluno.nome}</h1>
+            {aluno.profile_id ? (
+              <Etiqueta tom="verde">Conta vinculada</Etiqueta>
+            ) : (
+              <Etiqueta tom="cinza">Sem conta vinculada</Etiqueta>
+            )}
+            {!aluno.ativo ? <Etiqueta tom="vermelho">Inativo</Etiqueta> : null}
+          </div>
+          {historico.length > 0 ? (
+            <p className="mt-1 text-texto-suave">
+              {historico.length} {historico.length === 1 ? "turma" : "turmas"}
+              {concluidos > 0
+                ? ` · ${concluidos} ${concluidos === 1 ? "concluída" : "concluídas"}`
+                : ""}
+            </p>
+          ) : null}
+        </div>
+
+        {podeEditar ? (
+          <Link
+            href={`/gestao/estudos/alunos/${id}/editar`}
+            className="inline-flex shrink-0 items-center gap-2 rounded-full border border-marca-200 bg-white px-5 py-2.5 text-sm font-medium text-marca-700 hover:bg-marca-50"
+          >
+            <Pencil className="h-4 w-4" /> Editar
+          </Link>
+        ) : null}
       </div>
-      {historico.length > 0 ? (
-        <p className="mt-1 text-texto-suave">
-          {historico.length} {historico.length === 1 ? "turma" : "turmas"}
-          {concluidos > 0
-            ? ` · ${concluidos} ${concluidos === 1 ? "concluída" : "concluídas"}`
-            : ""}
-        </p>
+
+      {/* Contato, só leitura — editar tem tela própria */}
+      {aluno.email || aluno.telefone || aluno.observacoes ? (
+        <Cartao className="mt-6">
+          <CartaoCorpo>
+            <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-texto-suave">
+              {aluno.email ? (
+                <span className="inline-flex items-center gap-1.5">
+                  <Mail className="h-4 w-4" /> {aluno.email}
+                </span>
+              ) : null}
+              {aluno.telefone ? (
+                <span className="inline-flex items-center gap-1.5">
+                  <Phone className="h-4 w-4" /> {aluno.telefone}
+                </span>
+              ) : null}
+            </div>
+            {aluno.observacoes ? (
+              <p className="mt-3 whitespace-pre-line border-t border-borda pt-3 text-sm leading-relaxed text-texto">
+                {aluno.observacoes}
+              </p>
+            ) : null}
+          </CartaoCorpo>
+        </Cartao>
       ) : null}
 
       {/* Histórico — a frequência vem da view, nunca de coluna armazenada */}
-      <section className="mt-8">
+      <section className="mt-10">
         <h2 className="flex items-center gap-2 text-lg font-semibold text-texto">
           <GraduationCap className="h-5 w-5 text-marca-600" />
           Histórico de estudos
@@ -125,76 +153,6 @@ export default async function PaginaAluno({ params }: { params: Promise<{ id: st
             ))}
           </div>
         )}
-      </section>
-
-      {/* Cadastro */}
-      <section className="mt-10">
-        <h2 className="mb-2 text-lg font-semibold text-texto">Dados do aluno</h2>
-        <p className="mb-5 text-sm text-texto-suave">
-          {aluno.profile_id
-            ? "Este aluno já entra na área do aluno com a conta dele."
-            : "Para o aluno acessar a área dele no site, o e-mail aqui precisa ser o MESMO com que ele cria a conta. Ele mesmo faz o vínculo, em /aluno."}
-        </p>
-        <Cartao>
-          <CartaoCorpo className="sm:p-8">
-            <FormularioSimples acao={salvarAluno} aoSalvar="Dados salvos.">
-              <input type="hidden" name="id" value={id} />
-              <div className="grid gap-5 sm:grid-cols-2">
-                <div className="sm:col-span-2">
-                  <Rotulo htmlFor="nome">Nome</Rotulo>
-                  <Campo
-                    id="nome"
-                    name="nome"
-                    required
-                    defaultValue={aluno.nome}
-                    disabled={!podeEditar}
-                  />
-                </div>
-                <div>
-                  <Rotulo htmlFor="email">E-mail</Rotulo>
-                  <Campo
-                    id="email"
-                    name="email"
-                    type="email"
-                    defaultValue={aluno.email ?? ""}
-                    disabled={!podeEditar}
-                  />
-                </div>
-                <div>
-                  <Rotulo htmlFor="telefone">Telefone</Rotulo>
-                  <Campo
-                    id="telefone"
-                    name="telefone"
-                    defaultValue={aluno.telefone ?? ""}
-                    disabled={!podeEditar}
-                  />
-                </div>
-                <div>
-                  <Rotulo htmlFor="ativo">Situação</Rotulo>
-                  <Selecao
-                    id="ativo"
-                    name="ativo"
-                    defaultValue={aluno.ativo ? "1" : "0"}
-                    disabled={!podeEditar}
-                  >
-                    <option value="1">Ativo</option>
-                    <option value="0">Inativo</option>
-                  </Selecao>
-                </div>
-                <div className="sm:col-span-2">
-                  <Rotulo htmlFor="observacoes">Observações</Rotulo>
-                  <AreaTexto
-                    id="observacoes"
-                    name="observacoes"
-                    rows={3}
-                    defaultValue={aluno.observacoes ?? ""}
-                    disabled={!podeEditar}
-                  />
-                </div>
-              </div>
-            </FormularioSimples>
-          </CartaoCorpo>
-        </Cartao>
       </section>
     </div>
   );

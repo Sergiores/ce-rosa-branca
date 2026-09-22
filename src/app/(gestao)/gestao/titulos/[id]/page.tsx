@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 import { Cartao, CartaoCorpo, Etiqueta, Vazio } from "@/components/ui";
-import { FormularioBaixa } from "./FormularioBaixa";
 import { CobrancaPix } from "./CobrancaPix";
 import { BotaoConfirmar } from "@/components/gestao/BotaoConfirmar";
 import { formatarData, formatarDataHora } from "@/lib/datas";
@@ -63,12 +62,12 @@ export default async function PaginaTitulo({ params }: { params: Promise<{ id: s
         {podeEditar && !quitado ? (
           /* O formulario fica depois do historico, para quem baixa ver antes o
              que ja foi baixado. A ancora evita rolar quando nao precisa. */
-          <a
-            href="#baixar"
+          <Link
+            href={`/gestao/titulos/${titulo.id}/baixar`}
             className="inline-flex shrink-0 items-center gap-2 rounded-full bg-marca-600 px-5 py-2.5 text-sm font-medium text-white shadow-md shadow-marca-600/20 hover:bg-marca-700"
           >
             Registrar {titulo.tipo === "pagar" ? "pagamento" : "recebimento"}
-          </a>
+          </Link>
         ) : null}
       </div>
 
@@ -151,21 +150,6 @@ export default async function PaginaTitulo({ params }: { params: Promise<{ id: s
           </p>
         </CartaoCorpo>
       </Cartao>
-
-      {podeEditar && !quitado ? (
-        <Cartao className="mt-6 scroll-mt-24" id="baixar">
-          <CartaoCorpo className="sm:p-8">
-            <h2 className="mb-5 font-semibold text-texto">
-              Registrar {titulo.tipo === "pagar" ? "pagamento" : "recebimento"}
-            </h2>
-            <FormularioBaixa
-              tituloId={titulo.id}
-              tipo={titulo.tipo}
-              saldo={Number(titulo.saldo)}
-            />
-          </CartaoCorpo>
-        </Cartao>
-      ) : null}
 
       {podeEditar && !titulo.cancelado && Number(titulo.valor_pago) === 0 ? (
         <div className="mt-6">

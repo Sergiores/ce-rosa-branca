@@ -47,12 +47,14 @@ export async function salvarTurma(_estado: Resultado, dados: FormData): Promise<
     atualizado_em: new Date().toISOString(),
   };
 
+  // Formulario mora em pagina propria: salvar precisa devolver a pessoa para
+  // a tela de consulta, senao ela fica parada num formulario ja gravado.
   if (id) {
     const { error } = await supabase.from("estudo_turmas").update(registro).eq("id", id);
     if (error) return { erro: error.message };
     revalidatePath("/gestao/estudos");
     revalidatePath(`/gestao/estudos/${id}`);
-    return { ok: true };
+    redirect(`/gestao/estudos/${id}`);
   }
 
   const { data, error } = await supabase
@@ -106,7 +108,7 @@ export async function salvarAluno(_estado: Resultado, dados: FormData): Promise<
     if (error) return { erro: error.message };
     revalidatePath("/gestao/estudos/alunos");
     revalidatePath(`/gestao/estudos/alunos/${id}`);
-    return { ok: true };
+    redirect(`/gestao/estudos/alunos/${id}`);
   }
 
   const { error } = await supabase
@@ -115,7 +117,7 @@ export async function salvarAluno(_estado: Resultado, dados: FormData): Promise<
   if (error) return { erro: traduzirErroVinculo(error.message) };
 
   revalidatePath("/gestao/estudos/alunos");
-  return { ok: true };
+  redirect("/gestao/estudos/alunos");
 }
 
 /** O índice único recusa duas fichas para a mesma conta; a mensagem crua não ajuda. */
@@ -140,6 +142,7 @@ export async function matricularAluno(dados: FormData) {
     .select("id");
 
   revalidatePath(`/gestao/estudos/${turmaId}`);
+  redirect(`/gestao/estudos/${turmaId}`);
 }
 
 export async function alterarStatusMatricula(dados: FormData) {
@@ -205,7 +208,7 @@ export async function salvarAula(_estado: Resultado, dados: FormData): Promise<R
     if (error) return { erro: traduzirErroAula(error.message) };
     revalidatePath(`/gestao/estudos/${turmaId}`);
     revalidatePath(`/gestao/estudos/${turmaId}/aulas/${id}`);
-    return { ok: true };
+    redirect(`/gestao/estudos/${turmaId}/aulas/${id}`);
   }
 
   const { data: nova, error } = await supabase
@@ -265,7 +268,7 @@ export async function salvarMaterial(_estado: Resultado, dados: FormData): Promi
   if (error) return { erro: error.message };
 
   revalidatePath(`/gestao/estudos/${turmaId}/aulas/${aulaId}`);
-  return { ok: true };
+  redirect(`/gestao/estudos/${turmaId}/aulas/${aulaId}`);
 }
 
 export async function excluirMaterial(dados: FormData) {
@@ -314,4 +317,5 @@ export async function salvarChamada(dados: FormData) {
 
   revalidatePath(`/gestao/estudos/${turmaId}/aulas/${aulaId}`);
   revalidatePath(`/gestao/estudos/${turmaId}`);
+  redirect(`/gestao/estudos/${turmaId}/aulas/${aulaId}`);
 }
