@@ -12,8 +12,10 @@
 -- Nada altera nem apaga objeto existente. Nenhuma linha toca `public`,
 -- `auth` ou `storage`, que são da loja ou compartilhados.
 --
--- O passo 5 (trigger de criação de perfil) NÃO está escrito aqui de
--- propósito. Leia o porquê no fim do arquivo antes de mexer nele.
+-- Passos 0 a 4 já foram aplicados em 21/09/2026 (confirmado por consulta).
+-- O passo 5 foi escrito depois, em cima do corpo real de
+-- rosabranca.fn_novo_usuario obtido pelo passo 0.3 — não é mais um
+-- placeholder. Ainda falta rodá-lo.
 
 
 -- ---------------------------------------------------------------------
@@ -179,33 +181,74 @@ select tela_key, ver, editar
 
 
 -- ---------------------------------------------------------------------
--- PASSO 5 — Trigger de criação de perfil: NÃO ESTÁ AQUI, e é de propósito
+-- PASSO 5 — Trigger de criação de perfil: agora com o corpo real
 -- ---------------------------------------------------------------------
--- Falta o ajuste para a conta nascer `visitante` quando vier do cadastro
--- público, em vez de `membro`.
+-- Corpo confirmado em 21/09/2026 via passo 0.3. Existem DOIS triggers em
+-- auth.users, um para cada app deste banco:
 --
--- Não escrevi este passo às cegas porque a função vive em auth.users, que é
--- COMPARTILHADO com a loja em produção. Um `create or replace` com corpo
--- adivinhado sobrescreve o que estiver lá hoje — e uma falha dentro de um
--- trigger `after insert` em auth.users aborta, em silêncio, todo cadastro
--- novo da loja. Já existe registro desse acidente neste banco.
+--   public.handle_new_user      -> da LOJA, cria em public.profiles com
+--                                   role 'lojista'. NÃO TOCAR.
+--   rosabranca.fn_novo_usuario   -> o nosso. É este que muda abaixo.
 --
--- O caminho seguro: pegue o corpo real na saída do passo 0.3 e edite
--- a partir dele. A regra a acrescentar:
+-- A mudança é mínima e preserva tudo que já existia: mesmo portão
+-- (só age com projeto = 'rosabranca'), mesmo on conflict do nothing,
+-- mesma assinatura, security definer e search_path. A única diferença é
+-- que o role deixa de ser sempre 'membro' e passa a depender de um
+-- segundo campo do metadata.
 --
---   * continuar só agindo quando o metadata trouxer projeto = 'rosabranca';
---   * ler um segundo campo do metadata (ex.: origem = 'cadastro-publico')
---     e, nesse caso, criar o perfil com role 'visitante';
---   * fora disso, seguir criando como 'membro', como já faz.
---
--- E o de sempre: o papel NUNCA pode vir cru do metadata. Foi exatamente
--- assim que apareceu o furo que permitia alguém se cadastrar como
--- 'diretoria'.
---
--- Enquanto o passo 5 não for feito, os passos 1 a 4 já funcionam: quem é
--- convidado pela diretoria consegue favoritar e marcar leitura. Só o
--- cadastro público é que ainda não existe.
+-- O papel continua nunca vindo cru do metadata: só dois valores são
+-- possíveis, decididos aqui dentro, nunca lidos direto do que o usuário
+-- mandou.
 
+create or replace function rosabranca.fn_novo_usuario()
+returns trigger
+language plpgsql
+security definer
+set search_path to 'rosabranca'
+as $function$
+declare
+  v_role rosabranca.papel_usuario;
+begin
+  -- auth.users e compartilhado entre os projetos deste banco.
+  -- Sem este portao, todo usuario do app principal ganharia um perfil aqui.
+  -- O convite (acoes-usuarios.ts) precisa enviar projeto: 'rosabranca' no metadata.
+  if coalesce(new.raw_user_meta_data->>'projeto', '') <> 'rosabranca' then
+    return new;
+  end if;
+
+  -- O papel nunca vem cru do metadata do proprio usuario. Só dois casos
+  -- são possíveis aqui: convite (nasce membro, e a promoção para o papel
+  -- final acontece depois, no servidor, via acoes-usuarios.ts) ou
+  -- cadastro público marcado com origem = 'cadastro-publico' (nasce
+  -- visitante, sem nenhuma tela de gestão).
+  if coalesce(new.raw_user_meta_data->>'origem', '') = 'cadastro-publico' then
+    v_role := 'visitante';
+  else
+    v_role := 'membro';
+  end if;
+
+  insert into rosabranca.profiles (id, nome, email, role)
+  values (
+    new.id,
+    coalesce(new.raw_user_meta_data->>'nome', ''),
+    new.email,
+    v_role
+  )
+  on conflict (id) do nothing;
+  return new;
+end $function$;
+
+-- Confere: a troca não deve ter mudado o trigger que dispara a função,
+-- só o corpo dela.
+select tgname as trigger, tgrelid::regclass as tabela, p.proname as funcao
+  from pg_trigger t
+  join pg_proc p on p.oid = t.tgfoid
+ where p.proname = 'fn_novo_usuario';
+
+-- Teste manual sugerido (fora deste script): convidar um usuário de teste
+-- pela tela /gestao/usuarios (nasce 'membro', como sempre) e, quando o
+-- cadastro público existir no app, criar uma conta por ele (deve nascer
+-- 'visitante'). Nenhum dos dois deve tocar em public.profiles.
 
 -- ---------------------------------------------------------------------
 -- Final — avisar a API das tabelas novas
