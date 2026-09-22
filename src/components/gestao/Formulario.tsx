@@ -60,3 +60,39 @@ export function FormularioConteudo({
     </form>
   );
 }
+
+/**
+ * Formulário de um botão só, para telas cujo estado não é rascunho/publicado
+ * (turma, aula, aluno). Mesma exibição de erro do FormularioConteudo.
+ */
+export function FormularioSimples({
+  acao,
+  children,
+  rotulo = "Salvar",
+  aoSalvar,
+}: {
+  acao: Acao;
+  children: React.ReactNode;
+  rotulo?: string;
+  /** Mensagem discreta de confirmação, quando a ação não navega para outra tela. */
+  aoSalvar?: string;
+}) {
+  const [estado, executar] = useActionState<Resultado, FormData>(acao, {});
+
+  return (
+    <form action={executar} className="space-y-5">
+      {children}
+
+      {estado?.erro ? (
+        <p className="rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{estado.erro}</p>
+      ) : null}
+      {estado?.ok && aoSalvar ? (
+        <p className="rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{aoSalvar}</p>
+      ) : null}
+
+      <div className="flex flex-wrap gap-3 border-t border-borda pt-5">
+        <BotaoAcao valor="salvar" rotulo={rotulo} />
+      </div>
+    </form>
+  );
+}

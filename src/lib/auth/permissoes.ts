@@ -8,6 +8,7 @@ export type TelaKey =
   | "painel"
   | "conteudo"
   | "atas"
+  | "estudos"
   | "usuarios"
   | "permissoes"
   | "membros"

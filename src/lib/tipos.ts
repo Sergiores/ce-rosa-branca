@@ -178,3 +178,102 @@ export type RegistroAuditoria = {
   dados_depois: Record<string, unknown> | null;
   criado_em: string;
 };
+
+/* -------------------------------------------------- Area de estudos */
+
+export type StatusTurma = "planejada" | "ativa" | "encerrada";
+export type StatusMatricula = "matriculado" | "concluido" | "desistente";
+export type StatusAula = "planejada" | "realizada" | "cancelada";
+export type TipoMaterial = "video" | "link" | "texto";
+
+export type Turma = {
+  id: string;
+  nome: string;
+  nivel: string;
+  descricao: string | null;
+  /** 0 = domingo. */
+  dia_semana: number | null;
+  horario: string | null;
+  local: string | null;
+  data_inicio: string | null;
+  data_fim: string | null;
+  status: StatusTurma;
+  responsavel_id: string | null;
+  criado_em: string;
+};
+
+/**
+ * O aluno e a pessoa, nao a matricula: existe fora da turma porque o
+ * historico atravessa turmas. profile_id e membro_id sao opcionais — quem
+ * estuda aqui pode nao ter login e pode nao ser membro da casa.
+ */
+export type Aluno = {
+  id: string;
+  profile_id: string | null;
+  membro_id: string | null;
+  nome: string;
+  email: string | null;
+  telefone: string | null;
+  observacoes: string | null;
+  ativo: boolean;
+  criado_em: string;
+};
+
+export type Matricula = {
+  id: string;
+  turma_id: string;
+  aluno_id: string;
+  status: StatusMatricula;
+  matriculado_em: string;
+  concluido_em: string | null;
+  observacoes: string | null;
+};
+
+export type Aula = {
+  id: string;
+  turma_id: string;
+  numero: number;
+  titulo: string;
+  data: string;
+  plano: string | null;
+  observacoes: string | null;
+  status: StatusAula;
+  criado_em: string;
+};
+
+export type MaterialAula = {
+  id: string;
+  aula_id: string;
+  tipo: TipoMaterial;
+  titulo: string;
+  url: string | null;
+  descricao: string | null;
+  ordem: number;
+  criado_em: string;
+};
+
+export type Presenca = {
+  aula_id: string;
+  aluno_id: string;
+  presente: boolean;
+  justificativa: string | null;
+  registrado_por: string | null;
+  registrado_em: string;
+};
+
+/** Linha de v_estudo_frequencia: frequencia e derivada, nunca armazenada. */
+export type FrequenciaAluno = {
+  matricula_id: string;
+  turma_id: string;
+  aluno_id: string;
+  matricula_status: StatusMatricula;
+  matriculado_em: string;
+  concluido_em: string | null;
+  turma_nome: string;
+  turma_nivel: string;
+  turma_status: StatusTurma;
+  aluno_nome: string;
+  aulas_realizadas: number;
+  presencas: number;
+  frequencia_pct: number | null;
+};

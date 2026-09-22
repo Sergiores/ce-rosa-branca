@@ -12,12 +12,14 @@ const PAPEIS = [
   { valor: "voluntario", rotulo: "Voluntário" },
   { valor: "aluno", rotulo: "Aluno" },
   { valor: "membro", rotulo: "Membro" },
+  { valor: "visitante", rotulo: "Visitante" },
 ];
 
 const TELAS = [
   { chave: "painel", rotulo: "Painel" },
   { chave: "conteudo", rotulo: "Conteúdo do site" },
   { chave: "atas", rotulo: "Atas de reunião" },
+  { chave: "estudos", rotulo: "Área de estudos" },
   { chave: "membros", rotulo: "Membros" },
   { chave: "compras", rotulo: "Documentos de compra/venda" },
   { chave: "contas_pagar", rotulo: "Contas a pagar" },

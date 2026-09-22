@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Newspaper, FileText, Users, ArrowUpCircle, ArrowDownCircle, Eye } from "lucide-react";
+import { Newspaper, FileText, Users, ArrowUpCircle, ArrowDownCircle, Eye, GraduationCap } from "lucide-react";
 import { Cartao, CartaoCorpo, Etiqueta } from "@/components/ui";
 import { exigirSessao, type TelaKey } from "@/lib/auth/permissoes";
 
@@ -10,6 +10,7 @@ export const metadata: Metadata = { title: "Painel" };
 const ATALHOS: { tela: TelaKey; href: string; titulo: string; texto: string; Icone: typeof Newspaper }[] = [
   { tela: "conteudo", href: "/gestao/conteudo", titulo: "Conteúdo do site", texto: "Notícias, mensagem do dia, eventos e projetos.", Icone: Newspaper },
   { tela: "atas", href: "/gestao/atas", titulo: "Atas de reunião", texto: "Registro das reuniões e deliberações.", Icone: FileText },
+  { tela: "estudos", href: "/gestao/estudos", titulo: "Área de estudos", texto: "Turmas, alunos, aulas e chamada.", Icone: GraduationCap },
   { tela: "membros", href: "/gestao/membros", titulo: "Membros", texto: "Cadastro e configuração de mensalidades.", Icone: Users },
   { tela: "contas_pagar", href: "/gestao/contas-pagar", titulo: "Contas a pagar", texto: "Duplicatas em aberto e baixas.", Icone: ArrowUpCircle },
   { tela: "contas_receber", href: "/gestao/contas-receber", titulo: "Contas a receber", texto: "Mensalidades e recebimentos.", Icone: ArrowDownCircle },

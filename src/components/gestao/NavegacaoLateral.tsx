@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard, Newspaper, FileText, Users, ShieldCheck, UserCog,
+  LayoutDashboard, Newspaper, FileText, Users, ShieldCheck, UserCog, GraduationCap,
   ShoppingCart, ArrowDownCircle, ArrowUpCircle, BarChart3, History, Eye, Menu, X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,7 @@ const ITENS: { tela: TelaKey; href: string; rotulo: string; Icone: typeof Layout
   { tela: "painel", href: "/gestao", rotulo: "Painel", Icone: LayoutDashboard },
   { tela: "conteudo", href: "/gestao/conteudo", rotulo: "Conteúdo do site", Icone: Newspaper },
   { tela: "atas", href: "/gestao/atas", rotulo: "Atas de reunião", Icone: FileText },
+  { tela: "estudos", href: "/gestao/estudos", rotulo: "Área de estudos", Icone: GraduationCap },
   { tela: "membros", href: "/gestao/membros", rotulo: "Membros", Icone: Users },
   { tela: "compras", href: "/gestao/compras", rotulo: "Documentos", Icone: ShoppingCart },
   { tela: "contas_pagar", href: "/gestao/contas-pagar", rotulo: "Contas a pagar", Icone: ArrowUpCircle },
