@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { UserPlus } from "lucide-react";
 import { Cartao, CartaoCorpo, Etiqueta, Vazio } from "@/components/ui";
 import { FormularioConvite } from "./FormularioConvite";
 import { exigirTela } from "@/lib/auth/permissoes";
@@ -95,21 +96,24 @@ export default async function PaginaUsuarios() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <h1 className="text-2xl font-semibold tracking-tight text-texto">Usuários</h1>
-      <p className="mt-1 text-texto-suave">
-        O acesso é criado por convite. Cada perfil vê apenas as telas liberadas em Permissões.
-      </p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-texto">Usuários</h1>
+          <p className="mt-1 text-texto-suave">
+            O acesso é criado por convite. Cada perfil vê apenas as telas liberadas em Permissões.
+          </p>
+        </div>
+        {podeEditar ? (
+          <a
+            href="#convidar"
+            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-marca-600 px-5 py-2.5 text-sm font-medium text-white shadow-md shadow-marca-600/20 hover:bg-marca-700"
+          >
+            <UserPlus className="h-4 w-4" /> Convidar usuário
+          </a>
+        ) : null}
+      </div>
 
-      {podeEditar ? (
-        <Cartao className="mt-8">
-          <CartaoCorpo className="sm:p-8">
-            <h2 className="mb-5 font-semibold text-texto">Convidar usuário</h2>
-            <FormularioConvite />
-          </CartaoCorpo>
-        </Cartao>
-      ) : null}
-
-      <h2 className="mb-4 mt-10 font-semibold text-texto">Usuários cadastrados</h2>
+      <h2 className="mb-4 mt-8 font-semibold text-texto">Usuários cadastrados</h2>
       {usuarios.length === 0 ? (
         <Vazio mensagem="Nenhum usuário cadastrado." />
       ) : (
@@ -145,6 +149,18 @@ export default async function PaginaUsuarios() {
           )}
         </div>
       </details>
+
+      {podeEditar ? (
+        <Cartao className="mt-10 scroll-mt-24" id="convidar">
+          <CartaoCorpo className="sm:p-8">
+            <h2 className="mb-1 font-semibold text-texto">Convidar usuário</h2>
+            <p className="mb-5 text-sm text-texto-suave">
+              Confira antes na lista acima se a pessoa já não tem acesso.
+            </p>
+            <FormularioConvite />
+          </CartaoCorpo>
+        </Cartao>
+      ) : null}
     </div>
   );
 }

@@ -55,9 +55,21 @@ export default async function PaginaTitulo({ params }: { params: Promise<{ id: s
         Voltar a contas a {titulo.tipo === "pagar" ? "pagar" : "receber"}
       </Link>
 
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight text-texto">{titulo.descricao}</h1>
-        <Etiqueta tom={TOM[titulo.status]}>{ROTULO[titulo.status]}</Etiqueta>
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-2xl font-semibold tracking-tight text-texto">{titulo.descricao}</h1>
+          <Etiqueta tom={TOM[titulo.status]}>{ROTULO[titulo.status]}</Etiqueta>
+        </div>
+        {podeEditar && !quitado ? (
+          /* O formulario fica depois do historico, para quem baixa ver antes o
+             que ja foi baixado. A ancora evita rolar quando nao precisa. */
+          <a
+            href="#baixar"
+            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-marca-600 px-5 py-2.5 text-sm font-medium text-white shadow-md shadow-marca-600/20 hover:bg-marca-700"
+          >
+            Registrar {titulo.tipo === "pagar" ? "pagamento" : "recebimento"}
+          </a>
+        ) : null}
       </div>
 
       <Cartao className="mt-6">
@@ -86,21 +98,6 @@ export default async function PaginaTitulo({ params }: { params: Promise<{ id: s
           identificador={titulo.id.replace(/-/g, "").slice(0, 20)}
           descricao={titulo.descricao}
         />
-      ) : null}
-
-      {podeEditar && !quitado ? (
-        <Cartao className="mt-6">
-          <CartaoCorpo className="sm:p-8">
-            <h2 className="mb-5 font-semibold text-texto">
-              Registrar {titulo.tipo === "pagar" ? "pagamento" : "recebimento"}
-            </h2>
-            <FormularioBaixa
-              tituloId={titulo.id}
-              tipo={titulo.tipo}
-              saldo={Number(titulo.saldo)}
-            />
-          </CartaoCorpo>
-        </Cartao>
       ) : null}
 
       <Cartao className="mt-6">
@@ -154,6 +151,21 @@ export default async function PaginaTitulo({ params }: { params: Promise<{ id: s
           </p>
         </CartaoCorpo>
       </Cartao>
+
+      {podeEditar && !quitado ? (
+        <Cartao className="mt-6 scroll-mt-24" id="baixar">
+          <CartaoCorpo className="sm:p-8">
+            <h2 className="mb-5 font-semibold text-texto">
+              Registrar {titulo.tipo === "pagar" ? "pagamento" : "recebimento"}
+            </h2>
+            <FormularioBaixa
+              tituloId={titulo.id}
+              tipo={titulo.tipo}
+              saldo={Number(titulo.saldo)}
+            />
+          </CartaoCorpo>
+        </Cartao>
+      ) : null}
 
       {podeEditar && !titulo.cancelado && Number(titulo.valor_pago) === 0 ? (
         <div className="mt-6">
