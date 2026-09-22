@@ -166,7 +166,10 @@ export async function listarQuestoes(busca?: string) {
       .from("questoes")
       .select("*")
       .eq("status", "publicado")
-      .order("numero");
+      // Mais recente publicada primeiro; numero so desempata quando duas
+      // questoes forem publicadas no mesmo instante (ex.: o seed inicial).
+      .order("publicado_em", { ascending: false, nullsFirst: false })
+      .order("numero", { ascending: true });
 
     const termo = busca?.trim();
     if (termo) {

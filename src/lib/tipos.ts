@@ -1,4 +1,4 @@
-export type Papel = "diretoria" | "voluntario" | "aluno" | "membro";
+export type Papel = "diretoria" | "voluntario" | "aluno" | "membro" | "visitante";
 export type StatusPublicacao = "rascunho" | "publicado";
 export type StatusTitulo = "aberto" | "parcial" | "vencido" | "pago" | "cancelado";
 export type TipoTitulo = "pagar" | "receber";
@@ -74,6 +74,22 @@ export type Questao = {
   pergunta: string;
   resposta: string;
   status: StatusPublicacao;
+  /** Quando passou a publicada. Difere de criado_em, que e igual para todo o seed. */
+  publicado_em: string | null;
+};
+
+/** Marca de leitura por usuario — uma linha por pessoa que abriu a questao. */
+export type QuestaoLeitura = {
+  user_id: string;
+  questao_id: string;
+  lido_em: string;
+};
+
+/** Favorito por usuario. */
+export type QuestaoFavorita = {
+  user_id: string;
+  questao_id: string;
+  criado_em: string;
 };
 
 export type Parecer = {

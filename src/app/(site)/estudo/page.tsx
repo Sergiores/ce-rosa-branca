@@ -1,8 +1,11 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { BookOpen, Search, X } from "lucide-react";
-import { Botao, Campo, Cartao, CartaoCorpo, Etiqueta, TituloSecao, Vazio } from "@/components/ui";
+import { BookOpen, CheckCircle2, Heart, Search, X } from "lucide-react";
+import { Botao, Campo, Cartao, CartaoCorpo, Etiqueta, Vazio } from "@/components/ui";
+import { BotaoFavoritar } from "@/components/site/BotaoFavoritar";
 import { listarQuestoes } from "@/lib/conteudo";
+import { obterInteracoes } from "@/lib/estudo/leitura";
+import { criarClienteServidor } from "@/lib/supabase/server";
 import { registrarAcesso } from "@/lib/metricas";
 
 export const dynamic = "force-dynamic";
@@ -16,27 +19,41 @@ export default async function PaginaEstudo({
   await registrarAcesso("/estudo");
   const { q } = await searchParams;
   const busca = q?.trim() ?? "";
+
+  // listarQuestoes já ordena pela mais recente publicada primeiro.
   const questoes = await listarQuestoes(busca);
 
-  const porCapitulo = new Map<string, typeof questoes>();
-  for (const questao of questoes) {
-    const chave = questao.capitulo ?? "Questões";
-    porCapitulo.set(chave, [...(porCapitulo.get(chave) ?? []), questao]);
-  }
+  const supabase = await criarClienteServidor();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const logado = Boolean(user);
+
+  const { lidas, favoritas } = await obterInteracoes(questoes.map((q) => q.id));
 
   return (
     <div className="container-site py-14">
-      <div className="mb-8 flex items-start gap-4 rounded-2xl border border-marca-200 bg-gradient-to-br from-white to-marca-50 p-6 sm:p-8">
-        <BookOpen className="mt-1 h-8 w-8 shrink-0 text-marca-600" />
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-texto sm:text-3xl">
-            Estudo do Livro dos Espíritos
-          </h1>
-          <p className="mt-2 max-w-2xl text-texto-suave">
-            Cada questão traz a pergunta, a resposta original da obra e o parecer dos médiuns da casa
-            sobre o texto — fruto do estudo em grupo.
-          </p>
+      <div className="mb-8 flex flex-wrap items-start justify-between gap-6 rounded-2xl border border-marca-200 bg-gradient-to-br from-white to-marca-50 p-6 sm:p-8">
+        <div className="flex items-start gap-4">
+          <BookOpen className="mt-1 h-8 w-8 shrink-0 text-marca-600" />
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight text-texto sm:text-3xl">
+              Estudo do Livro dos Espíritos
+            </h1>
+            <p className="mt-2 max-w-2xl text-texto-suave">
+              Cada questão traz a pergunta, a resposta original da obra e o parecer dos médiuns da casa
+              sobre o texto — fruto do estudo em grupo. As mais recentes aparecem primeiro.
+            </p>
+          </div>
         </div>
+
+        <Link
+          href={logado ? "/estudo/favoritas" : "/entrar?redirecionar=/estudo/favoritas"}
+          className="inline-flex shrink-0 items-center gap-2 rounded-full border border-marca-200 bg-white px-5 py-2.5 text-sm font-medium text-marca-700 hover:bg-marca-50"
+        >
+          <Heart className="h-4 w-4" />
+          Minhas favoritas
+        </Link>
       </div>
 
       {/* Busca */}
@@ -81,26 +98,49 @@ export default async function PaginaEstudo({
           }
         />
       ) : (
-        <div className="space-y-10">
-          {[...porCapitulo.entries()].map(([capitulo, lista]) => (
-            <section key={capitulo}>
-              <TituloSecao className="mb-5" titulo={capitulo} />
-              <div className="grid gap-4 sm:grid-cols-2">
-                {lista.map((questao) => (
-                  <Link key={questao.id} href={`/estudo/${questao.numero}`} className="group">
-                    <Cartao className="h-full group-hover:shadow-lg group-hover:shadow-marca-900/10">
-                      <CartaoCorpo>
-                        <Etiqueta tom="marca">Questão {questao.numero}</Etiqueta>
-                        <p className="mt-3 line-clamp-3 text-base font-medium leading-snug text-texto group-hover:text-marca-700">
-                          {questao.pergunta}
-                        </p>
-                      </CartaoCorpo>
-                    </Cartao>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {questoes.map((questao) => {
+            const lida = lidas.has(questao.id);
+            const favoritada = favoritas.has(questao.id);
+
+            return (
+              <Cartao key={questao.id} className="group h-full hover:shadow-lg hover:shadow-marca-900/10">
+                <CartaoCorpo className="flex items-start justify-between gap-3">
+                  <Link href={`/estudo/${questao.numero}`} className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Etiqueta tom="marca">Questão {questao.numero}</Etiqueta>
+                      {questao.capitulo ? <Etiqueta tom="cinza">{questao.capitulo}</Etiqueta> : null}
+                      {lida ? (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-marca-600">
+                          <CheckCircle2 className="h-3.5 w-3.5" /> Lida
+                        </span>
+                      ) : null}
+                    </div>
+                    <p className="mt-3 line-clamp-3 text-base font-medium leading-snug text-texto group-hover:text-marca-700">
+                      {questao.pergunta}
+                    </p>
                   </Link>
-                ))}
-              </div>
-            </section>
-          ))}
+
+                  {logado ? (
+                    <BotaoFavoritar
+                      questaoId={questao.id}
+                      favoritadaInicial={favoritada}
+                      tamanho="sm"
+                    />
+                  ) : (
+                    <Link
+                      href={`/entrar?redirecionar=/estudo`}
+                      aria-label="Entre para favoritar"
+                      title="Entre para favoritar"
+                      className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-borda bg-white text-texto-suave hover:border-marca-200 hover:text-marca-600"
+                    >
+                      <Heart className="h-4 w-4" />
+                    </Link>
+                  )}
+                </CartaoCorpo>
+              </Cartao>
+            );
+          })}
         </div>
       )}
     </div>
