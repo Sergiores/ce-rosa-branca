@@ -4,12 +4,14 @@ import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 import { Campo, Cartao, CartaoCorpo, Etiqueta, Rotulo, Vazio } from "@/components/ui";
 import { FormularioConteudo } from "@/components/gestao/Formulario";
+import { SeletorPessoa } from "@/components/gestao/SeletorPessoa";
 import { BotaoExcluir } from "@/components/gestao/BotaoExcluir";
 import { formatarData } from "@/lib/datas";
 import { formatarMoeda } from "@/lib/utils";
 import { exigirTela } from "@/lib/auth/permissoes";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import { excluirMembro, salvarMembro } from "@/lib/gestao/acoes-financeiro";
+import { pessoasVinculaveis } from "@/lib/gestao/estudos";
 import type { Membro, StatusTitulo, TituloComSaldo } from "@/lib/tipos";
 
 export const dynamic = "force-dynamic";
@@ -33,6 +35,10 @@ export default async function EditorMembro({ params }: { params: Promise<{ id: s
   let membro: Membro | null = null;
   let mensalidade: Mensalidade | null = null;
   let titulos: TituloComSaldo[] = [];
+
+  // Só no cadastro novo: trocar a conta de um membro existente mexeria em
+  // quem enxerga o quê, sem aviso.
+  const pessoas = novo && podeEditar ? await pessoasVinculaveis("membro") : [];
 
   if (!novo) {
     const supabase = await criarClienteServidor();
@@ -84,6 +90,8 @@ export default async function EditorMembro({ params }: { params: Promise<{ id: s
             mostrarRascunho={false}
           >
             {membro ? <input type="hidden" name="id" value={membro.id} /> : null}
+
+            {novo ? <SeletorPessoa pessoas={pessoas} /> : null}
 
             <div className="grid gap-5 sm:grid-cols-2">
               <div>

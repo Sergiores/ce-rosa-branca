@@ -97,6 +97,10 @@ export async function salvarAluno(_estado: Resultado, dados: FormData): Promise<
     ativo: dados.get("ativo") === "on" || dados.get("ativo") === "1",
   };
 
+  // O vínculo com a conta só entra no cadastro novo: mudar a conta de um
+  // aluno existente desfaria o acesso que ele já tem à área dele.
+  const profileId = ouNulo(texto(dados, "profile_id"));
+
   if (id) {
     const { error } = await supabase.from("estudo_alunos").update(registro).eq("id", id);
     if (error) return { erro: error.message };
@@ -105,11 +109,20 @@ export async function salvarAluno(_estado: Resultado, dados: FormData): Promise<
     return { ok: true };
   }
 
-  const { error } = await supabase.from("estudo_alunos").insert(registro);
-  if (error) return { erro: error.message };
+  const { error } = await supabase
+    .from("estudo_alunos")
+    .insert({ ...registro, profile_id: profileId });
+  if (error) return { erro: traduzirErroVinculo(error.message) };
 
   revalidatePath("/gestao/estudos/alunos");
   return { ok: true };
+}
+
+/** O índice único recusa duas fichas para a mesma conta; a mensagem crua não ajuda. */
+function traduzirErroVinculo(mensagem: string) {
+  return mensagem.includes("ux_estudo_alunos_profile") || mensagem.includes("duplicate key")
+    ? "Esta conta já está ligada a outra ficha de aluno."
+    : mensagem;
 }
 
 /* -------------------------------------------------- Matrículas */

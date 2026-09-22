@@ -4,8 +4,9 @@ import { ArrowLeft, Mail, Phone } from "lucide-react";
 import { Campo, Cartao, CartaoCorpo, Etiqueta, Rotulo, AreaTexto, Vazio } from "@/components/ui";
 import { CabecalhoLista, FiltrosLista } from "@/components/gestao/Lista";
 import { FormularioSimples } from "@/components/gestao/Formulario";
+import { SeletorPessoa } from "@/components/gestao/SeletorPessoa";
 import { exigirTela } from "@/lib/auth/permissoes";
-import { listarAlunos } from "@/lib/gestao/estudos";
+import { listarAlunos, pessoasVinculaveis } from "@/lib/gestao/estudos";
 import { salvarAluno } from "@/lib/gestao/acoes-estudos";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +22,10 @@ export default async function PaginaAlunos({
   const { q } = await searchParams;
   const busca = q?.trim() ?? "";
 
-  const alunos = await listarAlunos(busca);
+  const [alunos, pessoas] = await Promise.all([
+    listarAlunos(busca),
+    podeEditar ? pessoasVinculaveis("aluno") : Promise.resolve([]),
+  ]);
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -45,6 +49,9 @@ export default async function PaginaAlunos({
             <h2 className="mb-5 font-semibold text-texto">Cadastrar aluno</h2>
             <FormularioSimples acao={salvarAluno} rotulo="Cadastrar" aoSalvar="Aluno cadastrado.">
               <input type="hidden" name="ativo" value="1" />
+
+              <SeletorPessoa pessoas={pessoas} />
+
               <div className="grid gap-5 sm:grid-cols-2">
                 <div className="sm:col-span-2">
                   <Rotulo htmlFor="nome">Nome</Rotulo>

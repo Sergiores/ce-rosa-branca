@@ -37,12 +37,20 @@ export async function salvarMembro(_estado: Resultado, dados: FormData): Promise
     atualizado_em: new Date().toISOString(),
   };
 
+  // O vínculo com a conta só entra no cadastro novo: trocar a conta de um
+  // membro existente mexeria em quem enxerga o quê, sem aviso.
+  const profileId = texto(dados, "profile_id") || null;
+
   let membroId = id;
   if (id) {
     const { error } = await supabase.from("membros").update(registro).eq("id", id);
     if (error) return { erro: error.message };
   } else {
-    const { data, error } = await supabase.from("membros").insert(registro).select("id").single();
+    const { data, error } = await supabase
+      .from("membros")
+      .insert({ ...registro, profile_id: profileId })
+      .select("id")
+      .single();
     if (error) return { erro: error.message };
     membroId = data.id as string;
   }

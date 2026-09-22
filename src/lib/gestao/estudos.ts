@@ -154,3 +154,20 @@ export async function alunosDisponiveis(turmaId: string) {
   const jaTem = new Set(matriculados.map((m) => m.aluno_id));
   return todos.filter((a) => a.ativo && !jaTem.has(a.id));
 }
+
+/**
+ * Contas que ainda não estão ligadas a um cadastro de aluno ou de membro.
+ * Passa por RPC porque `profiles` só é legível pela diretoria — voluntário
+ * lendo a tabela direto receberia lista vazia, em silêncio.
+ */
+export async function pessoasVinculaveis(destino: "aluno" | "membro") {
+  const supabase = await criarClienteServidor();
+  const { data } = await supabase.rpc("pessoas_vinculaveis", { p_destino: destino });
+  return (data ?? []) as {
+    id: string;
+    nome: string;
+    email: string | null;
+    telefone: string | null;
+    papel: string;
+  }[];
+}
