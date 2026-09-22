@@ -9,8 +9,8 @@ Este arquivo existe porque o app não cria nem altera estrutura de banco
 pedido: ordenar as questões por data de publicação, marcar questão lida por
 usuário e permitir favoritar.
 
-São **duas entregas independentes**. A primeira é uma coluna e desbloqueia
-sozinha a parte visível do pedido.
+São **três entregas**. A primeira é uma coluna só e desbloqueia sozinha a
+parte visível do pedido — pode ir na frente das outras duas.
 
 ---
 
