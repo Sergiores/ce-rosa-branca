@@ -48,7 +48,14 @@ export default async function PaginaAluno({ params }: { params: Promise<{ id: st
         <ArrowLeft className="h-4 w-4" /> Voltar aos alunos
       </Link>
 
-      <h1 className="mt-4 text-2xl font-semibold tracking-tight text-texto">{aluno.nome}</h1>
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <h1 className="text-2xl font-semibold tracking-tight text-texto">{aluno.nome}</h1>
+        {aluno.profile_id ? (
+          <Etiqueta tom="verde">Conta vinculada</Etiqueta>
+        ) : (
+          <Etiqueta tom="cinza">Sem conta vinculada</Etiqueta>
+        )}
+      </div>
       {historico.length > 0 ? (
         <p className="mt-1 text-texto-suave">
           {historico.length} {historico.length === 1 ? "turma" : "turmas"}
@@ -122,7 +129,12 @@ export default async function PaginaAluno({ params }: { params: Promise<{ id: st
 
       {/* Cadastro */}
       <section className="mt-10">
-        <h2 className="mb-5 text-lg font-semibold text-texto">Dados do aluno</h2>
+        <h2 className="mb-2 text-lg font-semibold text-texto">Dados do aluno</h2>
+        <p className="mb-5 text-sm text-texto-suave">
+          {aluno.profile_id
+            ? "Este aluno já entra na área do aluno com a conta dele."
+            : "Para o aluno acessar a área dele no site, o e-mail aqui precisa ser o MESMO com que ele cria a conta. Ele mesmo faz o vínculo, em /aluno."}
+        </p>
         <Cartao>
           <CartaoCorpo className="sm:p-8">
             <FormularioSimples acao={salvarAluno} aoSalvar="Dados salvos.">

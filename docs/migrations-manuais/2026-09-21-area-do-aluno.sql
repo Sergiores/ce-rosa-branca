@@ -217,6 +217,36 @@ grant execute on function rosabranca.minha_frequencia() to authenticated;
 
 
 -- ---------------------------------------------------------------------
+-- PASSO 5 — Tirar as funções novas do alcance do anônimo
+-- ---------------------------------------------------------------------
+-- O Postgres concede EXECUTE a PUBLIC por padrão em função nova. Conferido
+-- depois de aplicar os passos acima: as três respondiam HTTP 200 para a
+-- chave anônima.
+--
+-- Não havia vazamento — `meu_aluno_id()` devolve null sem auth.uid(), e
+-- `minha_frequencia()` filtra por ela, então voltavam `null` e `[]`. Mas
+-- isso é uma camada só de proteção: bastaria um dia alguém editar a função
+-- e esquecer a guarda. Revogar é a segunda camada.
+
+revoke execute on function rosabranca.meu_aluno_id()          from public, anon;
+revoke execute on function rosabranca.vincular_meu_cadastro() from public, anon;
+revoke execute on function rosabranca.minha_frequencia()      from public, anon;
+
+-- `authenticated` mantém o execute concedido nos passos anteriores.
+grant execute on function rosabranca.meu_aluno_id()          to authenticated;
+grant execute on function rosabranca.vincular_meu_cadastro() to authenticated;
+grant execute on function rosabranca.minha_frequencia()      to authenticated;
+
+-- Confere: só authenticated na lista de quem pode executar.
+select p.proname as funcao, p.proacl as permissoes
+  from pg_proc p
+  join pg_namespace n on n.oid = p.pronamespace
+ where n.nspname = 'rosabranca'
+   and p.proname in ('meu_aluno_id', 'vincular_meu_cadastro', 'minha_frequencia')
+ order by p.proname;
+
+
+-- ---------------------------------------------------------------------
 -- Final — avisar a API das funções novas
 -- ---------------------------------------------------------------------
 notify pgrst, 'reload schema';
@@ -237,7 +267,7 @@ notify pgrst, 'reload schema';
 -- ---------------------------------------------------------------------
 -- Desfazer
 -- ---------------------------------------------------------------------
---   drop function if exists rosabranca.minha_frequencia();
+--   drop function if exists rosabranca.minha_frequencia();   -- o revoke do passo 5 cai junto
 --   drop function if exists rosabranca.vincular_meu_cadastro();
 --   drop policy if exists estudo_presencas_minhas  on rosabranca.estudo_presencas;
 --   drop policy if exists estudo_materiais_meus    on rosabranca.estudo_materiais;

@@ -103,6 +103,12 @@ export default async function PaginaAula({
             <input type="hidden" name="id" value={nova ? "" : aulaId} />
             <input type="hidden" name="turma_id" value={id} />
 
+            {/* O aluno matriculado le o plano e as observacoes na area dele.
+                Anotacao interna sobre aluno nao deve entrar aqui. */}
+            <p className="rounded-xl bg-marca-50 px-4 py-3 text-sm text-texto-suave">
+              O planejamento e as observações aparecem para os alunos matriculados na área deles.
+            </p>
+
             <div className="grid gap-5 sm:grid-cols-4">
               <div>
                 <Rotulo htmlFor="numero">Nº</Rotulo>
