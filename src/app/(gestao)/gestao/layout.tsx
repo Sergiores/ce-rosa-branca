@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { NavegacaoLateral } from "@/components/gestao/NavegacaoLateral";
+import { BotaoFavoritarTela } from "@/components/gestao/BotaoFavoritarTela";
 import { MarcaRosa } from "@/components/site/Logo";
 import { exigirSessao, type TelaKey } from "@/lib/auth/permissoes";
 import { criarClienteServidor } from "@/lib/supabase/server";
+import { listarFavoritos } from "@/lib/gestao/favoritos";
 
 const NOME_PAPEL: Record<string, string> = {
   diretoria: "Diretoria",
@@ -22,6 +24,7 @@ async function sair() {
 export default async function LayoutGestao({ children }: { children: React.ReactNode }) {
   const sessao = await exigirSessao();
   const telasVisiveis = sessao.permissoes.filter((p) => p.ver).map((p) => p.tela_key as TelaKey);
+  const favoritos = await listarFavoritos();
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -39,6 +42,8 @@ export default async function LayoutGestao({ children }: { children: React.React
               <p className="text-sm font-medium text-texto">{sessao.perfil.nome || sessao.perfil.email}</p>
               <p className="text-xs text-marca-600">{NOME_PAPEL[sessao.perfil.role] ?? sessao.perfil.role}</p>
             </div>
+            <BotaoFavoritarTela favoritos={favoritos.map((f) => f.href)} />
+
             <Link
               href="/"
               className="hidden rounded-full border border-marca-200 px-4 py-2 text-sm font-medium text-marca-700 hover:bg-marca-50 sm:inline-flex"
@@ -58,7 +63,7 @@ export default async function LayoutGestao({ children }: { children: React.React
       </header>
 
       <div className="flex flex-1">
-        <NavegacaoLateral telasVisiveis={telasVisiveis} />
+        <NavegacaoLateral telasVisiveis={telasVisiveis} favoritos={favoritos} />
         <main className="min-w-0 flex-1 p-5 sm:p-8">{children}</main>
       </div>
     </div>

@@ -5,10 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Newspaper, FileText, Users, ShieldCheck, UserCog, GraduationCap,
-  ShoppingCart, ArrowDownCircle, ArrowUpCircle, BarChart3, History, Eye, Menu, X,
+  ShoppingCart, ArrowDownCircle, ArrowUpCircle, BarChart3, History, Eye, Menu, X, Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { TelaKey } from "@/lib/auth/permissoes";
+import type { Favorito } from "@/lib/gestao/favoritos";
 
 const ITENS: { tela: TelaKey; href: string; rotulo: string; Icone: typeof LayoutDashboard }[] = [
   { tela: "painel", href: "/gestao", rotulo: "Painel", Icone: LayoutDashboard },
@@ -26,13 +27,51 @@ const ITENS: { tela: TelaKey; href: string; rotulo: string; Icone: typeof Layout
   { tela: "audiencia", href: "/gestao/audiencia", rotulo: "Audiência do site", Icone: Eye },
 ];
 
-export function NavegacaoLateral({ telasVisiveis }: { telasVisiveis: TelaKey[] }) {
+export function NavegacaoLateral({
+  telasVisiveis,
+  favoritos = [],
+}: {
+  telasVisiveis: TelaKey[];
+  favoritos?: Favorito[];
+}) {
   const path = usePathname();
   const [aberto, setAberto] = useState(false);
   const itens = ITENS.filter((i) => telasVisiveis.includes(i.tela));
 
   const lista = (
     <nav className="space-y-1">
+      {/* Atalhos da pessoa, antes do menu fixo. So aparece se ela marcou
+          algo — menu vazio com titulo e pior que menu nenhum. */}
+      {favoritos.length > 0 ? (
+        <div className="mb-4">
+          <p className="mb-2 flex items-center gap-1.5 px-3 text-xs font-semibold uppercase tracking-wide text-texto-suave">
+            <Star className="h-3.5 w-3.5" /> Favoritos
+          </p>
+          <div className="space-y-1">
+            {favoritos.map((f) => {
+              const ativo = path === f.href;
+              return (
+                <Link
+                  key={f.href}
+                  href={f.href}
+                  onClick={() => setAberto(false)}
+                  className={cn(
+                    "flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition-colors",
+                    ativo
+                      ? "bg-marca-100 font-medium text-marca-800"
+                      : "text-texto-suave hover:bg-marca-50 hover:text-marca-700",
+                  )}
+                >
+                  <Star className="h-3.5 w-3.5 shrink-0 text-amber-500" fill="currentColor" />
+                  <span className="truncate">{f.rotulo}</span>
+                </Link>
+              );
+            })}
+          </div>
+          <div className="mt-4 border-t border-borda" />
+        </div>
+      ) : null}
+
       {itens.map(({ href, rotulo, Icone }) => {
         const ativo = href === "/gestao" ? path === "/gestao" : path.startsWith(href);
         return (
