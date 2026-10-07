@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 import { formatarDataLonga } from "@/lib/datas";
-import { emParagrafos } from "@/lib/utils";
+import { emParagrafos, resumoParaMeta } from "@/lib/utils";
 import { obterNoticia } from "@/lib/conteudo";
 import { registrarAcesso, registrarVisualizacao } from "@/lib/metricas";
 
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!noticia) return { title: "Notícia não encontrada" };
   return {
     title: noticia.titulo,
-    description: noticia.resumo ?? undefined,
+    description: resumoParaMeta(noticia.resumo),
     openGraph: { images: noticia.imagem_url ? [noticia.imagem_url] : undefined },
   };
 }

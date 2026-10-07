@@ -37,3 +37,20 @@ export function slugificar(texto: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 }
+
+/**
+ * Texto de uma linha para meta tags (description, og:description).
+ *
+ * A descricao crua vem de textarea, com quebras de linha. Jogada direto num
+ * atributo HTML ela fica com newline literal dentro das aspas — funciona,
+ * mas e sujo e confunde quem le o HTML. Aqui as quebras viram espaco e o
+ * corte respeita a ultima palavra inteira.
+ */
+export function resumoParaMeta(texto: string | null | undefined, limite = 160) {
+  if (!texto) return undefined;
+  const limpo = texto.replace(/\s+/g, " ").trim();
+  if (limpo.length <= limite) return limpo || undefined;
+  const cortado = limpo.slice(0, limite);
+  const ultimoEspaco = cortado.lastIndexOf(" ");
+  return `${(ultimoEspaco > limite * 0.6 ? cortado.slice(0, ultimoEspaco) : cortado).trim()}...`;
+}

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowLeft, CalendarDays, Clock, MapPin } from "lucide-react";
 import { formatarData, formatarDataLonga } from "@/lib/datas";
-import { emParagrafos } from "@/lib/utils";
+import { emParagrafos, resumoParaMeta } from "@/lib/utils";
 import { obterEvento } from "@/lib/conteudo";
 import { registrarAcesso, registrarVisualizacao } from "@/lib/metricas";
 
@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!evento) return { title: "Evento não encontrado" };
   return {
     title: evento.titulo,
-    description: evento.descricao?.slice(0, 160) ?? undefined,
+    description: resumoParaMeta(evento.descricao),
     openGraph: { images: evento.imagem_url ? [evento.imagem_url] : undefined },
   };
 }
