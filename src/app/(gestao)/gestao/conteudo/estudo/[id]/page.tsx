@@ -22,8 +22,8 @@ export default async function EditorQuestao({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const sessao = await exigirTela("conteudo");
-  const podeEditar = sessao.podeEditar("conteudo");
+  const sessao = await exigirTela("conteudo_livro");
+  const podeEditar = sessao.podeEditar("conteudo_livro");
   const { id } = await params;
   const nova = id === "nova";
 

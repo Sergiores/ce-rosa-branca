@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { CalendarDays, MapPin, Users } from "lucide-react";
 import { Cartao, CartaoCorpo, Etiqueta, Vazio } from "@/components/ui";
@@ -36,8 +37,14 @@ export default async function PaginaEstudos({
 }: {
   searchParams: Promise<{ status?: string }>;
 }) {
-  const sessao = await exigirTela("estudos");
-  const podeEditar = sessao.podeEditar("estudos");
+  // O menu "Area de estudos" aponta para ca. Quem so cuida de alunos nao
+  // pode ser barrado na porta: vai direto para a tela que e dele.
+  const area = await exigirTela("estudos");
+  if (!area.podeVer("estudos_turmas")) redirect("/gestao/estudos/alunos");
+
+  const sessao = area;
+  const podeEditar = sessao.podeEditar("estudos_turmas");
+  const veAlunos = sessao.podeVer("estudos_alunos");
   const { status } = await searchParams;
 
   const turmas = await listarTurmas(status || undefined);
@@ -52,6 +59,7 @@ export default async function PaginaEstudos({
         podeEditar={podeEditar}
       />
 
+      {veAlunos ? (
       <div className="mt-6 flex flex-wrap items-center gap-3">
         <Link
           href="/gestao/estudos/alunos"
@@ -60,6 +68,7 @@ export default async function PaginaEstudos({
           <Users className="h-4 w-4" /> Alunos e históricos
         </Link>
       </div>
+      ) : null}
 
       <div className="mt-6">
         <FiltrosLista

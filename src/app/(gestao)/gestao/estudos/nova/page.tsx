@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Nova turma" };
 
 export default async function NovaTurma() {
-  await exigirTela("estudos", true);
+  await exigirTela("estudos_turmas", true);
 
   return (
     <PaginaManutencao

@@ -23,8 +23,8 @@ export default async function ListaMensagens({
 }: {
   searchParams: Promise<{ q?: string; status?: string; pagina?: string }>;
 }) {
-  const sessao = await exigirTela("conteudo");
-  const podeEditar = sessao.podeEditar("conteudo");
+  const sessao = await exigirTela("conteudo_mensagens");
+  const podeEditar = sessao.podeEditar("conteudo_mensagens");
 
   const filtros = await searchParams;
   const busca = filtros.q?.trim() ?? "";

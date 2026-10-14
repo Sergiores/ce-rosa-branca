@@ -22,8 +22,8 @@ export default async function NavegadorQuestoes({
 }: {
   searchParams: Promise<{ q?: string; status?: string; pagina?: string }>;
 }) {
-  const sessao = await exigirTela("conteudo");
-  const podeEditar = sessao.podeEditar("conteudo");
+  const sessao = await exigirTela("conteudo_livro");
+  const podeEditar = sessao.podeEditar("conteudo_livro");
 
   const filtros = await searchParams;
   const busca = filtros.q?.trim() ?? "";

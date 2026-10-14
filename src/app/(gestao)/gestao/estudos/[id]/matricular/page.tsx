@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Matricular aluno" };
 
 export default async function Matricular({ params }: { params: Promise<{ id: string }> }) {
-  await exigirTela("estudos", true);
+  await exigirTela("estudos_turmas", true);
   const { id } = await params;
 
   const turma = await obterTurma(id);

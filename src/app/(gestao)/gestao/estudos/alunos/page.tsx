@@ -16,8 +16,8 @@ export default async function PaginaAlunos({
 }: {
   searchParams: Promise<{ q?: string }>;
 }) {
-  const sessao = await exigirTela("estudos");
-  const podeEditar = sessao.podeEditar("estudos");
+  const sessao = await exigirTela("estudos_alunos");
+  const podeEditar = sessao.podeEditar("estudos_alunos");
   const { q } = await searchParams;
   const busca = q?.trim() ?? "";
 
@@ -25,12 +25,14 @@ export default async function PaginaAlunos({
 
   return (
     <div className="mx-auto max-w-4xl">
-      <Link
-        href="/gestao/estudos"
-        className="inline-flex items-center gap-1 text-sm font-medium text-marca-700 hover:text-marca-800"
-      >
-        <ArrowLeft className="h-4 w-4" /> Voltar às turmas
-      </Link>
+      {sessao.podeVer("estudos_turmas") ? (
+        <Link
+          href="/gestao/estudos"
+          className="inline-flex items-center gap-1 text-sm font-medium text-marca-700 hover:text-marca-800"
+        >
+          <ArrowLeft className="h-4 w-4" /> Voltar às turmas
+        </Link>
+      ) : null}
 
       <div className="mt-4">
         <CabecalhoLista

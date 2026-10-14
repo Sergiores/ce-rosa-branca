@@ -15,8 +15,8 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Projeto" };
 
 export default async function EditorProjeto({ params }: { params: Promise<{ id: string }> }) {
-  const sessao = await exigirTela("conteudo");
-  const podeEditar = sessao.podeEditar("conteudo");
+  const sessao = await exigirTela("conteudo_projetos");
+  const podeEditar = sessao.podeEditar("conteudo_projetos");
   const { id } = await params;
   const novo = id === "novo";
 

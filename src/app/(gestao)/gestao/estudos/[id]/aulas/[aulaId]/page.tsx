@@ -44,9 +44,9 @@ export default async function PaginaAula({
 }: {
   params: Promise<{ id: string; aulaId: string }>;
 }) {
-  const sessao = await exigirTela("estudos");
+  const sessao = await exigirTela("estudos_turmas");
   const { id, aulaId } = await params;
-  const podeEditar = sessao.podeEditar("estudos");
+  const podeEditar = sessao.podeEditar("estudos_turmas");
 
   const [turma, aula] = await Promise.all([obterTurma(id), obterAula(aulaId)]);
   if (!turma || !aula || aula.turma_id !== id) notFound();

@@ -22,8 +22,8 @@ export default async function ListaProjetos({
 }: {
   searchParams: Promise<{ q?: string; status?: string; pagina?: string }>;
 }) {
-  const sessao = await exigirTela("conteudo");
-  const podeEditar = sessao.podeEditar("conteudo");
+  const sessao = await exigirTela("conteudo_projetos");
+  const podeEditar = sessao.podeEditar("conteudo_projetos");
 
   const filtros = await searchParams;
   const busca = filtros.q?.trim() ?? "";

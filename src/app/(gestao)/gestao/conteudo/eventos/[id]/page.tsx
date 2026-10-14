@@ -24,8 +24,8 @@ function paraCampoLocal(iso: string | null | undefined) {
 }
 
 export default async function EditorEvento({ params }: { params: Promise<{ id: string }> }) {
-  const sessao = await exigirTela("conteudo");
-  const podeEditar = sessao.podeEditar("conteudo");
+  const sessao = await exigirTela("conteudo_eventos");
+  const podeEditar = sessao.podeEditar("conteudo_eventos");
   const { id } = await params;
   const novo = id === "novo";
 

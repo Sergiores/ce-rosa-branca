@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Editar notícia" };
 
 export default async function FormNoticia({ params }: { params: Promise<{ id: string }> }) {
-  await exigirTela("conteudo", true);
+  await exigirTela("conteudo_noticias", true);
   const { id } = await params;
   const nova = id === "nova";
 

@@ -20,7 +20,7 @@ export default async function PaginasInstitucionais({
 }: {
   searchParams: Promise<{ slug?: string }>;
 }) {
-  await exigirTela("conteudo");
+  await exigirTela("conteudo_paginas");
   const { slug } = await searchParams;
   const alvo = PAGINAS_FIXAS.find((p) => p.slug === slug) ?? PAGINAS_FIXAS[0];
 

@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Editar aluno" };
 
 export default async function EditarAluno({ params }: { params: Promise<{ id: string }> }) {
-  await exigirTela("estudos", true);
+  await exigirTela("estudos_alunos", true);
   const { id } = await params;
 
   const aluno = await obterAluno(id);

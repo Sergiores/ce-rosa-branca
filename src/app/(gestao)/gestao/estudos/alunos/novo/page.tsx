@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Cadastrar aluno" };
 
 export default async function NovoAluno() {
-  await exigirTela("estudos", true);
+  await exigirTela("estudos_alunos", true);
   const pessoas = await pessoasVinculaveis("aluno");
 
   return (

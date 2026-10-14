@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { criarClienteServidor } from "@/lib/supabase/server";
-import { exigirTela } from "@/lib/auth/permissoes";
+import { exigirTela, type TelaKey } from "@/lib/auth/permissoes";
 import { slugificar } from "@/lib/utils";
 
 export type Resultado = { erro?: string; ok?: boolean };
@@ -27,13 +27,26 @@ function revalidarSite(...caminhos: string[]) {
 
 type TabelaPublicavel = "mensagens_do_dia" | "eventos" | "projetos" | "questoes" | "pareceres";
 
+/**
+ * Uma funcao, cinco entidades: a permissao exigida depende da tabela. Uma
+ * chave fixa aqui deixaria quem so cuida de eventos publicar mensagem do dia
+ * chamando a acao direto.
+ */
+const TELA_DA_TABELA: Record<TabelaPublicavel, TelaKey> = {
+  mensagens_do_dia: "conteudo_mensagens",
+  eventos: "conteudo_eventos",
+  projetos: "conteudo_projetos",
+  questoes: "conteudo_livro",
+  pareceres: "conteudo_livro",
+};
+
 /** Alterna a publicacao sem abrir o formulario, direto pela lista. */
 export async function alternarPublicacao(
   tabela: TabelaPublicavel,
   id: string,
   publicar: boolean,
 ) {
-  await exigirTela("conteudo", true);
+  await exigirTela(TELA_DA_TABELA[tabela], true);
   const supabase = await criarClienteServidor();
   await supabase
     .from(tabela)
@@ -46,7 +59,7 @@ export async function alternarPublicacao(
 /* ------------------------------------------------------------------ Notícias */
 
 export async function salvarNoticia(_estado: Resultado, dados: FormData): Promise<Resultado> {
-  await exigirTela("conteudo", true);
+  await exigirTela("conteudo_noticias", true);
   const supabase = await criarClienteServidor();
 
   const id = texto(dados, "id");
@@ -94,7 +107,7 @@ export async function salvarNoticia(_estado: Resultado, dados: FormData): Promis
 }
 
 export async function alternarPublicacaoNoticia(id: string, publicar: boolean) {
-  await exigirTela("conteudo", true);
+  await exigirTela("conteudo_noticias", true);
   const supabase = await criarClienteServidor();
   await supabase
     .from("noticias")
@@ -108,7 +121,7 @@ export async function alternarPublicacaoNoticia(id: string, publicar: boolean) {
 }
 
 export async function excluirNoticia(id: string) {
-  await exigirTela("conteudo", true);
+  await exigirTela("conteudo_noticias", true);
   const supabase = await criarClienteServidor();
   await supabase.from("noticias").delete().eq("id", id);
   revalidarSite();
@@ -118,7 +131,7 @@ export async function excluirNoticia(id: string) {
 /* ------------------------------------------------------------ Mensagem do dia */
 
 export async function salvarMensagem(_estado: Resultado, dados: FormData): Promise<Resultado> {
-  await exigirTela("conteudo", true);
+  await exigirTela("conteudo_mensagens", true);
   const supabase = await criarClienteServidor();
 
   const id = texto(dados, "id");
@@ -149,7 +162,7 @@ export async function salvarMensagem(_estado: Resultado, dados: FormData): Promi
 }
 
 export async function excluirMensagem(id: string) {
-  await exigirTela("conteudo", true);
+  await exigirTela("conteudo_mensagens", true);
   const supabase = await criarClienteServidor();
   await supabase.from("mensagens_do_dia").delete().eq("id", id);
   revalidarSite();
@@ -159,7 +172,7 @@ export async function excluirMensagem(id: string) {
 /* ------------------------------------------------------------------- Eventos */
 
 export async function salvarEvento(_estado: Resultado, dados: FormData): Promise<Resultado> {
-  await exigirTela("conteudo", true);
+  await exigirTela("conteudo_eventos", true);
   const supabase = await criarClienteServidor();
 
   const id = texto(dados, "id");
@@ -188,7 +201,7 @@ export async function salvarEvento(_estado: Resultado, dados: FormData): Promise
 }
 
 export async function excluirEvento(id: string) {
-  await exigirTela("conteudo", true);
+  await exigirTela("conteudo_eventos", true);
   const supabase = await criarClienteServidor();
   await supabase.from("eventos").delete().eq("id", id);
   revalidarSite();
@@ -198,7 +211,7 @@ export async function excluirEvento(id: string) {
 /* ------------------------------------------------------------------ Projetos */
 
 export async function salvarProjeto(_estado: Resultado, dados: FormData): Promise<Resultado> {
-  await exigirTela("conteudo", true);
+  await exigirTela("conteudo_projetos", true);
   const supabase = await criarClienteServidor();
 
   const id = texto(dados, "id");
@@ -224,7 +237,7 @@ export async function salvarProjeto(_estado: Resultado, dados: FormData): Promis
 }
 
 export async function excluirProjeto(id: string) {
-  await exigirTela("conteudo", true);
+  await exigirTela("conteudo_projetos", true);
   const supabase = await criarClienteServidor();
   await supabase.from("projetos").delete().eq("id", id);
   revalidarSite();
@@ -234,7 +247,7 @@ export async function excluirProjeto(id: string) {
 /* ------------------------------------------------- Páginas institucionais */
 
 export async function salvarPagina(_estado: Resultado, dados: FormData): Promise<Resultado> {
-  await exigirTela("conteudo", true);
+  await exigirTela("conteudo_paginas", true);
   const supabase = await criarClienteServidor();
 
   const slug = texto(dados, "slug");
@@ -257,7 +270,7 @@ export async function salvarPagina(_estado: Resultado, dados: FormData): Promise
 /* ------------------------------------- Estudo: questões e pareceres */
 
 export async function salvarQuestao(_estado: Resultado, dados: FormData): Promise<Resultado> {
-  await exigirTela("conteudo", true);
+  await exigirTela("conteudo_livro", true);
   const supabase = await criarClienteServidor();
 
   const id = texto(dados, "id");
@@ -290,7 +303,7 @@ export async function salvarQuestao(_estado: Resultado, dados: FormData): Promis
 }
 
 export async function excluirQuestao(id: string) {
-  await exigirTela("conteudo", true);
+  await exigirTela("conteudo_livro", true);
   const supabase = await criarClienteServidor();
   await supabase.from("questoes").delete().eq("id", id);
   revalidarSite();
@@ -299,7 +312,7 @@ export async function excluirQuestao(id: string) {
 
 /** Publica ou volta a rascunho sem abrir o formulario. */
 export async function alternarPublicacaoQuestao(id: string, publicar: boolean) {
-  await exigirTela("conteudo", true);
+  await exigirTela("conteudo_livro", true);
   const supabase = await criarClienteServidor();
   await supabase
     .from("questoes")
@@ -310,7 +323,7 @@ export async function alternarPublicacaoQuestao(id: string, publicar: boolean) {
 }
 
 export async function salvarParecer(_estado: Resultado, dados: FormData): Promise<Resultado> {
-  await exigirTela("conteudo", true);
+  await exigirTela("conteudo_livro", true);
   const supabase = await criarClienteServidor();
 
   const id = texto(dados, "id");
@@ -337,7 +350,7 @@ export async function salvarParecer(_estado: Resultado, dados: FormData): Promis
 }
 
 export async function excluirParecer(id: string) {
-  await exigirTela("conteudo", true);
+  await exigirTela("conteudo_livro", true);
   const supabase = await criarClienteServidor();
   await supabase.from("pareceres").delete().eq("id", id);
   revalidarSite();

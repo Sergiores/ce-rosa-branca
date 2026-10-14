@@ -51,9 +51,9 @@ const ROTULO_MATRICULA = {
 const TOM_MATRICULA = { matriculado: "marca", concluido: "verde", desistente: "cinza" } as const;
 
 export default async function PaginaTurma({ params }: { params: Promise<{ id: string }> }) {
-  const sessao = await exigirTela("estudos");
+  const sessao = await exigirTela("estudos_turmas");
   const { id } = await params;
-  const podeEditar = sessao.podeEditar("estudos");
+  const podeEditar = sessao.podeEditar("estudos_turmas");
 
   const turma = await obterTurma(id);
   if (!turma) notFound();

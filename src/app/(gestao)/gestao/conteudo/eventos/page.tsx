@@ -23,8 +23,8 @@ export default async function ListaEventos({
 }: {
   searchParams: Promise<{ q?: string; status?: string; quando?: string; pagina?: string }>;
 }) {
-  const sessao = await exigirTela("conteudo");
-  const podeEditar = sessao.podeEditar("conteudo");
+  const sessao = await exigirTela("conteudo_eventos");
+  const podeEditar = sessao.podeEditar("conteudo_eventos");
 
   const filtros = await searchParams;
   const busca = filtros.q?.trim() ?? "";

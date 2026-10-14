@@ -3,12 +3,21 @@ import "server-only";
 import { redirect } from "next/navigation";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import type { Papel, Perfil } from "@/lib/tipos";
+import { AREAS } from "@/lib/auth/telas";
 
 export type TelaKey =
   | "painel"
   | "conteudo"
+  | "conteudo_noticias"
+  | "conteudo_mensagens"
+  | "conteudo_eventos"
+  | "conteudo_projetos"
+  | "conteudo_paginas"
+  | "conteudo_livro"
   | "atas"
   | "estudos"
+  | "estudos_turmas"
+  | "estudos_alunos"
   | "usuarios"
   | "permissoes"
   | "membros"
@@ -74,6 +83,18 @@ export async function estadoSessao(): Promise<EstadoSessao> {
   const mescladas = new Map<string, Permissao>();
   for (const p of (doPapel ?? []) as Permissao[]) mescladas.set(p.tela_key, p);
   for (const e of (doUsuario ?? []) as Permissao[]) mescladas.set(e.tela_key, e);
+
+  // Area-mae (Conteudo, Estudos) nao e marcada a mao: aparece se a pessoa
+  // tiver qualquer tela de dentro dela. Assim o menu e o painel, que filtram
+  // pela mae, mostram a area exatamente para quem tem algo para fazer la.
+  for (const [mae, filhas] of Object.entries(AREAS)) {
+    const delas = filhas.map((f) => mescladas.get(f)).filter(Boolean) as Permissao[];
+    mescladas.set(mae, {
+      tela_key: mae as TelaKey,
+      ver: delas.some((d) => d.ver),
+      editar: delas.some((d) => d.editar),
+    });
+  }
 
   const lista = [...mescladas.values()];
   const achar = (tela: TelaKey) => lista.find((p) => p.tela_key === tela);

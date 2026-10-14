@@ -15,7 +15,7 @@ export default async function NovaAula({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ numero?: string }>;
 }) {
-  await exigirTela("estudos", true);
+  await exigirTela("estudos_turmas", true);
   const { id } = await params;
   const { numero } = await searchParams;
 

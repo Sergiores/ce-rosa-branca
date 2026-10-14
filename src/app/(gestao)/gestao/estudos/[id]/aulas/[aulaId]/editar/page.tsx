@@ -13,7 +13,7 @@ export default async function EditarAula({
 }: {
   params: Promise<{ id: string; aulaId: string }>;
 }) {
-  await exigirTela("estudos", true);
+  await exigirTela("estudos_turmas", true);
   const { id, aulaId } = await params;
 
   const aula = await obterAula(aulaId);

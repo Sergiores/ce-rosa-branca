@@ -24,7 +24,7 @@ function numeroOuNulo(valor: string) {
 /* -------------------------------------------------- Turmas */
 
 export async function salvarTurma(_estado: Resultado, dados: FormData): Promise<Resultado> {
-  await exigirTela("estudos", true);
+  await exigirTela("estudos_turmas", true);
   const supabase = await criarClienteServidor();
 
   const id = texto(dados, "id");
@@ -69,7 +69,7 @@ export async function salvarTurma(_estado: Resultado, dados: FormData): Promise<
 }
 
 export async function excluirTurma(dados: FormData) {
-  await exigirTela("estudos", true);
+  await exigirTela("estudos_turmas", true);
   const id = texto(dados, "id");
   if (!id) return;
 
@@ -83,7 +83,7 @@ export async function excluirTurma(dados: FormData) {
 /* -------------------------------------------------- Alunos */
 
 export async function salvarAluno(_estado: Resultado, dados: FormData): Promise<Resultado> {
-  await exigirTela("estudos", true);
+  await exigirTela("estudos_alunos", true);
   const supabase = await criarClienteServidor();
 
   const id = texto(dados, "id");
@@ -130,7 +130,7 @@ function traduzirErroVinculo(mensagem: string) {
 /* -------------------------------------------------- Matrículas */
 
 export async function matricularAluno(dados: FormData) {
-  await exigirTela("estudos", true);
+  await exigirTela("estudos_turmas", true);
   const turmaId = texto(dados, "turma_id");
   const alunoId = texto(dados, "aluno_id");
   if (!turmaId || !alunoId) return;
@@ -146,7 +146,7 @@ export async function matricularAluno(dados: FormData) {
 }
 
 export async function alterarStatusMatricula(dados: FormData) {
-  await exigirTela("estudos", true);
+  await exigirTela("estudos_turmas", true);
   const id = texto(dados, "id");
   const turmaId = texto(dados, "turma_id");
   const status = texto(dados, "status");
@@ -167,7 +167,7 @@ export async function alterarStatusMatricula(dados: FormData) {
 }
 
 export async function removerMatricula(dados: FormData) {
-  await exigirTela("estudos", true);
+  await exigirTela("estudos_turmas", true);
   const id = texto(dados, "id");
   const turmaId = texto(dados, "turma_id");
   if (!id) return;
@@ -180,7 +180,7 @@ export async function removerMatricula(dados: FormData) {
 /* -------------------------------------------------- Aulas */
 
 export async function salvarAula(_estado: Resultado, dados: FormData): Promise<Resultado> {
-  await exigirTela("estudos", true);
+  await exigirTela("estudos_turmas", true);
   const supabase = await criarClienteServidor();
 
   const id = texto(dados, "id");
@@ -231,7 +231,7 @@ function traduzirErroAula(mensagem: string) {
 }
 
 export async function excluirAula(dados: FormData) {
-  await exigirTela("estudos", true);
+  await exigirTela("estudos_turmas", true);
   const id = texto(dados, "id");
   const turmaId = texto(dados, "turma_id");
   if (!id) return;
@@ -245,7 +245,7 @@ export async function excluirAula(dados: FormData) {
 /* -------------------------------------------------- Materiais */
 
 export async function salvarMaterial(_estado: Resultado, dados: FormData): Promise<Resultado> {
-  await exigirTela("estudos", true);
+  await exigirTela("estudos_turmas", true);
   const supabase = await criarClienteServidor();
 
   const aulaId = texto(dados, "aula_id");
@@ -272,7 +272,7 @@ export async function salvarMaterial(_estado: Resultado, dados: FormData): Promi
 }
 
 export async function excluirMaterial(dados: FormData) {
-  await exigirTela("estudos", true);
+  await exigirTela("estudos_turmas", true);
   const id = texto(dados, "id");
   const aulaId = texto(dados, "aula_id");
   const turmaId = texto(dados, "turma_id");
@@ -291,7 +291,7 @@ export async function excluirMaterial(dados: FormData) {
  * vale mais que ausência de registro na hora de conferir o histórico.
  */
 export async function salvarChamada(dados: FormData) {
-  await exigirTela("estudos", true);
+  await exigirTela("estudos_turmas", true);
   const supabase = await criarClienteServidor();
 
   const aulaId = texto(dados, "aula_id");

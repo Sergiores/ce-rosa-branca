@@ -2,22 +2,25 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Newspaper, MessageSquareQuote, CalendarDays, HeartHandshake, FileText, BookOpen } from "lucide-react";
 import { Cartao, CartaoCorpo } from "@/components/ui";
-import { exigirTela } from "@/lib/auth/permissoes";
+import { exigirTela, type TelaKey } from "@/lib/auth/permissoes";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Conteúdo do site" };
 
 const SECOES = [
-  { href: "/gestao/conteudo/noticias", titulo: "Notícias", texto: "Publique notícias e escolha o que aparece no carrossel.", Icone: Newspaper },
-  { href: "/gestao/conteudo/mensagens", titulo: "Mensagem do dia", texto: "A mensagem exibida na página inicial.", Icone: MessageSquareQuote },
-  { href: "/gestao/conteudo/eventos", titulo: "Eventos", texto: "Programação, palestras e cursos.", Icone: CalendarDays },
-  { href: "/gestao/conteudo/projetos", titulo: "Projetos", texto: "Frentes de trabalho da casa.", Icone: HeartHandshake },
-  { href: "/gestao/conteudo/paginas", titulo: "Páginas institucionais", texto: "A Casa, missão e valores, contato.", Icone: FileText },
-  { href: "/gestao/conteudo/estudo", titulo: "Livro dos Espíritos", texto: "Questões, respostas e pareceres.", Icone: BookOpen },
+  { tela: "conteudo_noticias" as TelaKey, href: "/gestao/conteudo/noticias", titulo: "Notícias", texto: "Publique notícias e escolha o que aparece no carrossel.", Icone: Newspaper },
+  { tela: "conteudo_mensagens" as TelaKey, href: "/gestao/conteudo/mensagens", titulo: "Mensagem do dia", texto: "A mensagem exibida na página inicial.", Icone: MessageSquareQuote },
+  { tela: "conteudo_eventos" as TelaKey, href: "/gestao/conteudo/eventos", titulo: "Eventos", texto: "Programação, palestras e cursos.", Icone: CalendarDays },
+  { tela: "conteudo_projetos" as TelaKey, href: "/gestao/conteudo/projetos", titulo: "Projetos", texto: "Frentes de trabalho da casa.", Icone: HeartHandshake },
+  { tela: "conteudo_paginas" as TelaKey, href: "/gestao/conteudo/paginas", titulo: "Páginas institucionais", texto: "A Casa, missão e valores, contato.", Icone: FileText },
+  { tela: "conteudo_livro" as TelaKey, href: "/gestao/conteudo/estudo", titulo: "Livro dos Espíritos", texto: "Questões, respostas e pareceres.", Icone: BookOpen },
 ];
 
 export default async function PaginaConteudo() {
-  await exigirTela("conteudo");
+  // "conteudo" e liberado para quem tiver qualquer tela daqui. Os cartoes
+  // filtram tela por tela — mostrar os seis faria cinco deles barrarem.
+  const sessao = await exigirTela("conteudo");
+  const secoes = SECOES.filter((s) => sessao.podeVer(s.tela));
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -27,7 +30,7 @@ export default async function PaginaConteudo() {
       </p>
 
       <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {SECOES.map(({ href, titulo, texto, Icone }) => (
+        {secoes.map(({ href, titulo, texto, Icone }) => (
           <Link key={href} href={href} className="group">
             <Cartao className="h-full group-hover:shadow-lg group-hover:shadow-marca-900/10">
               <CartaoCorpo>
