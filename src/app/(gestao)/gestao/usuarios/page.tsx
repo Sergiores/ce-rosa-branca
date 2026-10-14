@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SlidersHorizontal, UserPlus } from "lucide-react";
+import { KeyRound, SlidersHorizontal, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { Cartao, Etiqueta, Vazio } from "@/components/ui";
 import { exigirTela } from "@/lib/auth/permissoes";
@@ -22,10 +22,12 @@ function LinhaUsuario({
   usuario,
   podeEditar,
   excecoes = 0,
+  podeRedefinirSenha = false,
 }: {
   usuario: Perfil;
   podeEditar: boolean;
   excecoes?: number;
+  podeRedefinirSenha?: boolean;
 }) {
   return (
     <div className="flex flex-wrap items-center gap-4 px-5 py-4">
@@ -53,6 +55,17 @@ function LinhaUsuario({
           >
             <SlidersHorizontal className="h-4 w-4" />
           </Link>
+
+          {podeRedefinirSenha ? (
+            <Link
+              href={`/gestao/usuarios/${usuario.id}/senha`}
+              aria-label="Redefinir a senha desta pessoa"
+              title="Redefinir a senha desta pessoa"
+              className="grid h-9 w-9 place-items-center rounded-full text-marca-700 hover:bg-marca-100"
+            >
+              <KeyRound className="h-4 w-4" />
+            </Link>
+          ) : null}
         </div>
       ) : (
         <Etiqueta tom="cinza">
@@ -63,9 +76,16 @@ function LinhaUsuario({
   );
 }
 
-export default async function PaginaUsuarios() {
+export default async function PaginaUsuarios({
+  searchParams,
+}: {
+  searchParams: Promise<{ senha?: string }>;
+}) {
+  const { senha } = await searchParams;
   const sessao = await exigirTela("usuarios");
   const podeEditar = sessao.podeEditar("usuarios");
+  // Trocar senha alheia e mais forte que editar usuarios: so diretoria.
+  const podeRedefinirSenha = podeEditar && sessao.perfil.role === "diretoria";
 
   const supabase = await criarClienteServidor();
   const [{ data }, excecoes] = await Promise.all([
@@ -100,6 +120,12 @@ export default async function PaginaUsuarios() {
         ) : null}
       </div>
 
+      {senha === "1" ? (
+        <p className="mt-6 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+          Senha alterada e registrada na auditoria. Avise a pessoa da senha nova por um canal seguro.
+        </p>
+      ) : null}
+
       <h2 className="mb-4 mt-8 font-semibold text-texto">Usuários cadastrados</h2>
       {usuarios.length === 0 ? (
         <Vazio mensagem="Nenhum usuário cadastrado." />
@@ -111,6 +137,7 @@ export default async function PaginaUsuarios() {
               usuario={u}
               podeEditar={podeEditar}
               excecoes={excecoes.get(u.id) ?? 0}
+              podeRedefinirSenha={podeRedefinirSenha}
             />
           ))}
         </Cartao>
@@ -140,6 +167,7 @@ export default async function PaginaUsuarios() {
               usuario={u}
               podeEditar={podeEditar}
               excecoes={excecoes.get(u.id) ?? 0}
+              podeRedefinirSenha={podeRedefinirSenha}
             />
               ))}
             </Cartao>

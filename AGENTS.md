@@ -25,10 +25,19 @@ escreve código de aplicação.
 
 **4. Nunca acrescente um novo uso de `criarClienteAdmin()`.**
 Ela usa a service role, que ignora RLS **e alcança os dados da loja**, não só os
-nossos. Isso foi verificado, não é hipótese. O único uso existente — o convite,
-em `src/lib/gestao/acoes-usuarios.ts` — está auditado e basta. A signed URL de
-anexo **não** usa a service role: sai por `criarClienteServidor()`, com RLS
-aplicado. Precisando de um uso novo, pare e pergunte.
+nossos. Isso foi verificado, não é hipótese. Existem DOIS usos, ambos em
+`src/lib/gestao/acoes-usuarios.ts`, ambos autorizados pelo dono do sistema:
+
+- `convidarUsuario` — o convite por e-mail.
+- `redefinirSenha` — a diretoria define a senha de outra pessoa (autorizado em
+  13/10/2026). Como `auth.users` é compartilhado com a loja, ele só age depois
+  de três travas: quem chama é diretoria e edita Usuários; o alvo tem perfil em
+  `rosabranca.profiles` (conta só da loja é recusada); e a auditoria é gravada
+  ANTES da troca — sem registro, não há troca. Não afrouxe nenhuma das três.
+
+A signed URL de anexo **não** usa a service role: sai por
+`criarClienteServidor()`, com RLS aplicado. Precisando de um terceiro uso,
+pare e pergunte.
 
 ### Preciso de uma coluna nova. O que faço?
 
@@ -132,7 +141,7 @@ Regras que estão no banco, não na interface. Quebrar qualquer uma delas gera e
 - Nomes em português, inclusive funções e variáveis.
 - `src/app/(site)/` é público, `src/app/(gestao)/` é restrito.
 - Server Actions em `src/lib/gestao/acoes-*.ts`.
-- `criarClienteAdmin()` ignora RLS. Hoje só o convite de usuário a usa. Nunca importe em componente cliente.
+- `criarClienteAdmin()` ignora RLS. Hoje só o convite e a redefinição de senha a usam. Nunca importe em componente cliente.
 - Tipos escritos à mão em `src/lib/tipos.ts`. Não há types gerados do banco, então uma coluna nova precisa ser refletida ali manualmente.
 - Listagens paginam com `.range()`. O limite de linhas por requisição da API é 1000.
 

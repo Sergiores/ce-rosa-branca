@@ -236,3 +236,91 @@ export async function salvarAcessosDoUsuario(dados: FormData): Promise<void> {
   redirect("/gestao/usuarios?acessos=1");
 }
 
+/* -------------------------------------------------- Redefinir senha */
+
+/**
+ * A diretoria define a senha de outra pessoa.
+ *
+ * SEGUNDO uso de criarClienteAdmin() no projeto, autorizado pelo dono do
+ * sistema em 13/10/2026 (AGENTS.md, regra 4). A service role alcanca
+ * `auth.users` inteiro, que e COMPARTILHADO com a loja: sem as travas abaixo,
+ * esta acao trocaria a senha de cliente ou do administrador da loja.
+ *
+ * Travas, todas antes de tocar em auth.users:
+ *   1. quem chama precisa ser diretoria E poder editar Usuarios;
+ *   2. o alvo precisa ter perfil em rosabranca.profiles — conta so da loja
+ *      nao tem, e e recusada;
+ *   3. a auditoria e gravada ANTES da troca. Se nao der para registrar, a
+ *      senha nao e trocada: nunca existe troca sem rastro.
+ *
+ * A senha nunca e gravada em lugar nenhum, nem na auditoria.
+ */
+export async function redefinirSenha(_estado: Resultado, dados: FormData): Promise<Resultado> {
+  // Trava 1
+  const sessao = await exigirTela("usuarios", true);
+  if (sessao.perfil.role !== "diretoria") {
+    return { erro: "Só a diretoria pode redefinir senha de outra pessoa." };
+  }
+
+  const alvoId = texto(dados, "id");
+  const senha = typeof dados.get("senha") === "string" ? String(dados.get("senha")) : "";
+  const confirmacao =
+    typeof dados.get("confirmacao") === "string" ? String(dados.get("confirmacao")) : "";
+
+  if (!alvoId) return { erro: "Usuário não informado." };
+  if (senha.length < 8) return { erro: "A senha deve ter ao menos 8 caracteres." };
+  if (senha !== confirmacao) return { erro: "As senhas não conferem." };
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return { erro: "SUPABASE_SERVICE_ROLE_KEY não configurada no ambiente." };
+  }
+
+  const admin = criarClienteAdmin();
+
+  // Trava 2: o cliente admin declara o schema rosabranca, entao isto le
+  // rosabranca.profiles — nunca public.profiles, que e da loja.
+  const { data: alvo } = await admin
+    .from("profiles")
+    .select("id, nome, email")
+    .eq("id", alvoId)
+    .maybeSingle();
+  if (!alvo) {
+    return { erro: "Esta conta não pertence a este sistema. A senha não foi alterada." };
+  }
+
+  // Trava 3: registra antes de trocar.
+  const { error: erroAuditoria } = await admin.from("auditoria").insert({
+    tabela: "auth.users",
+    registro_id: alvoId,
+    acao: "UPDATE",
+    autor_id: sessao.perfil.id,
+    autor_email: sessao.perfil.email,
+    dados_antes: null,
+    dados_depois: {
+      evento: "senha redefinida pela diretoria",
+      usuario: alvo.email ?? alvo.nome ?? alvoId,
+    },
+  });
+  if (erroAuditoria) {
+    return {
+      erro: `A senha NÃO foi alterada: não foi possível registrar na auditoria (${erroAuditoria.message}).`,
+    };
+  }
+
+  const { error } = await admin.auth.admin.updateUserById(alvoId, { password: senha });
+  if (error) {
+    // O registro acima ficou dizendo que houve troca; corrige com um segundo.
+    await admin.from("auditoria").insert({
+      tabela: "auth.users",
+      registro_id: alvoId,
+      acao: "UPDATE",
+      autor_id: sessao.perfil.id,
+      autor_email: sessao.perfil.email,
+      dados_antes: null,
+      dados_depois: { evento: "redefinição de senha FALHOU", motivo: error.message },
+    });
+    return { erro: `Não foi possível alterar a senha: ${error.message}` };
+  }
+
+  revalidatePath("/gestao/usuarios");
+  redirect("/gestao/usuarios?senha=1");
+}
