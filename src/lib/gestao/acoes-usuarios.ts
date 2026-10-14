@@ -7,12 +7,60 @@ import { SCHEMA_DB } from "@/lib/supabase/schema";
 import { exigirTela } from "@/lib/auth/permissoes";
 import type { Papel } from "@/lib/tipos";
 import type { Resultado } from "@/lib/gestao/acoes-conteudo";
+import { acessosDoPapel } from "@/lib/gestao/permissoes-usuario";
+import { TELAS } from "@/lib/auth/telas";
 
 const PAPEIS: Papel[] = ["diretoria", "voluntario", "aluno", "membro"];
 
 function texto(dados: FormData, campo: string) {
   const v = dados.get(campo);
   return typeof v === "string" ? v.trim() : "";
+}
+
+/**
+ * Grava as excecoes de tela de uma pessoa, comparando o pedido com a matriz
+ * do papel. So o que DIFERE vira linha.
+ *
+ * Isso importa: se gravassemos tudo, a pessoa ficaria congelada na matriz do
+ * dia em que foi convidada, e ajuste futuro no papel nunca mais a alcancaria.
+ */
+async function gravarExcecoes(
+  supabase: Awaited<ReturnType<typeof criarClienteServidor>>,
+  userId: string,
+  papel: Papel,
+  dados: FormData,
+  definidoPor: string | null,
+) {
+  const doPapel = await acessosDoPapel(papel);
+
+  const excecoes = TELAS.flatMap((t) => {
+    const ver = dados.get(`ver:${t.chave}`) === "on";
+    const editarPedido = dados.get(`editar:${t.chave}`) === "on";
+    // Editar sem ver nao faz sentido e confundiria a leitura da tela.
+    const editar = ver && editarPedido;
+
+    const base = doPapel.get(t.chave);
+    if (ver === (base?.ver ?? false) && editar === (base?.editar ?? false)) return [];
+
+    return [
+      {
+        user_id: userId,
+        tela_key: t.chave,
+        ver,
+        editar,
+        definido_por: definidoPor,
+        atualizado_em: new Date().toISOString(),
+      },
+    ];
+  });
+
+  // Troca o conjunto inteiro: o que saiu da lista volta a seguir o papel.
+  await supabase.from("permissoes_usuario").delete().eq("user_id", userId);
+  if (excecoes.length > 0) {
+    await supabase.from("permissoes_usuario").insert(excecoes);
+  }
+
+  return excecoes.length;
 }
 
 /** Convida um usuário por e-mail. Não existe auto-cadastro público. */
@@ -58,6 +106,12 @@ export async function convidarUsuario(_estado: Resultado, dados: FormData): Prom
       .update({ nome, role, atualizado_em: new Date().toISOString() })
       .eq("id", data.user.id);
     if (erroPapel) return { erro: `Convite enviado, mas o perfil não foi definido: ${erroPapel.message}` };
+
+    // Acessos escolhidos no proprio convite. Falhar aqui nao desfaz o
+    // convite — a pessoa entra com o padrao do papel e a diretoria ajusta
+    // depois na ficha dela.
+    const { data: quemConvidou } = await supabase.auth.getUser();
+    await gravarExcecoes(supabase, data.user.id, role, dados, quemConvidou.user?.id ?? null);
   }
 
   revalidatePath("/gestao/usuarios");
@@ -114,3 +168,35 @@ export async function salvarPermissoes(dados: FormData) {
   revalidatePath("/gestao/permissoes");
   revalidatePath("/gestao");
 }
+
+/* -------------------------------------------------- Permissoes por usuario */
+
+/**
+ * Grava as excecoes de tela de uma pessoa.
+ *
+ * O formulario manda o estado desejado de TODAS as telas. Aqui comparamos
+ * com a matriz do papel e gravamos so o que difere — por isso a tabela fica
+ * pequena e, principalmente, por isso mudar a matriz do papel continua
+ * valendo para quem nao tem excecao daquela tela.
+ *
+ * Se gravassemos tudo, a primeira vez que alguem abrisse esta tela a pessoa
+ * ficaria congelada na matriz daquele dia, e ajustes futuros no papel nunca
+ * mais a alcancariam.
+ */
+export async function salvarAcessosDoUsuario(dados: FormData): Promise<void> {
+  await exigirTela("usuarios", true);
+
+  const userId = texto(dados, "user_id");
+  const papel = texto(dados, "role") as Papel;
+  if (!userId || !PAPEIS.includes(papel)) return;
+
+  const supabase = await criarClienteServidor();
+  const { data: usuario } = await supabase.auth.getUser();
+
+  await gravarExcecoes(supabase, userId, papel, dados, usuario.user?.id ?? null);
+
+  revalidatePath("/gestao", "layout");
+  revalidatePath("/gestao/usuarios");
+  redirect("/gestao/usuarios?acessos=1");
+}
+

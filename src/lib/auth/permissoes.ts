@@ -57,12 +57,25 @@ export async function estadoSessao(): Promise<EstadoSessao> {
   if (!perfil) return { tipo: "sem_perfil" };
   if (!perfil.ativo) return { tipo: "inativo" };
 
-  const { data: permissoes } = await supabase
-    .from("permissoes")
-    .select("tela_key, ver, editar")
-    .eq("role", perfil.role as Papel);
+  // Duas camadas: o papel da a base, e as excecoes por pessoa mandam por
+  // cima dela. Quem nao tem excecao nenhuma segue o papel, que era o
+  // comportamento antes desta tabela existir.
+  const [{ data: doPapel }, { data: doUsuario }] = await Promise.all([
+    supabase
+      .from("permissoes")
+      .select("tela_key, ver, editar")
+      .eq("role", perfil.role as Papel),
+    supabase
+      .from("permissoes_usuario")
+      .select("tela_key, ver, editar")
+      .eq("user_id", user.id),
+  ]);
 
-  const lista = (permissoes ?? []) as Permissao[];
+  const mescladas = new Map<string, Permissao>();
+  for (const p of (doPapel ?? []) as Permissao[]) mescladas.set(p.tela_key, p);
+  for (const e of (doUsuario ?? []) as Permissao[]) mescladas.set(e.tela_key, e);
+
+  const lista = [...mescladas.values()];
   const achar = (tela: TelaKey) => lista.find((p) => p.tela_key === tela);
 
   return {

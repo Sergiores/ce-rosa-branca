@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Botao, Cartao, CartaoCorpo } from "@/components/ui";
 import { exigirTela } from "@/lib/auth/permissoes";
+import { TELAS } from "@/lib/auth/telas";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import { salvarPermissoes } from "@/lib/gestao/acoes-usuarios";
 
@@ -15,21 +16,6 @@ const PAPEIS = [
   { valor: "visitante", rotulo: "Visitante" },
 ];
 
-const TELAS = [
-  { chave: "painel", rotulo: "Painel" },
-  { chave: "conteudo", rotulo: "Conteúdo do site" },
-  { chave: "atas", rotulo: "Atas de reunião" },
-  { chave: "estudos", rotulo: "Área de estudos" },
-  { chave: "membros", rotulo: "Membros" },
-  { chave: "compras", rotulo: "Documentos de compra/venda" },
-  { chave: "contas_pagar", rotulo: "Contas a pagar" },
-  { chave: "contas_receber", rotulo: "Contas a receber" },
-  { chave: "relatorios", rotulo: "Relatórios" },
-  { chave: "usuarios", rotulo: "Usuários" },
-  { chave: "permissoes", rotulo: "Permissões" },
-  { chave: "auditoria", rotulo: "Auditoria" },
-  { chave: "audiencia", rotulo: "Audiência do site" },
-];
 
 export default async function PaginaPermissoes() {
   await exigirTela("permissoes");

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { UserPlus } from "lucide-react";
+import { SlidersHorizontal, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { Cartao, Etiqueta, Vazio } from "@/components/ui";
 import { exigirTela } from "@/lib/auth/permissoes";
 import { criarClienteServidor } from "@/lib/supabase/server";
 import { alterarPapel, alternarAtivo } from "@/lib/gestao/acoes-usuarios";
+import { contarExcecoes } from "@/lib/gestao/permissoes-usuario";
 import type { Perfil } from "@/lib/tipos";
 
 export const dynamic = "force-dynamic";
@@ -17,7 +18,15 @@ const PAPEIS = [
   { valor: "membro", rotulo: "Membro" },
 ];
 
-function LinhaUsuario({ usuario, podeEditar }: { usuario: Perfil; podeEditar: boolean }) {
+function LinhaUsuario({
+  usuario,
+  podeEditar,
+  excecoes = 0,
+}: {
+  usuario: Perfil;
+  podeEditar: boolean;
+  excecoes?: number;
+}) {
   return (
     <div className="flex flex-wrap items-center gap-4 px-5 py-4">
       <div className="min-w-0 flex-1">
@@ -25,6 +34,11 @@ function LinhaUsuario({ usuario, podeEditar }: { usuario: Perfil; podeEditar: bo
         <p className="truncate text-sm text-texto-suave">{usuario.email}</p>
       </div>
 
+      {excecoes > 0 ? (
+        <Etiqueta tom="ambar">
+          {excecoes} {excecoes === 1 ? "acesso ajustado" : "acessos ajustados"}
+        </Etiqueta>
+      ) : null}
       {!usuario.ativo ? <Etiqueta tom="vermelho">Inativo</Etiqueta> : null}
 
       {podeEditar ? (
@@ -69,6 +83,15 @@ function LinhaUsuario({ usuario, podeEditar }: { usuario: Perfil; podeEditar: bo
               {usuario.ativo ? "Desativar" : "Ativar"}
             </button>
           </form>
+
+          <Link
+            href={`/gestao/usuarios/${usuario.id}/acessos`}
+            aria-label="Ajustar telas que esta pessoa acessa"
+            title="Ajustar telas que esta pessoa acessa"
+            className="grid h-9 w-9 place-items-center rounded-full text-marca-700 hover:bg-marca-100"
+          >
+            <SlidersHorizontal className="h-4 w-4" />
+          </Link>
         </div>
       ) : (
         <Etiqueta tom="cinza">
@@ -84,7 +107,10 @@ export default async function PaginaUsuarios() {
   const podeEditar = sessao.podeEditar("usuarios");
 
   const supabase = await criarClienteServidor();
-  const { data } = await supabase.from("profiles").select("*").order("nome");
+  const [{ data }, excecoes] = await Promise.all([
+    supabase.from("profiles").select("*").order("nome"),
+    contarExcecoes(),
+  ]);
   const todos = (data ?? []) as Perfil[];
 
   // Visitante nasce sozinho pelo cadastro público (/cadastro), sem convite da
@@ -119,7 +145,12 @@ export default async function PaginaUsuarios() {
       ) : (
         <Cartao className="divide-y divide-borda overflow-hidden">
           {usuarios.map((u) => (
-            <LinhaUsuario key={u.id} usuario={u} podeEditar={podeEditar} />
+            <LinhaUsuario
+              key={u.id}
+              usuario={u}
+              podeEditar={podeEditar}
+              excecoes={excecoes.get(u.id) ?? 0}
+            />
           ))}
         </Cartao>
       )}
@@ -143,7 +174,12 @@ export default async function PaginaUsuarios() {
           ) : (
             <Cartao className="divide-y divide-borda overflow-hidden">
               {visitantes.map((u) => (
-                <LinhaUsuario key={u.id} usuario={u} podeEditar={podeEditar} />
+                <LinhaUsuario
+              key={u.id}
+              usuario={u}
+              podeEditar={podeEditar}
+              excecoes={excecoes.get(u.id) ?? 0}
+            />
               ))}
             </Cartao>
           )}

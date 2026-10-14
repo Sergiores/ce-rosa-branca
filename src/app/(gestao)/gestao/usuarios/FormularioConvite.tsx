@@ -1,9 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { Loader2, Send } from "lucide-react";
 import { Botao, Campo, Rotulo, Selecao } from "@/components/ui";
+import { SeletorAcessos, type MatrizPorPapel } from "@/components/gestao/SeletorAcessos";
 import { convidarUsuario } from "@/lib/gestao/acoes-usuarios";
 import type { Resultado } from "@/lib/gestao/acoes-conteudo";
 
@@ -17,8 +18,10 @@ function BotaoEnviar() {
   );
 }
 
-export function FormularioConvite() {
+export function FormularioConvite({ matrizPorPapel }: { matrizPorPapel: MatrizPorPapel }) {
   const [estado, executar] = useActionState<Resultado, FormData>(convidarUsuario, {});
+  // O papel mora aqui porque a grade de telas reage a ele.
+  const [papel, setPapel] = useState("membro");
 
   return (
     <form action={executar} className="space-y-5">
@@ -35,21 +38,26 @@ export function FormularioConvite() {
 
       <div className="sm:max-w-xs">
         <Rotulo htmlFor="role">Perfil de acesso</Rotulo>
-        <Selecao id="role" name="role" defaultValue="membro">
+        <Selecao
+          id="role"
+          name="role"
+          value={papel}
+          onChange={(e) => setPapel(e.target.value)}
+        >
           <option value="diretoria">Diretoria</option>
           <option value="voluntario">Voluntário</option>
           <option value="aluno">Aluno</option>
           <option value="membro">Membro</option>
         </Selecao>
+        <p className="mt-1.5 text-xs text-texto-suave">
+          O perfil define o padrão. Abaixo você ajusta o que for diferente só para esta pessoa.
+        </p>
       </div>
+
+      <SeletorAcessos papel={papel} matrizPorPapel={matrizPorPapel} />
 
       {estado?.erro ? (
         <p className="rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{estado.erro}</p>
-      ) : null}
-      {estado?.ok ? (
-        <p className="rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-          Convite enviado. O usuário define a senha pelo link recebido por e-mail.
-        </p>
       ) : null}
 
       <BotaoEnviar />
