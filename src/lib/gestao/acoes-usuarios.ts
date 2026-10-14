@@ -278,11 +278,18 @@ export async function redefinirSenha(_estado: Resultado, dados: FormData): Promi
 
   // Trava 2: o cliente admin declara o schema rosabranca, entao isto le
   // rosabranca.profiles — nunca public.profiles, que e da loja.
-  const { data: alvo } = await admin
+  const { data: alvo, error: erroAlvo } = await admin
     .from("profiles")
     .select("id, nome, email")
     .eq("id", alvoId)
     .maybeSingle();
+  // Erro de leitura NAO e "conta de fora": confundir os dois mandou o
+  // diagnostico para o lado errado na primeira vez que esta tela rodou.
+  if (erroAlvo) {
+    return {
+      erro: `A senha NÃO foi alterada: não foi possível conferir a conta (${erroAlvo.message}).`,
+    };
+  }
   if (!alvo) {
     return { erro: "Esta conta não pertence a este sistema. A senha não foi alterada." };
   }
