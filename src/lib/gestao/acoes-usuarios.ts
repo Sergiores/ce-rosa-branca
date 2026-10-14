@@ -63,6 +63,56 @@ async function gravarExcecoes(
   return excecoes.length;
 }
 
+/**
+ * O e-mail ja tem conta — tipicamente criada pela loja, porque o login e o
+ * mesmo nos dois sistemas. Em vez de recusar o convite, cria so o perfil
+ * aqui, por uma funcao do banco que acha a conta pelo e-mail.
+ *
+ * Funcao e nao a service role: achar conta por e-mail exige ler auth.users,
+ * e abrir um terceiro uso da chave de administrador e o que a regra 4 do
+ * AGENTS.md proibe. A funcao checa a diretoria por dentro.
+ */
+async function concederAcessoAContaExistente(
+  email: string,
+  nome: string,
+  role: Papel,
+  dados: FormData,
+): Promise<Resultado> {
+  const supabase = await criarClienteServidor();
+  const { data, error } = await supabase.rpc("conceder_acesso_conta_existente", {
+    p_email: email,
+    p_nome: nome,
+    p_role: role,
+  });
+
+  if (error) {
+    return {
+      erro: error.message.includes("Could not find the function")
+        ? "Já existe uma conta com este e-mail (provavelmente da loja). Para dar acesso a ela, falta aplicar no banco o SQL 2026-10-13-acesso-para-conta-existente.sql."
+        : `Já existe uma conta com este e-mail, e não foi possível dar acesso a ela: ${error.message}`,
+    };
+  }
+
+  const linha = (data as { user_id: string | null; situacao: string }[] | null)?.[0];
+  if (!linha || linha.situacao === "nao_encontrado") {
+    return { erro: "O e-mail consta como existente, mas a conta não foi encontrada." };
+  }
+  if (linha.situacao === "ja_tinha") {
+    return {
+      erro: "Esta pessoa já tem acesso ao site. Ajuste o perfil dela na lista de usuários.",
+    };
+  }
+
+  // Acessos escolhidos no formulario valem tambem aqui.
+  if (linha.user_id) {
+    const { data: quemConcedeu } = await supabase.auth.getUser();
+    await gravarExcecoes(supabase, linha.user_id, role, dados, quemConcedeu.user?.id ?? null);
+  }
+
+  revalidatePath("/gestao/usuarios");
+  redirect("/gestao/usuarios?vinculado=1");
+}
+
 /** Convida um usuário por e-mail. Não existe auto-cadastro público. */
 export async function convidarUsuario(_estado: Resultado, dados: FormData): Promise<Resultado> {
   await exigirTela("usuarios", true);
@@ -89,13 +139,10 @@ export async function convidarUsuario(_estado: Resultado, dados: FormData): Prom
     redirectTo,
   });
 
-  if (error) {
-    return {
-      erro: error.message.includes("already")
-        ? "Já existe um usuário com este e-mail."
-        : error.message,
-    };
+  if (error && error.message.includes("already")) {
+    return concederAcessoAContaExistente(email, nome, role, dados);
   }
+  if (error) return { erro: error.message };
 
   // O papel e definido aqui, pelo servidor. A trigger no banco sempre cria o
   // usuario como 'membro' — o metadata do proprio usuario nunca decide o papel.
@@ -248,8 +295,10 @@ export async function salvarAcessosDoUsuario(dados: FormData): Promise<void> {
  *
  * Travas, todas antes de tocar em auth.users:
  *   1. quem chama precisa ser diretoria E poder editar Usuarios;
- *   2. o alvo precisa ter perfil em rosabranca.profiles — conta so da loja
- *      nao tem, e e recusada;
+ *   2. o alvo precisa ter perfil em rosabranca.profiles E ter sido criado
+ *      pela Casa (metadata projeto = rosabranca). Conta que nasceu na loja e
+ *      recusada mesmo que tenha ganho acesso ao site: a senha e a mesma nos
+ *      dois sistemas;
  *   3. a auditoria e gravada ANTES da troca. Se nao der para registrar, a
  *      senha nao e trocada: nunca existe troca sem rastro.
  *
@@ -292,6 +341,23 @@ export async function redefinirSenha(_estado: Resultado, dados: FormData): Promi
   }
   if (!alvo) {
     return { erro: "Esta conta não pertence a este sistema. A senha não foi alterada." };
+  }
+
+  // Trava 2b: a conta precisa ter NASCIDO na Casa. Ter perfil aqui nao basta:
+  // quem ja era da loja e ganhou acesso ao site tem perfil aqui E e conta da
+  // loja, com a MESMA senha. Troca-la daqui mudaria o login dela na loja — e
+  // se ela administra a loja, seria um caminho para entrar la como ela.
+  // O convite e o cadastro do site gravam `projeto: rosabranca` na conta.
+  const { data: conta, error: erroConta } = await admin.auth.admin.getUserById(alvoId);
+  if (erroConta || !conta?.user) {
+    return {
+      erro: `A senha NÃO foi alterada: não foi possível conferir a conta (${erroConta?.message ?? "não encontrada"}).`,
+    };
+  }
+  if (conta.user.user_metadata?.projeto !== SCHEMA_DB) {
+    return {
+      erro: "Esta conta também é usada na loja, com a mesma senha. Trocá-la daqui mudaria o acesso dela lá — a própria pessoa precisa trocar a senha.",
+    };
   }
 
   // Trava 3: registra antes de trocar.

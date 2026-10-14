@@ -32,8 +32,14 @@ nossos. Isso foi verificado, não é hipótese. Existem DOIS usos, ambos em
 - `redefinirSenha` — a diretoria define a senha de outra pessoa (autorizado em
   13/10/2026). Como `auth.users` é compartilhado com a loja, ele só age depois
   de três travas: quem chama é diretoria e edita Usuários; o alvo tem perfil em
-  `rosabranca.profiles` (conta só da loja é recusada); e a auditoria é gravada
-  ANTES da troca — sem registro, não há troca. Não afrouxe nenhuma das três.
+  `rosabranca.profiles` E foi criado pela Casa (metadata `projeto =
+  rosabranca`) — conta que nasceu na loja é recusada mesmo com perfil aqui,
+  porque a senha é a mesma nos dois sistemas; e a auditoria é gravada ANTES da
+  troca — sem registro, não há troca. Não afrouxe nenhuma das três.
+
+Dar acesso a quem já tem conta (na loja) NÃO usa a service role: é a função
+`rosabranca.conceder_acesso_conta_existente`, chamada pelo convite quando o
+e-mail já existe. Ela checa a diretoria por dentro.
 
 A signed URL de anexo **não** usa a service role: sai por
 `criarClienteServidor()`, com RLS aplicado. Precisando de um terceiro uso,

@@ -79,9 +79,9 @@ function LinhaUsuario({
 export default async function PaginaUsuarios({
   searchParams,
 }: {
-  searchParams: Promise<{ senha?: string }>;
+  searchParams: Promise<{ senha?: string; vinculado?: string }>;
 }) {
-  const { senha } = await searchParams;
+  const { senha, vinculado } = await searchParams;
   const sessao = await exigirTela("usuarios");
   const podeEditar = sessao.podeEditar("usuarios");
   // Trocar senha alheia e mais forte que editar usuarios: so diretoria.
@@ -123,6 +123,13 @@ export default async function PaginaUsuarios({
       {senha === "1" ? (
         <p className="mt-6 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
           Senha alterada e registrada na auditoria. Avise a pessoa da senha nova por um canal seguro.
+        </p>
+      ) : null}
+
+      {vinculado === "1" ? (
+        <p className="mt-6 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+          Esta pessoa já tinha conta (da loja), e agora tem acesso ao site. Ela entra com o mesmo
+          e-mail e a mesma senha que usa lá — não recebe e-mail de convite.
         </p>
       ) : null}
 
