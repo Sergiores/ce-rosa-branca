@@ -118,28 +118,64 @@ export async function convidarUsuario(_estado: Resultado, dados: FormData): Prom
   redirect("/gestao/usuarios?convidado=1");
 }
 
-export async function alterarPapel(dados: FormData) {
+/**
+ * Troca o papel de um usuario.
+ *
+ * Devolve o erro em vez de engolir: antes, se o banco recusasse, a tela so
+ * recarregava com o papel antigo e ninguem sabia por que.
+ *
+ * O `.select()` depois do update existe porque o RLS nao gera erro quando
+ * barra um update — ele simplesmente nao altera linha nenhuma. Sem conferir
+ * quantas linhas voltaram, uma recusa de permissao pareceria sucesso.
+ */
+export async function alterarPapel(_estado: Resultado, dados: FormData): Promise<Resultado> {
   await exigirTela("usuarios", true);
   const id = texto(dados, "id");
   const role = texto(dados, "role") as Papel;
-  if (!id || !PAPEIS.includes(role)) return;
+  if (!id) return { erro: "Usuário não informado." };
+  if (!PAPEIS.includes(role)) return { erro: "Perfil de acesso inválido." };
 
   const supabase = await criarClienteServidor();
-  await supabase.from("profiles").update({ role, atualizado_em: new Date().toISOString() }).eq("id", id);
+  const { data, error } = await supabase
+    .from("profiles")
+    .update({ role, atualizado_em: new Date().toISOString() })
+    .eq("id", id)
+    .select("id");
+
+  if (error) return { erro: `O banco recusou: ${error.message}` };
+  if (!data || data.length === 0) {
+    return {
+      erro: "Nada foi alterado: o banco não deixou esta conta editar o perfil de outra pessoa.",
+    };
+  }
+
   revalidatePath("/gestao/usuarios");
+  return { ok: true };
 }
 
-export async function alternarAtivo(dados: FormData) {
+/** Ativa ou desativa um usuario. Mesmo cuidado de alterarPapel com a recusa silenciosa. */
+export async function alternarAtivo(_estado: Resultado, dados: FormData): Promise<Resultado> {
   await exigirTela("usuarios", true);
   const id = texto(dados, "id");
   const ativo = dados.get("ativo") === "1";
+  if (!id) return { erro: "Usuário não informado." };
 
   const supabase = await criarClienteServidor();
-  await supabase
+  const { data, error } = await supabase
     .from("profiles")
     .update({ ativo, atualizado_em: new Date().toISOString() })
-    .eq("id", id);
+    .eq("id", id)
+    .select("id");
+
+  if (error) return { erro: `O banco recusou: ${error.message}` };
+  if (!data || data.length === 0) {
+    return {
+      erro: "Nada foi alterado: o banco não deixou esta conta editar o perfil de outra pessoa.",
+    };
+  }
+
   revalidatePath("/gestao/usuarios");
+  return { ok: true };
 }
 
 /** Salva a matriz de permissões por tela. */

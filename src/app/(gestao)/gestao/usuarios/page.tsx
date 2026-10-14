@@ -4,9 +4,9 @@ import Link from "next/link";
 import { Cartao, Etiqueta, Vazio } from "@/components/ui";
 import { exigirTela } from "@/lib/auth/permissoes";
 import { criarClienteServidor } from "@/lib/supabase/server";
-import { alterarPapel, alternarAtivo } from "@/lib/gestao/acoes-usuarios";
 import { contarExcecoes } from "@/lib/gestao/permissoes-usuario";
 import type { Perfil } from "@/lib/tipos";
+import { AcoesUsuario } from "./AcoesUsuario";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Usuários" };
@@ -43,46 +43,7 @@ function LinhaUsuario({
 
       {podeEditar ? (
         <div className="flex items-center gap-2">
-          <form action={alterarPapel}>
-            <input type="hidden" name="id" value={usuario.id} />
-            <select
-              name="role"
-              defaultValue={usuario.role}
-              className="rounded-xl border border-borda bg-white px-3 py-2 text-sm"
-            >
-              {/* "Visitante" nunca é uma opção de destino — é papel de
-                  origem única, do cadastro público. Aparece aqui só quando
-                  já é o papel atual, para o select não cair sozinho na
-                  primeira opção da lista e o botão Salvar não promover
-                  ninguém por engano. Selecionar e salvar com ela marcada
-                  não faz nada: o servidor recusa esse valor. */}
-              {usuario.role === "visitante" ? (
-                <option value="visitante">Visitante (cadastro público)</option>
-              ) : null}
-              {PAPEIS.map((p) => (
-                <option key={p.valor} value={p.valor}>
-                  {p.rotulo}
-                </option>
-              ))}
-            </select>
-            <button
-              type="submit"
-              className="ml-2 rounded-full px-3 py-2 text-sm font-medium text-marca-700 hover:bg-marca-50"
-            >
-              Salvar
-            </button>
-          </form>
-
-          <form action={alternarAtivo}>
-            <input type="hidden" name="id" value={usuario.id} />
-            <input type="hidden" name="ativo" value={usuario.ativo ? "0" : "1"} />
-            <button
-              type="submit"
-              className="rounded-full px-3 py-2 text-sm font-medium text-texto-suave hover:bg-marca-50"
-            >
-              {usuario.ativo ? "Desativar" : "Ativar"}
-            </button>
-          </form>
+          <AcoesUsuario id={usuario.id} papel={usuario.role} ativo={usuario.ativo} />
 
           <Link
             href={`/gestao/usuarios/${usuario.id}/acessos`}
